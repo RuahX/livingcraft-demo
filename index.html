@@ -1385,13 +1385,13 @@ const HERO_SLIDES = [
     kickerEn: "Featured Exhibition · London 2026",
     copyZh: "在 AI 时代重新发现手作之美，让作品成为观众觉察内心、安顿身心的媒介。",
     copyEn: "Rediscover the beauty of handwork in the age of AI, where works become a medium for inner awareness and restoration.",
-    primaryHref: "collections.html",
+    primaryHref: "/livingcraft-demo/collections.html",
     primaryZh: "探索藏品 →",
     primaryEn: "Explore Collections →",
-    secondaryHref: "vr-preview/",
+    secondaryHref: "/livingcraft-demo/vr-preview/",
     secondaryZh: "进入展览",
     secondaryEn: "Enter Exhibition",
-    linkHref: "exhibition-london-2026.html",
+    linkHref: "/livingcraft-demo/exhibition-london-2026.html",
     linkZh: "查看展览 →",
     linkEn: "View Exhibition →"
   },
@@ -1403,10 +1403,10 @@ const HERO_SLIDES = [
     kickerEn: "Featured Exhibition · 2026",
     copyZh: "以《长春百子图》为灵感，通过数字动画重构传统叙事，让经典图像在当代语境中重生。",
     copyEn: "A digital animation inspired by One Hundred Children in the Long Spring, reimagining classical narrative for a contemporary exhibition context.",
-    primaryHref: "vr-preview/",
+    primaryHref: "/livingcraft-demo/vr-preview/",
     primaryZh: "进入展览",
     primaryEn: "View Exhibition",
-    secondaryHref: "artisans.html",
+    secondaryHref: "/livingcraft-demo/artisans.html",
     secondaryZh: "关于艺术家 →",
     secondaryEn: "About the Artists →"
   }
@@ -1429,7 +1429,7 @@ function safeSubject(name) {
   return encodeURIComponent("Inquiry: " + name);
 }
 function detailHref(item) {
-  return `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+  return `/livingcraft-demo/artifact-detail.html?id=${encodeURIComponent(item.id)}`;
 }
 function resolvedImage(item) {
   return IMAGE_FALLBACKS[item.id] || item.image;
@@ -1472,8 +1472,8 @@ function renderHero() {
         <p class="hero-sub">${subtitle}</p>
         <p class="hero-copy">${pick(slide.copyZh, slide.copyEn)}</p>
         <div class="hero-actions">
-          <a class="btn primary" href="${slide.primaryHref || "vr-preview/"}">${pick(slide.primaryZh, slide.primaryEn)}</a>
-          <a class="btn secondary" href="${slide.secondaryHref || "collections.html"}">${pick(slide.secondaryZh, slide.secondaryEn)}</a>
+          <a class="btn primary" href="${slide.primaryHref || "/livingcraft-demo/vr-preview/"}">${pick(slide.primaryZh, slide.primaryEn)}</a>
+          <a class="btn secondary" href="${slide.secondaryHref || "/livingcraft-demo/collections.html"}">${pick(slide.secondaryZh, slide.secondaryEn)}</a>
         </div>
         ${slide.linkHref ? `<a class="hero-text-link" href="${slide.linkHref}">${pick(slide.linkZh, slide.linkEn)}</a>` : ""}
       </div>
@@ -1534,6 +1534,6 @@ document.addEventListener("languagechange", () => {
 renderHero();
 renderFeatured();
 </script>
-<script src="scripts/theme-toggle.js?v=20260519-navfix"></script>
+<script src="scripts/theme-toggle.js?v=20260519-pagesfix2"></script>
 </body>
 </html>

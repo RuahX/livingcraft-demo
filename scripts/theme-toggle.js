@@ -119,12 +119,12 @@
   }
 
   const NAV_ITEMS = [
-    { id: "home", href: "index-v2.html", zh: "首页", en: "Home" },
-    { id: "explore", href: "explore.html", zh: "VR 展厅", en: "VR Gallery" },
-    { id: "collections", href: "collections.html", zh: "艺术品", en: "Works" },
-    { id: "exhibitions", href: "exhibitions.html", zh: "展览", en: "Exhibitions" },
-    { id: "artisans", href: "artisans.html", zh: "艺术家", en: "Artists" },
-    { id: "about", href: "about.html", zh: "关于", en: "About" },
+    { id: "home", href: "/livingcraft-demo/", zh: "首页", en: "Home" },
+    { id: "explore", href: "/livingcraft-demo/explore.html", zh: "VR 展厅", en: "VR Gallery" },
+    { id: "collections", href: "/livingcraft-demo/collections.html", zh: "艺术品", en: "Works" },
+    { id: "exhibitions", href: "/livingcraft-demo/exhibitions.html", zh: "展览", en: "Exhibitions" },
+    { id: "artisans", href: "/livingcraft-demo/artisans.html", zh: "艺术家", en: "Artists" },
+    { id: "about", href: "/livingcraft-demo/about.html", zh: "关于", en: "About" },
     { id: "help", href: "mailto:hello@xmeta.art", zh: "帮助", en: "Help" }
   ];
 
@@ -143,7 +143,7 @@
   }
 
   function pathTo(href) {
-    if (/^(mailto:|https?:|#)/i.test(href)) return href;
+    if (/^(mailto:|https?:|#|\/)/i.test(href)) return href;
     return "../".repeat(currentDepth()) + href;
   }
 
@@ -163,7 +163,7 @@
     }
     if (path.endsWith("artisans.html")) return "artisans";
     if (path.endsWith("about.html")) return "about";
-    if (path.endsWith("index-v2.html") || /\/(?:xemta-cultural\/?)?$/.test(path)) return "home";
+    if (path.endsWith("index-v2.html") || /\/(?:xemta-cultural|livingcraft-demo)\/?$/.test(path)) return "home";
     return "";
   }
 
@@ -181,7 +181,7 @@
     const activeSection = currentSection();
     nav.innerHTML = `
       <div class="brand-row">
-        <a class="brand brand-centered" href="${pathTo("index-v2.html")}" aria-label="新生万物首页 Living Craft home">
+        <a class="brand brand-centered" href="${pathTo("/livingcraft-demo/")}" aria-label="新生万物首页 Living Craft home">
           <span class="brand-text">
             <span class="brand-cn display-cn">新生万物</span>
             <span class="brand-en">Living Craft · MADverse</span>
@@ -195,7 +195,7 @@
             <button type="button" data-lang-set="en">EN</button>
           </span>
           <a class="nav-login" href="#" data-zh="登录" data-en="Sign In">登录</a>
-          <a class="nav-cta" href="${pathTo("vr-preview/")}" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+          <a class="nav-cta" href="${pathTo("/livingcraft-demo/vr-preview/")}" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
         </div>
       </div>
       <div class="nav-row">
