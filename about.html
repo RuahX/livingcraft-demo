@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · 关于 About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --white: #fff;
+  --offwhite: #FBF8F1;
+  --warm: #F4EFE6;
+  --ink: #181713;
+  --ink-mid: #6F675D;
+  --ink-light: #8A8175;
+  --gold: #B88718;
+  --gold-light: #C49A3A;
+  --blue: #07172F;
+  --border: rgba(120, 92, 45, 0.18);
+  --card-border: rgba(120, 92, 45, 0.16);
+  --max: 1320px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255,255,255,0.96);
+  border-bottom: 1px solid var(--border);
+}
+.brand-row {
+  position: relative;
+  min-height: 76px;
+  padding: 16px 26px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand { text-align: center; }
+.brand-cn {
+  display: block;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(22px, 2.1vw, 34px);
+  font-weight: 200;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  line-height: 1;
+}
+.brand-en {
+  display: block;
+  margin-top: 8px;
+  color: #5f6b84;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+}
+.nav-right {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.lang-switch { display: inline-flex; gap: 5px; align-items: center; color: var(--ink-light); }
+.lang-switch button { border: 0; padding: 0; background: transparent; color: var(--ink-light); cursor: pointer; }
+.lang-switch button.active { color: var(--gold); }
+.nav-cta {
+  min-height: 36px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+.nav-row {
+  height: 52px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-links {
+  display: flex;
+  gap: clamp(26px, 4vw, 58px);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--gold); }
+.page { overflow: hidden; }
+.hero {
+  position: relative;
+  min-height: 560px;
+  display: grid;
+  align-items: center;
+  background: var(--warm);
+  border-bottom: 1px solid var(--border);
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(48vw, 780px);
+  background: linear-gradient(90deg, rgba(244,239,230,1), rgba(244,239,230,0.26) 32%, rgba(244,239,230,0)), url("assets/hero/jian-ware-bowl-hero.jfif") center/cover;
+  opacity: 0.82;
+}
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(var(--max), calc(100% - 64px));
+  margin: 0 auto;
+  padding: 82px 0;
+}
+.kicker {
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+h1 {
+  max-width: 760px;
+  margin: 18px 0 20px;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(48px, 6vw, 88px);
+  font-weight: 200;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+}
+.title-en {
+  display: block;
+  margin-top: 10px;
+  color: var(--ink-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(28px, 3vw, 48px);
+  font-style: italic;
+  letter-spacing: 0;
+}
+.lead {
+  max-width: 660px;
+  margin: 34px 0 0;
+  color: var(--ink-mid);
+  font-size: 19px;
+  line-height: 1.8;
+}
+.lead-en {
+  display: block;
+  margin-top: 14px;
+  color: var(--ink-light);
+  font-style: italic;
+  font-size: 17px;
+}
+.section {
+  width: min(var(--max), calc(100% - 64px));
+  margin: 0 auto;
+  padding: 104px 0;
+}
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
+  gap: 52px;
+  align-items: end;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 36px;
+}
+.section h2 {
+  margin: 10px 0 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(36px, 4.6vw, 66px);
+  font-weight: 200;
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+}
+.section-desc {
+  margin: 0;
+  color: var(--ink-mid);
+  font-size: 16px;
+  line-height: 1.75;
+}
+.grid-4,
+.grid-3 {
+  display: grid;
+  gap: 24px;
+}
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.feature-card,
+.belief-card {
+  min-height: 260px;
+  padding: 28px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.42);
+}
+.feature-card h3,
+.belief-card h3 {
+  margin: 0 0 16px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+.feature-card .en,
+.belief-card .en {
+  display: block;
+  color: var(--gold);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  font-style: italic;
+  letter-spacing: 0;
+}
+.feature-card p,
+.belief-card p {
+  margin: 0;
+  color: var(--ink-mid);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.cta-band {
+  background: var(--blue);
+  color: var(--white);
+  margin-top: 24px;
+}
+.cta-inner {
+  width: min(var(--max), calc(100% - 64px));
+  margin: 0 auto;
+  padding: 78px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 36px;
+  align-items: center;
+}
+.cta-inner h2 {
+  margin: 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 200;
+  letter-spacing: 0.08em;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.btn {
+  min-width: 148px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.48);
+  color: var(--white);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.btn.gold {
+  border-color: var(--gold-light);
+  background: var(--gold-light);
+}
+.btn:hover { background: var(--white); color: var(--blue); }
+@media (max-width: 900px) {
+  .brand-row { justify-content: flex-start; }
+  .brand { text-align: left; }
+  .brand-cn { font-size: 21px; letter-spacing: 0.24em; text-indent: 0; }
+  .brand-en { font-size: 10px; letter-spacing: 0.2em; }
+  .nav-right { position: static; transform: none; margin-left: auto; }
+  .nav-row { overflow-x: auto; justify-content: flex-start; padding: 0 18px; }
+  .nav-links { white-space: nowrap; gap: 24px; font-size: 11px; }
+  .hero::after { width: 100%; opacity: 0.18; }
+  .hero-inner,
+  .section,
+  .cta-inner { width: min(100% - 36px, var(--max)); }
+  .section-head { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: 1fr; }
+  .cta-inner { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 620px) {
+  .nav-right { gap: 10px; font-size: 10px; }
+  .nav-cta { padding: 0 12px; }
+  .hero { min-height: 520px; }
+  .lead { font-size: 16px; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .feature-card,
+  .belief-card { min-height: auto; }
+  .actions { width: 100%; flex-direction: column; }
+  .btn { width: 100%; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<nav class="nav" aria-label="主导航 Main navigation">
+  <div class="brand-row">
+    <a class="brand" href="index-v2.html" aria-label="新生万物首页 Living Craft home">
+      <span class="brand-cn">新生万物</span>
+      <span class="brand-en">Living Craft · MADverse</span>
+    </a>
+    <div class="nav-right">
+      <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+      </span>
+      <a href="#" data-zh="登录" data-en="Sign In">登录</a>
+      <a class="nav-cta" href="vr-preview/" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+    </div>
+  </div>
+  <div class="nav-row">
+    <div class="nav-links">
+      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a class="active" href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="kicker">ABOUT · XINSHENG WANWU</div>
+      <h1 data-zh="关于新生万物" data-en="About Xinsheng Wanwu" data-i18n-sub>关于新生万物</h1>
+      <p class="lead">
+        <span data-zh="新生万物是一个连接中国文化艺术、艺术家与数字展览的精选平台。我们以数字为桥，守护与呈现中华文化的深度与当代生命力。" data-en="Xinsheng Wanwu is a curated platform connecting Chinese cultural artworks, artists, and digital exhibitions. We build a bridge through digital means to preserve and present the depth and contemporary vitality of Chinese culture." data-i18n-sub>新生万物是一个连接中国文化艺术、艺术家与数字展览的精选平台。我们以数字为桥，守护与呈现中华文化的深度与当代生命力。</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">PLATFORM STRUCTURE</div>
+        <h2 data-zh="我们如何组织内容" data-en="How We Organize the Platform" data-i18n-sub>我们如何组织内容</h2>
+      </div>
+      <p class="section-desc" data-zh="新生万物以藏品、艺术家、展览与探索四条路径组织内容，帮助海外买家和观众从观看进入理解，再进入收藏和交易意向。" data-en="Xinsheng Wanwu organizes content through collections, artists, exhibitions and exploration, guiding viewers from discovery to context, collecting and inquiry." data-i18n-sub>新生万物以藏品、艺术家、展览与探索四条路径组织内容，帮助海外买家和观众从观看进入理解，再进入收藏和交易意向。</p>
+    </div>
+    <div class="grid-4">
+      <article class="feature-card">
+        <h3>藏品 <span class="en">Collections</span></h3>
+        <p>精选传统与当代艺术作品，涵盖陶瓷、漆器、书画、茶器、织绣等门类。</p>
+      </article>
+      <article class="feature-card">
+        <h3>艺术家 <span class="en">Artists</span></h3>
+        <p>汇聚当代创作者与非遗传承人，呈现他们的创作与思想。</p>
+      </article>
+      <article class="feature-card">
+        <h3>展览 <span class="en">Exhibitions</span></h3>
+        <p>策划数字展览，打破时空边界，让文化被更多人看见。</p>
+      </article>
+      <article class="feature-card">
+        <h3>探索 <span class="en">Explore</span></h3>
+        <p>通过 3D 探索与专题内容，深入了解工艺、材料与文化故事。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">PRINCIPLES</div>
+        <h2 data-zh="平台理念" data-en="Platform Principles" data-i18n-sub>平台理念</h2>
+      </div>
+      <p class="section-desc" data-zh="我们把作品放回真实的人、材料、工艺与时间之中，使文化价值和收藏判断都能被清晰理解。" data-en="We place every work within people, materials, craft and time, so cultural value and collecting judgment can be read clearly." data-i18n-sub>我们把作品放回真实的人、材料、工艺与时间之中，使文化价值和收藏判断都能被清晰理解。</p>
+    </div>
+    <div class="grid-3">
+      <article class="belief-card">
+        <h3>活工艺 <span class="en">Living Craft</span></h3>
+        <p>我们相信，工艺不仅是技艺的传承，更是与生活、时间和情感的连接。</p>
+      </article>
+      <article class="belief-card">
+        <h3>创作者统一称为：艺术家</h3>
+        <p>在新生万物，我们将所有创作者统一称为“艺术家”。其中一部分艺术家同时也是非遗传承人，ICH Inheritor 是身份标签，不是独立主分类。</p>
+      </article>
+      <article class="belief-card">
+        <h3>真实 · 可追溯 · 值得信赖</h3>
+        <p>我们与艺术家、传承人及机构合作，确保作品来源、工艺、材料和背景信息清晰透明。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="cta-inner">
+      <h2 data-zh="开启你的文化之旅" data-en="Begin Your Cultural Journey" data-i18n-sub>开启你的文化之旅</h2>
+      <div class="actions">
+        <a class="btn gold" href="collections.html" data-zh="浏览藏品" data-en="Browse Collections">浏览藏品</a>
+        <a class="btn" href="artisans.html" data-zh="认识艺术家" data-en="Meet Artists">认识艺术家</a>
+        <a class="btn" href="vr-preview/" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="data/i18n.js"></script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

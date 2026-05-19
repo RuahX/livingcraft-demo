@@ -1,0 +1,259 @@
+/* ── OpeningIntro — component-scoped styles ─────────────────────────────────
+   Layer order (z-index):
+   1  → scene background (antique room image, soft fade-in)
+   4  → particle canvas (opacity 0.76, center safe-zone mask)
+   5  → warm light (mix-blend-mode:screen — amplifies scene rays + particles)
+   6  → vignette (edge darkening)
+   10 → brand title / subtitle / button
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.openingIntro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #070706;
+  font-family: 'Songti SC', 'STSong', 'Noto Serif SC', serif;
+  overflow: hidden;
+}
+
+/* ── Canvas ─────────────────────────────────────────────────────────────── */
+/* z:4 — ABOVE light (z:3) so particles are never covered by the light layer.*/
+/* opacity 0.68 (+10% from 0.62) keeps particles clearly visible.            */
+/* Center safe-zone mask reduces particles over the brand title area only.    */
+
+.openingCanvasWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0.76;
+  -webkit-mask-image: radial-gradient(ellipse 42% 36% at 52% 46%,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.60) 48%,
+    rgba(0,0,0,1.00) 80%);
+  mask-image: radial-gradient(ellipse 42% 36% at 52% 46%,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.60) 48%,
+    rgba(0,0,0,1.00) 80%);
+}
+
+.openingCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Scene background (below canvas) ────────────────────────────────────── */
+/* Sits at z:1. Canvas at opacity 0.40 lets the scene show through:          */
+/* dark trail areas  →  canvas 0.40 × dark + scene 0.60 × scene_pixel       */
+/* bright particles  →  canvas bright×0.40 + scene×0.60 (particles dominate) */
+/* Left-to-right mask creates the left-bright / right-dark narrative.         */
+
+.openingSceneLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right,
+    rgba(0,0,0,1.00) 0%,
+    rgba(0,0,0,0.96) 35%,
+    rgba(0,0,0,0.88) 65%,
+    rgba(0,0,0,0.72) 100%);
+  mask-image: linear-gradient(to right,
+    rgba(0,0,0,1.00) 0%,
+    rgba(0,0,0,0.96) 35%,
+    rgba(0,0,0,0.88) 65%,
+    rgba(0,0,0,0.72) 100%);
+}
+
+.openingSceneBg {
+  /* Native resolution, centered, cropped — no upscaling distortion.         */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  max-width: none;
+  min-width: 100%;
+  /* Starts invisible, slowly emerges from darkness over 7s.                 */
+  opacity: 0;
+  filter: brightness(2.9) saturate(0.90) sepia(0.12);
+  animation: sceneFadeIn 7s ease-in 0.3s forwards;
+}
+
+@keyframes sceneFadeIn {
+  0%   { opacity: 0;    }   /* 0s:   invisible */
+  18%  { opacity: 0.04; }   /* 1.6s: barely perceptible trace */
+  45%  { opacity: 0.18; }   /* 3.5s: subtly emerging */
+  72%  { opacity: 0.30; }   /* 5.3s: softly present */
+  100% { opacity: 0.40; }   /* 7.3s: settled — scene rays now visible */
+}
+
+/* ── Volumetric light — backdrop-filter approach ─────────────────────────── */
+/* Not a color layer. backdrop-filter transforms what already exists beneath: */
+/* scene's own warm rays get brighter; particles in the zone glow warmer.    */
+/* "Light in the air" = scene + particles are illuminated, not covered.      */
+
+.openingLightLeft {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+  /* brightness amplifies scene's own rays; sepia warms; saturate enriches   */
+  /* particles already gold → appear lit from within, not coated             */
+  -webkit-backdrop-filter: brightness(1.50) sepia(0.22) saturate(1.28);
+          backdrop-filter: brightness(1.50) sepia(0.22) saturate(1.28);
+  /* Mask: effect confined to upper-left, dissolves before reaching center.  */
+  /* Brand text at ~52% 46% is outside mask radius → unaffected.             */
+  -webkit-mask-image: radial-gradient(ellipse 58% 72% at -6% -6%,
+    rgba(0,0,0,1.00)  0%,
+    rgba(0,0,0,0.75) 38%,
+    rgba(0,0,0,0.30) 65%,
+    transparent       83%
+  );
+  mask-image: radial-gradient(ellipse 58% 72% at -6% -6%,
+    rgba(0,0,0,1.00)  0%,
+    rgba(0,0,0,0.75) 38%,
+    rgba(0,0,0,0.30) 65%,
+    transparent       83%
+  );
+  animation:
+    lightFadeIn  5.5s ease-out    2.5s forwards,
+    lightBreathe 10.0s ease-in-out 8.0s infinite;
+}
+
+/* ── Light keyframes ────────────────────────────────────────────────────── */
+
+@keyframes lightFadeIn {
+  from { opacity: 0;    }
+  to   { opacity: 0.88; }
+}
+
+/* Breathing: ~8% amplitude. Transforms scene/particles, not a color layer. */
+@keyframes lightBreathe {
+  0%   { opacity: 0.84; }
+  50%  { opacity: 0.92; }
+  100% { opacity: 0.84; }
+}
+
+/* ── Vignette — right-heavy, left open ──────────────────────────────────── */
+/* Right side stays deeply dark to contrast with the lit left.                */
+
+.openingVignette {
+  position: absolute;
+  inset: 0;
+  z-index: 6;  /* above light z:5 — keeps edges dark over screen-blend glow */
+  pointer-events: none;
+  background:
+    /* Soft right-side darkness — reduced to let scene show through */
+    linear-gradient(to left,
+      rgba(7,7,6,0.62) 0%,
+      rgba(7,7,6,0.34) 25%,
+      rgba(7,7,6,0.08) 52%,
+      transparent 68%
+    ),
+    /* Overall edge vignette, center shifted left to keep left area open */
+    radial-gradient(ellipse 92% 82% at 40% 50%,
+      transparent 22%, rgba(7,7,6,0.42) 62%, rgba(7,7,6,0.88) 100%
+    ),
+    /* Top edge */
+    linear-gradient(to bottom, rgba(7,7,6,0.65) 0%, transparent 17%),
+    /* Bottom edge */
+    linear-gradient(to top,    rgba(7,7,6,0.55) 0%, transparent 20%);
+}
+
+/* ── Brand text ─────────────────────────────────────────────────────────── */
+/* Initial: invisible + slightly low. .visible: fade + float up to center.   */
+
+.openingBrandContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -45%);
+  transition:
+    opacity   3s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.openingBrandContainer.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.openingBrandTitle {
+  font-family: 'Songti SC', 'STSong', 'Noto Serif SC', serif;
+  font-size: 5.5vw;
+  color: #f2e0a4;
+  font-weight: 200;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  margin: 0 0 18px 0;
+  text-shadow:
+    0 0 24px rgba(242, 224, 164, 0.55),
+    0 0 60px rgba(235, 200, 130, 0.20);
+  white-space: nowrap;
+}
+
+.openingSubtitle {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.65vw;
+  color: #b09870;
+  letter-spacing: 1.0em;
+  text-indent: 1.0em;
+  margin: 0;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+@media (max-width: 768px) {
+  .openingBrandTitle { font-size: 8vw; }
+  .openingSubtitle   { font-size: 1.8vw; }
+}
+
+/* ── Enter button ───────────────────────────────────────────────────────── */
+/* Starts at opacity 0. CSS animation (delay 8.5s) fades it in gently.      */
+/* pointer-events stays none until .btn-active is added by JS at 8.5s.       */
+
+.openingEnterBtn {
+  display: block;
+  margin: 48px auto 0;
+  padding: 11px 42px;
+  border: 1px solid rgba(235, 209, 151, 0.28);
+  background: transparent;
+  color: rgba(235, 209, 151, 0.80);
+  cursor: pointer;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.62vw;
+  letter-spacing: 0.6em;
+  text-indent: 0.6em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  animation: openingBtnFade 2s ease-out 8.5s forwards;
+  transition: background 0.5s, border-color 0.5s;
+}
+
+.openingEnterBtn.btn-active {
+  pointer-events: auto;
+}
+
+.openingEnterBtn:hover {
+  background: rgba(235, 209, 151, 0.06);
+  border-color: rgba(235, 209, 151, 0.42);
+}
+
+@keyframes openingBtnFade {
+  0%   { opacity: 0; }
+  100% { opacity: 0.52; }
+}
+
+@media (max-width: 768px) {
+  .openingEnterBtn { font-size: 2.2vw; padding: 10px 32px; }
+}

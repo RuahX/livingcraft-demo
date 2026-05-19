@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · Living Craft MADverse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-style: normal; src: local("Cormorant Garamond"), url("fonts/CormorantGaramond-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 400; font-style: italic; src: local("Cormorant Garamond Italic"), url("fonts/CormorantGaramond-Italic.ttf") format("truetype"); }
+:root {
+  --white: #FFFFFF;
+  --offwhite: #F5F3EF;
+  --parchment: #EAE6DD;
+  --ink: #0F0F0D;
+  --ink-mid: #3A3228;
+  --ink-light: #8A8078;
+  --gold: #C9973A;
+  --gold-light: #E8C878;
+  --border: #E0DAD0;
+  --dark: #1A1208;
+  --max: 1480px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+.display-cn { font-family: "Noto Serif SC", serif; font-weight: 200; letter-spacing: 0.08em; }
+.display-en { font-family: "Cormorant Garamond", serif; font-style: italic; font-weight: 300; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 68px;
+  border-bottom: 1px solid rgba(224, 218, 208, 0.88);
+  background: rgba(245, 243, 239, 0.94);
+  backdrop-filter: blur(18px);
+}
+.nav-inner {
+  max-width: var(--max);
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 245px;
+}
+.brand-text { line-height: 1.15; }
+.brand-cn { display: block; font-size: 15px; letter-spacing: 0.18em; }
+.brand-en { display: block; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-light); }
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 28px);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 17px;
+  min-width: 245px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-light);
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-transform: uppercase;
+}
+.lang-switch button.active { color: var(--gold); }
+.nav-link { color: var(--ink-mid); white-space: nowrap; }
+.nav-link:hover { color: var(--gold); }
+.nav-cta,
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 22px;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--white);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+.nav-cta { min-height: 34px; padding: 0 16px; font-size: 10px; }
+.btn:hover,
+.nav-cta:hover { background: var(--gold-light); border-color: var(--gold-light); color: var(--ink); }
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: rgba(15, 15, 13, 0.28);
+}
+.btn.secondary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--white);
+}
+.section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 82px 34px;
+}
+.hero {
+  position: relative;
+  max-width: none;
+  height: clamp(620px, calc(100svh - 126px), 850px);
+  min-height: 620px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #11100e;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/hero/jian-ware-bowl-hero.jfif");
+  background-size: cover;
+  background-position: center 46%;
+  filter: saturate(0.86) contrast(1.03);
+  transform: scale(1.01);
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5,5,4,0.55) 0%, rgba(5,5,4,0.18) 32%, rgba(5,5,4,0.22) 68%, rgba(5,5,4,0.58) 100%),
+    linear-gradient(180deg, rgba(5,5,4,0.26) 0%, rgba(5,5,4,0.12) 38%, rgba(5,5,4,0.52) 100%);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  width: min(980px, calc(100% - 40px));
+  margin: 0 auto;
+  color: var(--white);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hero-kicker,
+.section-kicker {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  margin: 24px 0 18px;
+  font-size: clamp(72px, 9.4vw, 168px);
+  line-height: 0.96;
+  font-weight: 200;
+  color: var(--white);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-shadow: 0 18px 44px rgba(0,0,0,0.48);
+}
+.hero-sub {
+  margin: 0;
+  color: rgba(255,255,255,0.82);
+  font-size: clamp(20px, 3vw, 44px);
+  line-height: 1.02;
+  text-shadow: 0 10px 28px rgba(0,0,0,0.46);
+}
+.hero-copy {
+  max-width: 430px;
+  margin: 26px 0 34px;
+  color: rgba(255,255,255,0.76);
+  font-size: 16px;
+  line-height: 1.6;
+  text-shadow: 0 8px 24px rgba(0,0,0,0.42);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.hero .btn.secondary {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.52);
+}
+.hero .btn.secondary:hover {
+  background: var(--white);
+  border-color: var(--white);
+  color: var(--ink);
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 34px;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+}
+.section-title {
+  margin: 10px 0 0;
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 300;
+  line-height: 1;
+}
+.title-en {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(22px, 2.5vw, 34px);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+.section-desc {
+  max-width: 360px;
+  margin: 0;
+  color: var(--ink-light);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.hero-copy-en {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.68);
+}
+.featured-grid,
+.category-grid,
+.artisan-grid {
+  display: grid;
+  gap: 18px;
+}
+.featured-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.artisan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.artifact-card,
+.category-card,
+.artisan-card {
+  border-top: 1px solid var(--border);
+  background: transparent;
+}
+.artifact-media {
+  display: block;
+  aspect-ratio: 3 / 4;
+  background: var(--parchment);
+  overflow: hidden;
+  position: relative;
+}
+.artifact-visual {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transform: scale(1);
+  filter: saturate(1) contrast(1);
+  transition: transform 0.56s cubic-bezier(.2,.8,.2,1), filter 0.46s ease;
+}
+.artifact-card:hover .artifact-visual,
+.artifact-card:focus-within .artifact-visual,
+.artifact-media:hover .artifact-visual {
+  opacity: 1;
+  transform: scale(1.025);
+  filter: saturate(1.04) contrast(1.02);
+}
+.placeholder,
+.portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+.artifact-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.artifact-trigger {
+  position: absolute;
+  left: 16px;
+  bottom: 18px;
+  z-index: 2;
+  min-height: 34px;
+  padding: 8px 13px 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(245, 243, 239, 0.9);
+  border: 1px solid rgba(224, 218, 208, 0.74);
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  box-shadow: 0 12px 34px rgba(15,15,13,0.08);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity 0.28s ease, background 0.28s ease, color 0.28s ease, transform 0.28s ease, border-color 0.28s ease;
+}
+.artifact-card:hover .artifact-trigger,
+.artifact-card:focus-within .artifact-trigger,
+.artifact-media:hover .artifact-trigger {
+  opacity: 1;
+  background: rgba(255,255,255,0.96);
+  border-color: rgba(201,151,58,0.58);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.image-trigger-icon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 1px solid var(--ink-mid);
+  border-radius: 50%;
+}
+.image-trigger-icon::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink-mid);
+  transform: translate(-50%, -50%);
+}
+.image-trigger-icon::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 50%;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: left;
+}
+.artifact-card:hover .image-trigger-icon::after,
+.artifact-card:focus-within .image-trigger-icon::after,
+.artifact-media:hover .image-trigger-icon::after {
+  animation: imageScan 0.72s ease forwards;
+}
+.image-trigger-text { white-space: nowrap; }
+@keyframes imageScan {
+  0% { opacity: 0; transform: translateY(-50%) scaleX(0); }
+  24% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-50%) scaleX(1); }
+}
+.artifact-info {
+  padding: 18px 2px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+}
+.card-cat {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.card-name {
+  display: block;
+  color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+.card-name:hover { color: var(--gold); }
+.card-name-en {
+  color: var(--ink-mid);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.3;
+}
+.card-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: start;
+}
+.card-year {
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.38em;
+  line-height: 1.4;
+  padding-top: 4px;
+  white-space: nowrap;
+}
+.card-meta {
+  margin-top: 16px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.inquire-link {
+  border: 0;
+  padding: 0;
+  color: var(--gold);
+  background: transparent;
+  font-family: "Noto Serif SC", "Cormorant Garamond", serif;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.inquire-link:hover { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .artifact-visual,
+  .artifact-trigger {
+    transition: none;
+  }
+  .artifact-card:hover .image-trigger-icon::after,
+  .artifact-card:focus-within .image-trigger-icon::after,
+  .artifact-media:hover .image-trigger-icon::after {
+    animation: none;
+  }
+}
+.category-card {
+  position: relative;
+  min-height: 250px;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border: 1px solid rgba(120, 92, 45, 0.16);
+  background: rgba(255,255,255,0.28);
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.category-card:hover {
+  background: rgba(255,255,255,0.72);
+  border-color: rgba(201,151,58,0.42);
+  transform: translateY(-2px);
+}
+.category-card::after {
+  content: "";
+  position: absolute;
+  right: -18%;
+  bottom: -18%;
+  width: 74%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--purpose-image, linear-gradient(160deg, rgba(201,151,58,0.2), rgba(201,151,58,0)));
+  opacity: 0.18;
+  filter: blur(1px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.category-card:hover::after {
+  opacity: 0.28;
+  transform: translate(-6px, -6px);
+}
+.category-body,
+.category-foot {
+  position: relative;
+  z-index: 1;
+}
+.category-cn {
+  display: block;
+  font-family: "Noto Serif SC", serif;
+  font-size: 28px;
+  font-weight: 300;
+}
+.category-en {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-light);
+  font-size: 18px;
+  font-style: italic;
+}
+.category-desc {
+  display: block;
+  max-width: 230px;
+  margin: 24px 0 0;
+  color: var(--ink-mid);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.category-foot { display: block; }
+.category-count {
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.category-arrow {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--gold);
+  font-size: 22px;
+  transition: transform 180ms ease;
+}
+.category-card:hover .category-arrow { transform: translateX(6px); }
+.artisan-media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  margin-bottom: 0;
+  background: var(--parchment);
+  overflow: hidden;
+}
+.artisan-card {
+  display: block;
+  border-top: 0;
+}
+.artisan-media img,
+.artisan-media .portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.artisan-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 22%, rgba(0,0,0,0.28) 58%, rgba(0,0,0,0.76) 100%);
+}
+.artisan-info {
+  position: absolute;
+  inset: auto 22px 22px;
+  z-index: 1;
+  color: var(--white);
+}
+.artisan-tag {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,0.32);
+  color: rgba(255,255,255,0.78);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.artisan-card h3 {
+  margin: 0 0 8px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 1.15;
+}
+.artisan-card h3 .display-en {
+  display: block;
+  margin-top: 5px;
+  color: var(--gold-light);
+  font-size: 21px;
+  letter-spacing: 0;
+}
+.artisan-meta {
+  margin: 0;
+  color: rgba(255,255,255,0.76);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 13px;
+  line-height: 1.62;
+}
+.artisan-arrow {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,0.38);
+  color: var(--white);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+.artisan-card:hover .artisan-arrow {
+  border-color: var(--gold-light);
+  transform: translateX(4px);
+}
+.category-fashion { background: linear-gradient(160deg, #C4A8B0 0%, #6B1A3A 100%); }
+.category-objects { background: linear-gradient(160deg, #8BB5C4 0%, #2A5870 100%); }
+.category-decorative { background: linear-gradient(160deg, #B4C4A0 0%, #3A5820 100%); }
+.section-foot {
+  margin-top: 42px;
+  display: flex;
+  justify-content: flex-end;
+}
+.all-link {
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.all-link:hover { color: var(--ink); }
+.auction-home {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 34px 112px;
+}
+.auction-home-panel {
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(115deg, rgba(15,15,13,0.96) 0%, rgba(15,15,13,0.86) 54%, rgba(245,243,239,0.32) 100%),
+    url("assets/works/ceramics-1.jfif") center / cover;
+  color: var(--white);
+  min-height: 260px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: 42px;
+  align-items: end;
+  padding: clamp(34px, 5vw, 58px);
+}
+.auction-home-title {
+  margin: 8px 0 0;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 200;
+  letter-spacing: 0.08em;
+  line-height: 1.08;
+}
+.auction-home-en {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,0.72);
+  font-size: clamp(20px, 2.7vw, 34px);
+  font-style: italic;
+}
+.auction-home-copy {
+  margin: 18px 0 0;
+  max-width: 620px;
+  color: rgba(255,255,255,0.74);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.auction-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.auction-home-actions .btn.secondary {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.32);
+}
+.auction-home-actions .btn.secondary:hover {
+  color: var(--ink);
+  border-color: var(--gold-light);
+  background: var(--gold-light);
+}
+.auction-home-meta {
+  border-top: 1px solid rgba(255,255,255,0.22);
+  padding-top: 20px;
+  color: rgba(255,255,255,0.72);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  line-height: 2.1;
+  text-transform: uppercase;
+}
+.auction-home-meta strong {
+  color: var(--gold-light);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+.exhibition-entry {
+  background: var(--dark);
+  color: var(--white);
+  margin-top: 36px;
+}
+.exhibition-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 92px 34px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 28px;
+}
+.exhibition-entry h2 {
+  margin: 10px 0;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  font-size: clamp(42px, 6vw, 82px);
+  letter-spacing: 0.08em;
+}
+.exhibition-entry p { margin: 0; color: rgba(255,255,255,0.66); font-size: 18px; }
+.footer {
+  border-top: 1px solid var(--border);
+  background: var(--offwhite);
+}
+.footer-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 42px 34px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 30px;
+  color: var(--ink-light);
+  font-size: 13px;
+}
+.footer strong { color: var(--ink); font-weight: 400; }
+.footer-links { display: flex; gap: 14px; flex-wrap: wrap; }
+.footer-links a:hover { color: var(--gold); }
+@media (max-width: 1060px) {
+  .nav-inner { padding: 0 20px; }
+  .nav-links { display: none; }
+  .brand, .nav-right { min-width: auto; }
+  .hero { height: clamp(560px, calc(100svh - 116px), 760px); min-height: 560px; }
+  .hero h1 { letter-spacing: 0.18em; text-indent: 0.18em; }
+  .featured-grid, .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .nav { height: auto; }
+  .nav-inner { min-height: 64px; align-items: flex-start; padding: 14px 16px; flex-direction: column; }
+  .nav-right { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 8px 18px; font-size: 10px; }
+  .nav-cta { padding: 0 12px; font-size: 9px; letter-spacing: 0.1em; white-space: nowrap; }
+  .section { padding-left: 18px; padding-right: 18px; }
+  .hero { height: clamp(520px, calc(100svh - 132px), 680px); min-height: 520px; }
+  .hero::before { background-position: center center; }
+  .hero-content { width: min(340px, calc(100% - 32px)); }
+  .hero-kicker { font-size: 9px; letter-spacing: 0.16em; }
+  .hero h1 { font-size: clamp(42px, 13vw, 56px); letter-spacing: 0.06em; text-indent: 0.06em; }
+  .hero-sub { font-size: 24px; }
+  .hero-copy { font-size: 14px; max-width: 310px; }
+  .hero-actions { width: min(260px, 100%); flex-direction: column; }
+  .hero-actions .btn { width: 100%; min-height: 44px; padding: 0 14px; }
+  .section-head { display: block; }
+  .section-desc { margin-top: 16px; }
+  .featured-grid, .category-grid, .artisan-grid, .exhibition-inner, .footer-inner, .auction-home-panel { grid-template-columns: 1fr; }
+  .auction-home { padding: 0 18px 86px; }
+  .exhibition-inner { padding: 70px 18px; }
+}
+
+/* Home v2 carousel header */
+.nav {
+  height: auto;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid var(--border);
+}
+.brand-row {
+  position: relative;
+  height: 78px;
+  max-width: none;
+  padding: 16px 26px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-centered {
+  min-width: auto;
+  justify-content: center;
+  text-align: center;
+}
+.brand-centered .brand-cn {
+  font-size: clamp(22px, 2.1vw, 34px);
+  line-height: 1;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+}
+.brand-centered .brand-en {
+  margin-top: 8px;
+  color: #5f6b84;
+  font-size: 12px;
+  letter-spacing: 0.38em;
+}
+.brand-row .nav-right {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  min-width: auto;
+}
+.nav-row {
+  height: 52px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-row .nav-links {
+  display: flex;
+  gap: clamp(26px, 4vw, 58px);
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.32em;
+}
+.nav-row .nav-link {
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.nav-cta {
+  min-height: 36px;
+  padding: 0 20px;
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--white);
+}
+.nav-cta:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--white);
+}
+.hero {
+  height: clamp(600px, calc(100svh - 130px), 840px);
+  min-height: 600px;
+  display: block;
+  background: var(--ink);
+  margin-bottom: 64px;
+  overflow: visible;
+}
+.hero::before,
+.hero::after { display: none; }
+.hero-slides,
+.hero-slide {
+  position: absolute;
+  inset: 0;
+}
+.hero-slide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 520ms ease, visibility 520ms ease;
+}
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+}
+.hero-slide.poster img {
+  object-fit: contain;
+  object-position: center;
+  background: var(--offwhite);
+  filter: none;
+}
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.16) 48%, rgba(0,0,0,0.52) 100%),
+    linear-gradient(90deg, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.28) 30%, rgba(0,0,0,0.08) 56%, rgba(0,0,0,0) 100%);
+}
+.poster .hero-shade {
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.18) 54%, rgba(0,0,0,0.5) 100%),
+    linear-gradient(90deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.22) 34%, rgba(0,0,0,0.06) 62%, rgba(0,0,0,0) 100%);
+}
+.hero-panel {
+  position: absolute;
+  left: clamp(46px, 10vw, 180px);
+  bottom: clamp(76px, 16vh, 142px);
+  width: min(520px, calc(100% - 72px));
+  color: var(--white);
+  text-align: left;
+  text-shadow: 0 14px 36px rgba(0,0,0,0.42);
+}
+.hero-slide.align-left .hero-panel {
+  left: clamp(46px, 10vw, 180px);
+  text-align: left;
+}
+.hero-panel .hero-kicker {
+  color: rgba(255,255,255,0.66);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.hero .hero-title {
+  margin: 24px 0 12px;
+  font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  font-size: clamp(52px, 4.8vw, 68px) !important;
+  font-weight: 200;
+  line-height: 1.08;
+  letter-spacing: 0.04em !important;
+  text-indent: 0 !important;
+  white-space: normal;
+  color: var(--white);
+  text-shadow: 0 14px 34px rgba(0,0,0,0.42);
+}
+.hero-panel .hero-sub {
+  margin: 0;
+  color: rgba(255,255,255,0.84);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-size: clamp(23px, 1.55vw, 30px);
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.28;
+  text-shadow: 0 8px 26px rgba(0,0,0,0.48);
+}
+.hero-panel .hero-copy {
+  max-width: 520px;
+  margin: 22px 0 30px;
+  color: rgba(255,255,255,0.74);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: clamp(15px, 0.95vw, 17px);
+  font-weight: 400;
+  line-height: 1.72;
+}
+.hero-panel .hero-copy:empty { display: none; }
+.hero-slide.align-left .hero-copy { margin-left: 0; margin-right: 0; }
+.hero-panel .hero-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero-slide.align-left .hero-actions { justify-content: flex-start; }
+.hero-panel .btn {
+  min-width: 178px;
+  height: 48px;
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(15,15,13,0.18);
+  color: var(--white);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  backdrop-filter: blur(2px);
+}
+.hero-panel .btn.primary {
+  background: #07142c;
+  border-color: #07142c;
+}
+.hero-panel .btn.secondary {
+  background: rgba(15,15,13,0.12);
+  border-color: rgba(255,255,255,0.54);
+}
+.hero-panel .btn:hover {
+  border-color: rgba(255,255,255,0.82);
+  background: var(--gold);
+  color: var(--white);
+}
+.hero-panel .hero-text-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 18px;
+  color: rgba(255,255,255,0.72);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 180ms ease, transform 180ms ease;
+}
+.hero-panel .hero-text-link:hover {
+  color: var(--gold-light);
+  transform: translateX(4px);
+}
+.carousel-arrow {
+  position: absolute;
+  bottom: -52px;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: rgba(15,15,13,0.72);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  transform: none;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.carousel-arrow:hover {
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+.carousel-prev { left: clamp(150px, 12.5vw, 270px); }
+.carousel-next { right: clamp(150px, 12.5vw, 270px); }
+.hero-dots {
+  position: absolute;
+  left: 50%;
+  bottom: -42px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: min(68vw, 1280px);
+  height: 24px;
+  transform: translateX(-50%);
+}
+.hero-dots::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(15,15,13,0.24);
+  transform: translateY(-50%);
+}
+.hero-dot {
+  position: relative;
+  z-index: 1;
+  width: 90px;
+  height: 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.hero-dot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: transparent;
+  transform: translateY(-50%);
+}
+.hero-dot.active::after { background: var(--ink); }
+@media (max-width: 900px) {
+  .brand-row {
+    height: auto;
+    min-height: 76px;
+    padding: 14px 18px 12px;
+    justify-content: flex-start;
+  }
+  .brand-centered {
+    text-align: left;
+  }
+  .brand-centered .brand-cn {
+    font-size: 20px;
+    letter-spacing: 0.26em;
+    text-indent: 0;
+  }
+  .brand-centered .brand-en {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+  }
+  .brand-row .nav-right {
+    position: static;
+    transform: none;
+    margin-left: auto;
+    gap: 10px;
+    font-size: 10px;
+  }
+  .nav-row {
+    height: auto;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 12px 18px;
+  }
+  .nav-row .nav-links {
+    gap: 24px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+  }
+  .hero {
+    height: clamp(540px, calc(100svh - 128px), 720px);
+    min-height: 540px;
+    margin-bottom: 58px;
+  }
+  .hero-panel,
+  .hero-slide.align-left .hero-panel {
+    left: 28px;
+    right: 28px;
+    bottom: 62px;
+    width: auto;
+    text-align: left;
+  }
+  .hero .hero-title { font-size: clamp(38px, 10vw, 50px) !important; white-space: normal; }
+  .hero-panel .hero-sub { font-size: clamp(20px, 6vw, 26px); }
+  .hero-slide.align-left .hero-actions { justify-content: center; }
+  .hero-panel .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-panel .btn { width: min(260px, 100%); }
+  .carousel-prev { left: 22px; }
+  .carousel-next { right: 22px; }
+  .hero-dots {
+    width: calc(100% - 132px);
+    bottom: -40px;
+  }
+  .carousel-arrow {
+    bottom: -50px;
+  }
+  .hero-dot { width: 64px; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<nav class="nav" aria-label="主导航 Main navigation">
+  <div class="brand-row">
+    <a class="brand brand-centered" href="index-v2.html" aria-label="新生万物首页 Living Craft home">
+      <span class="brand-text">
+        <span class="brand-cn display-cn">新生万物</span>
+        <span class="brand-en">Living Craft · MADverse</span>
+      </span>
+    </a>
+    <div class="nav-right">
+      <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+      </span>
+      <a href="#" data-zh="登录" data-en="Sign In">登录</a>
+      <a class="nav-cta" href="vr-preview/" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+    </div>
+  </div>
+  <div class="nav-row">
+    <div class="nav-links">
+      <a class="nav-link" href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a class="nav-link" href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a class="nav-link" href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a class="nav-link" href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a class="nav-link" href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a class="nav-link" href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a class="nav-link" href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="hero" aria-label="Home carousel">
+    <div class="hero-slides" id="hero-slides"></div>
+    <button class="carousel-arrow carousel-prev" id="hero-prev" type="button" aria-label="Previous slide">‹</button>
+    <button class="carousel-arrow carousel-next" id="hero-next" type="button" aria-label="Next slide">›</button>
+    <div class="hero-dots" id="hero-dots" aria-label="Carousel slides"></div>
+  </section>
+
+  <section class="section" id="featured">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker" data-zh="精选展品" data-en="Selected Works" data-i18n-sub>精选展品</div>
+        <h2 class="section-title display-cn" data-zh="精选藏品" data-en="Featured Acquisitions" data-i18n-sub>精选藏品</h2>
+      </div>
+      <p class="section-desc" data-zh="从米兰展览归藏品中遴选契合当代审美与文化表达的作品，以东方工艺的深度与当代视角，构建可收藏、可进入的生活美学。" data-en="Selected Milan works shaped for contemporary collecting, living spaces and cultural context." data-i18n-sub>从米兰展览归藏品中遴选契合当代审美与文化表达的作品，以东方工艺的深度与当代视角，构建可收藏、可进入的生活美学。</p>
+    </div>
+    <div class="featured-grid" id="featured-grid"></div>
+    <div class="section-foot">
+      <a class="all-link" href="collections.html" data-zh="查看全部藏品 →" data-en="View All Collections →">查看全部藏品 →</a>
+    </div>
+  </section>
+
+  <section class="auction-home" aria-label="Online Auction Room">
+    <div class="auction-home-panel">
+      <div>
+        <div class="section-kicker" data-zh="线上拍卖厅 · 模拟竞价" data-en="Online Auction Room · Simulated Bidding" data-i18n-sub>线上拍卖厅 · 模拟竞价</div>
+        <h2 class="auction-home-title" data-zh="线上拍卖厅" data-en="Online Auction Room" data-i18n-sub>线上拍卖厅</h2>
+        <p class="auction-home-en">Selected Heritage Works · Simulated Live Auction</p>
+        <p class="auction-home-copy" data-zh="六件入选 LOT 可进入直播式拍卖界面，查看当前价、下一口价、倒计时、直播讲解并进行前端模拟竞价。v0.5 不产生真实出价、支付、保证金或成交。" data-en="Six selected lots enter a live-style auction interface with current price, next bid, countdown, commentary and front-end simulated bidding. v0.5 creates no real bid, payment, deposit or settlement." data-i18n-sub>六件入选 LOT 可进入直播式拍卖界面，查看当前价、下一口价、倒计时、直播讲解并进行前端模拟竞价。v0.5 不产生真实出价、支付、保证金或成交。</p>
+        <div class="auction-home-actions">
+          <a class="btn" href="auction-room.html" data-zh="进入拍卖厅 →" data-en="Enter Auction Room →">进入拍卖厅 →</a>
+          <a class="btn secondary" href="auction-room.html#lots" data-zh="查看 LOT" data-en="View Lots">查看 LOT</a>
+        </div>
+      </div>
+      <div class="auction-home-meta">
+        <div><strong>Countdown</strong><br>08:42 Demo</div>
+        <div><strong>Selected Lots</strong><br>LOT 01–06</div>
+        <div><strong>Mode</strong><br>Simulated Bidding</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker" data-zh="功能分类" data-en="Functional Categories" data-i18n-sub>功能分类</div>
+        <h2 class="section-title display-cn" data-zh="按用途浏览" data-en="Shop by Purpose" data-i18n-sub>按用途浏览</h2>
+      </div>
+      <p class="section-desc" data-zh="先以家具、器物、服饰珠宝和观赏品理解购买场景，技艺与材质作为二级筛选信息。" data-en="Functional categories first; craft and material remain as supporting context." data-i18n-sub>先以家具、器物、服饰珠宝和观赏品理解购买场景，技艺与材质作为二级筛选信息。</p>
+    </div>
+    <div class="category-grid">
+      <a class="category-card" href="collections.html#category=furniture" style="--purpose-image: radial-gradient(circle at 68% 66%, rgba(196,168,112,0.72), rgba(107,58,24,0.04) 64%);">
+        <span class="category-body">
+          <span class="category-cn" data-zh="家具" data-en="Furniture">家具</span>
+          <span class="category-en">Furniture</span>
+          <span class="category-desc" data-zh="承载日常起居的器具，形塑生活的空间与秩序。" data-en="Objects for daily living that shape space, order and ritual.">承载日常起居的器具，形塑生活的空间与秩序。</span>
+        </span>
+        <span class="category-foot"><span class="category-count">120+ 作品</span><span class="category-arrow">→</span></span>
+      </a>
+      <a class="category-card" href="collections.html#category=objects" style="--purpose-image: radial-gradient(circle at 68% 66%, rgba(139,181,196,0.72), rgba(42,88,112,0.04) 64%);">
+        <span class="category-body">
+          <span class="category-cn" data-zh="器物" data-en="Objects">器物</span>
+          <span class="category-en">Objects</span>
+          <span class="category-desc" data-zh="日用之器，承载功能与美学的凝练表达。" data-en="Functional objects carrying a distilled expression of beauty.">日用之器，承载功能与美学的凝练表达。</span>
+        </span>
+        <span class="category-foot"><span class="category-count">240+ 作品</span><span class="category-arrow">→</span></span>
+      </a>
+      <a class="category-card" href="collections.html#category=fashion" style="--purpose-image: radial-gradient(circle at 68% 66%, rgba(196,168,176,0.72), rgba(107,26,58,0.04) 64%);">
+        <span class="category-body">
+          <span class="category-cn" data-zh="服饰与珠宝" data-en="Fashion & Jewelry">服饰与珠宝</span>
+          <span class="category-en">Fashion & Jewelry</span>
+          <span class="category-desc" data-zh="身体与身份的延伸，工艺与文化的精致表达。" data-en="Extensions of body and identity through refined craft.">身体与身份的延伸，工艺与文化的精致表达。</span>
+        </span>
+        <span class="category-foot"><span class="category-count">180+ 作品</span><span class="category-arrow">→</span></span>
+      </a>
+      <a class="category-card" href="collections.html#category=decorative" style="--purpose-image: radial-gradient(circle at 68% 66%, rgba(180,196,160,0.72), rgba(58,88,32,0.04) 64%);">
+        <span class="category-body">
+          <span class="category-cn" data-zh="观赏品" data-en="Decorative">观赏品</span>
+          <span class="category-en">Decorative</span>
+          <span class="category-desc" data-zh="为欣赏与收藏而造，凝固自然与人文的瞬间。" data-en="Made for viewing and collecting, holding moments of culture and nature.">为欣赏与收藏而造，凝固自然与人文的瞬间。</span>
+        </span>
+        <span class="category-foot"><span class="category-count">160+ 作品</span><span class="category-arrow">→</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" id="artisans">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker" data-zh="艺术家精选" data-en="Artist Focus" data-i18n-sub>艺术家精选</div>
+        <h2 class="section-title display-cn" data-zh="艺术家脉络" data-en="Artists in Context" data-i18n-sub>艺术家脉络</h2>
+      </div>
+      <p class="section-desc" data-zh="以信任为起点，尊重技艺与溯源，让每一件作品在脉络中被理解，在时间中被传承。" data-en="Trust, craft and provenance give each work a context across time." data-i18n-sub>以信任为起点，尊重技艺与溯源，让每一件作品在脉络中被理解，在时间中被传承。</p>
+    </div>
+    <div class="artisan-grid">
+      <a class="artisan-card" href="artisans.html#tim-yip">
+        <div class="artisan-media">
+          <img src="assets/works/costume-1.jfif" alt="叶锦添 Tim Yip" loading="lazy">
+          <div class="artisan-info">
+            <span class="artisan-tag">Artist</span>
+            <h3>叶锦添 <span class="display-en">Tim Yip</span></h3>
+            <p class="artisan-meta">陶瓷 · Ceramics<br>景德镇，中国 Jingdezhen, China</p>
+          </div>
+          <span class="artisan-arrow">→</span>
+        </div>
+      </a>
+      <a class="artisan-card" href="artisans.html#xu-jiegen">
+        <div class="artisan-media">
+          <img src="assets/works/ceramics-1.jfif" alt="徐结根 Xu Jiegen" loading="lazy">
+          <div class="artisan-info">
+            <span class="artisan-tag">ICH Inheritor</span>
+            <h3>徐结根 <span class="display-en">Xu Jiegen</span></h3>
+            <p class="artisan-meta">皮影 · Shadow Puppet<br>陇县，陕西，中国 Longxian, Shaanxi, China</p>
+          </div>
+          <span class="artisan-arrow">→</span>
+        </div>
+      </a>
+      <a class="artisan-card" href="artisans.html#xue-jindi">
+        <div class="artisan-media">
+          <img src="assets/works/lacquer-1.jfif" alt="薛金绮 Xue Jindi" loading="lazy">
+          <div class="artisan-info">
+            <span class="artisan-tag">Artist</span>
+            <h3>薛金绮 <span class="display-en">Xue Jindi</span></h3>
+            <p class="artisan-meta">漆艺 · Lacquer<br>扬州，中国 Yangzhou, China</p>
+          </div>
+          <span class="artisan-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="exhibition-entry" id="exhibition">
+    <div class="exhibition-inner">
+      <div>
+        <div class="section-kicker" data-zh="虚拟展览" data-en="Virtual Exhibition" data-i18n-sub>虚拟展览</div>
+        <h2>遗·境</h2>
+        <p>Heritage Realms · Somerset House, London · Sep 16–27, 2026</p>
+      </div>
+      <a class="btn" href="vr-preview/" data-zh="进入虚拟展览 →" data-en="Enter Virtual Exhibition →">进入虚拟展览 →</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div><strong>新生 Living Craft · MADverse</strong><br><span data-zh="面向海外藏家、画廊与设计买家的高端非遗交易平台。" data-en="High-end living heritage marketplace for overseas collectors, galleries and design buyers.">面向海外藏家、画廊与设计买家的高端非遗交易平台。</span></div>
+    <div class="footer-links">
+      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a href="about.html" data-zh="关于" data-en="About">关于</a>
+    </div>
+    <div><span data-zh="中文" data-en="English">中文</span><br>© 2026 Living Craft MADverse</div>
+  </div>
+</footer>
+
+<script src="data/artifacts.js"></script>
+<script src="data/i18n.js"></script>
+<script>
+const USE_REAL_IMAGES = true;
+const IMAGE_FALLBACKS = {
+};
+const CATEGORY_COLORS = {
+  furniture: "linear-gradient(160deg, #C4A870 0%, #6B3A18 100%)",
+  objects: "linear-gradient(160deg, #8BB5C4 0%, #2A5870 100%)",
+  fashion: "linear-gradient(160deg, #C4A8B0 0%, #6B1A3A 100%)",
+  decorative: "linear-gradient(160deg, #B4C4A0 0%, #3A5820 100%)"
+};
+const featuredIds = ["huang-wei-ceremonial-robe", "sun-qiye-nine-dragon-crown", "xu-jiegen-listening", "zhi-min-hetu-luoshu"];
+const featured = featuredIds.map(id => ARTIFACTS.find(item => item.id === id)).filter(Boolean);
+const CATEGORY_LABELS = {
+  furniture: { zh: "家具", en: "Furniture" },
+  objects: { zh: "器物", en: "Objects" },
+  fashion: { zh: "服饰与珠宝", en: "Fashion & Jewelry" },
+  decorative: { zh: "观赏品", en: "Decorative" }
+};
+const CRAFT_LABELS = {
+  textiles: { zh: "织锦", en: "Brocade" },
+  shadowpuppet: { zh: "皮影", en: "Shadow Puppet" },
+  ceramics: { zh: "陶瓷", en: "Ceramics" },
+  furniture: { zh: "家具工艺", en: "Furniture" },
+  embroidery: { zh: "刺绣", en: "Embroidery" },
+  metalwork: { zh: "金属工艺", en: "Metalwork" },
+  jewelry: { zh: "珠宝", en: "Jewelry" },
+  lacquerware: { zh: "漆器", en: "Lacquer" },
+  glass: { zh: "玻璃", en: "Glass" },
+  music: { zh: "丝竹乐器", en: "Musical Instrument" },
+  installation: { zh: "装置", en: "Installation" },
+  mixedmedia: { zh: "混合媒介", en: "Mixed Media" },
+  bonsai: { zh: "盆景", en: "Bonsai" },
+  flowercraft: { zh: "花艺", en: "Flower Craft" },
+  painting: { zh: "绘画", en: "Painting" },
+  ink: { zh: "水墨", en: "Ink" },
+  natural: { zh: "自然雕塑", en: "Natural Sculpture" }
+};
+const HERO_SLIDES = [
+  {
+    image: "assets/hero/jian-ware-bowl-hero.jfif",
+    titleZh: "以物会心",
+    titleEn: "To Encounter the Mind through Objects",
+    kickerZh: "精选展览 · LONDON 2026",
+    kickerEn: "Featured Exhibition · London 2026",
+    copyZh: "在 AI 时代重新发现手作之美，让作品成为观众觉察内心、安顿身心的媒介。",
+    copyEn: "Rediscover the beauty of handwork in the age of AI, where works become a medium for inner awareness and restoration.",
+    primaryHref: "collections.html",
+    primaryZh: "探索藏品 →",
+    primaryEn: "Explore Collections →",
+    secondaryHref: "vr-preview/",
+    secondaryZh: "进入展览",
+    secondaryEn: "Enter Exhibition",
+    linkHref: "exhibition-london-2026.html",
+    linkZh: "查看展览 →",
+    linkEn: "View Exhibition →"
+  },
+  {
+    image: "assets/hero/long-spring-children.jpg",
+    titleZh: "《长春百子图》",
+    titleEn: "One Hundred Children in the Long Spring",
+    kickerZh: "数字展览 · 2026",
+    kickerEn: "Featured Exhibition · 2026",
+    copyZh: "以《长春百子图》为灵感，通过数字动画重构传统叙事，让经典图像在当代语境中重生。",
+    copyEn: "A digital animation inspired by One Hundred Children in the Long Spring, reimagining classical narrative for a contemporary exhibition context.",
+    primaryHref: "vr-preview/",
+    primaryZh: "进入展览",
+    primaryEn: "View Exhibition",
+    secondaryHref: "artisans.html",
+    secondaryZh: "关于艺术家 →",
+    secondaryEn: "About the Artists →"
+  }
+];
+let heroIndex = 0;
+function isEn() {
+  return window.LIVING_I18N && LIVING_I18N.getLang() === "en";
+}
+function pick(zh, en) {
+  return isEn() ? en : zh;
+}
+function categoryLabel(item) {
+  const label = CATEGORY_LABELS[item.functionalCategory] || { zh: item.functionalCategoryLabel, en: item.functionalCategoryLabel };
+  return pick(label.zh, label.en);
+}
+function dualText(zh, en) {
+  return `${pick(zh, en)}<span class="i18n-sub">${pick(en, zh)}</span>`;
+}
+function safeSubject(name) {
+  return encodeURIComponent("Inquiry: " + name);
+}
+function detailHref(item) {
+  return `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+}
+function resolvedImage(item) {
+  return IMAGE_FALLBACKS[item.id] || item.image;
+}
+function mediaMarkup(item) {
+  if (USE_REAL_IMAGES) {
+    return `<div class="artifact-visual"><img src="${resolvedImage(item)}" alt="${item.name} ${item.nameEn}" loading="lazy"></div>`;
+  }
+  return `<div class="artifact-visual placeholder" style="background:${CATEGORY_COLORS[item.functionalCategory]}">${pick(item.name, item.nameEn)}</div>`;
+}
+function artifactCode(item) {
+  const index = ARTIFACTS.findIndex(artifact => artifact.id === item.id) + 1;
+  return `HR-${String(index).padStart(3, "0")}`;
+}
+function craftText(item) {
+  return pick(item.technique, item.techniqueEn);
+}
+function compactCraftText(item) {
+  return craftText(item).split(/[，,、]/)[0].trim();
+}
+function craftLine(item) {
+  const label = CRAFT_LABELS[item.craftCategory] || { zh: item.craftCategory, en: item.craftCategory };
+  return isEn()
+    ? `${compactCraftText(item)} · ${label.zh}`
+    : `${compactCraftText(item)} · ${label.en}`;
+}
+function renderHero() {
+  const slides = document.getElementById("hero-slides");
+  const dots = document.getElementById("hero-dots");
+  slides.innerHTML = HERO_SLIDES.map((slide, index) => {
+    const title = pick(slide.titleZh, slide.titleEn);
+    const subtitle = pick(slide.titleEn, slide.titleZh);
+    return `
+    <article class="hero-slide ${index === heroIndex ? "active" : ""} ${slide.className || ""}">
+      <img src="${slide.image}" alt="${title}">
+      <div class="hero-shade"></div>
+      <div class="hero-panel">
+        <div class="hero-kicker">${pick(slide.kickerZh, slide.kickerEn)}</div>
+        <h1 class="hero-title">${title}</h1>
+        <p class="hero-sub">${subtitle}</p>
+        <p class="hero-copy">${pick(slide.copyZh, slide.copyEn)}</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="${slide.primaryHref || "vr-preview/"}">${pick(slide.primaryZh, slide.primaryEn)}</a>
+          <a class="btn secondary" href="${slide.secondaryHref || "collections.html"}">${pick(slide.secondaryZh, slide.secondaryEn)}</a>
+        </div>
+        ${slide.linkHref ? `<a class="hero-text-link" href="${slide.linkHref}">${pick(slide.linkZh, slide.linkEn)}</a>` : ""}
+      </div>
+    </article>
+  `;
+  }).join("");
+  dots.innerHTML = HERO_SLIDES.map((slide, index) => `
+    <button class="hero-dot ${index === heroIndex ? "active" : ""}" type="button" aria-label="${pick("切换到第 " + (index + 1) + " 张", "Go to slide " + (index + 1))}" data-slide="${index}"></button>
+  `).join("");
+  dots.querySelectorAll(".hero-dot").forEach(btn => {
+    btn.addEventListener("click", () => showHero(Number(btn.dataset.slide), true));
+  });
+}
+function updateHeroState() {
+  document.querySelectorAll(".hero-slide").forEach((slide, index) => {
+    slide.classList.toggle("active", index === heroIndex);
+  });
+  document.querySelectorAll(".hero-dot").forEach((dot, index) => {
+    dot.classList.toggle("active", index === heroIndex);
+  });
+}
+function showHero(nextIndex, userAction) {
+  heroIndex = (nextIndex + HERO_SLIDES.length) % HERO_SLIDES.length;
+  updateHeroState();
+}
+function renderFeatured() {
+  document.getElementById("featured-grid").innerHTML = featured.map(item => `
+    <article class="artifact-card">
+      <a class="artifact-media" href="${detailHref(item)}" aria-label="${pick("查看 " + item.name + " 详情", "Open details for " + item.nameEn)}">
+        ${mediaMarkup(item)}
+        <div class="artifact-trigger">
+          <span class="image-trigger-icon" aria-hidden="true"></span>
+          <span class="image-trigger-text">${pick("\u67e5\u770b\u8be6\u60c5", "View Detail")} &rarr;</span>
+        </div>
+      </a>
+      <div class="artifact-info">
+        <div class="card-heading">
+          <div>
+            <a class="card-name" href="${detailHref(item)}">${pick(item.name, item.nameEn)}</a>
+            <div class="card-name-en">${pick(item.nameEn, item.name)}</div>
+          </div>
+          <div class="card-year">${item.year}</div>
+        </div>
+        <div class="card-meta">
+          <div>${craftLine(item)}</div>
+          <a class="inquire-link" href="mailto:info@livingcraft.com?subject=${safeSubject(item.name)}">${pick("询价", "Inquire")}</a>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+document.getElementById("hero-prev").addEventListener("click", () => showHero(heroIndex - 1, true));
+document.getElementById("hero-next").addEventListener("click", () => showHero(heroIndex + 1, true));
+document.addEventListener("languagechange", () => {
+  renderHero();
+  renderFeatured();
+});
+renderHero();
+renderFeatured();
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

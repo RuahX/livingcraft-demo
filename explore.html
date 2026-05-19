@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · VR 展厅 Explore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --white: #FFFFFF;
+  --offwhite: #FBF8F1;
+  --parchment: #F4EFE6;
+  --ink: #181713;
+  --ink-mid: #6F675D;
+  --ink-light: #8A8175;
+  --gold: #B88718;
+  --gold-light: #C49A3A;
+  --blue: #07172F;
+  --border: rgba(120, 92, 45, 0.18);
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+canvas#c {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.topbar {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  right: auto;
+  z-index: 20;
+  min-height: 0;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 18px;
+  background: rgba(251, 248, 241, 0.72);
+  border: 1px solid rgba(184, 135, 24, 0.22);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 60px rgba(24,23,19,0.08);
+}
+.exit-link {
+  min-height: 38px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--blue);
+  color: var(--white);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+.hall-brand { line-height: 1.2; }
+.hall-kicker {
+  display: block;
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.hall-title {
+  display: block;
+  margin-top: 5px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 19px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+}
+.hall-en {
+  display: block;
+  color: var(--ink-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-style: italic;
+}
+.nav-actions,
+.filters,
+.view-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-actions {
+  position: fixed;
+  right: 24px;
+  top: 24px;
+  z-index: 20;
+  padding: 8px;
+  border: 1px solid rgba(184, 135, 24, 0.18);
+  background: rgba(251, 248, 241, 0.68);
+  backdrop-filter: blur(16px);
+}
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-light);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-light);
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-transform: uppercase;
+}
+.lang-switch button.active { color: var(--gold); }
+.nav-actions a,
+.filter-btn,
+.icon-btn,
+.solid-btn {
+  min-height: 34px;
+  border: 1px solid rgba(15, 15, 13, 0.16);
+  background: rgba(255, 255, 255, 0.38);
+  color: var(--ink-mid);
+  padding: 0 13px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.filter-btn.active,
+.solid-btn {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--white);
+}
+.nav-actions a:hover,
+.filter-btn:hover,
+.icon-btn:hover { border-color: var(--gold); color: var(--gold); }
+.solid-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--white); }
+.filters-panel {
+  position: fixed;
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: 22px;
+  z-index: 15;
+  width: min(900px, calc(100vw - 48px));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: stretch;
+  gap: 12px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.filters,
+.view-actions {
+  pointer-events: auto;
+  min-width: 0;
+  padding: 7px;
+  border: 1px solid rgba(184, 135, 24, 0.2);
+  background: rgba(251, 248, 241, 0.76);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 14px 42px rgba(24,23,19,0.07);
+}
+.filters {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.filter-btn,
+.icon-btn {
+  white-space: nowrap;
+  min-height: 32px;
+  padding: 0 12px;
+}
+.view-actions::after {
+  content: "拖动 / 点击";
+  padding: 0 12px;
+  color: var(--ink-light);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.status {
+  position: fixed;
+  left: 28px;
+  top: 124px;
+  bottom: auto;
+  z-index: 15;
+  width: min(342px, calc(100vw - 56px));
+  max-width: min(342px, calc(100vw - 56px));
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(184, 135, 24, 0.26);
+  background: rgba(251, 248, 241, 0.8);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 20px 58px rgba(24,23,19,0.08);
+}
+.status-kicker {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.status h1 {
+  margin: 0 0 6px;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  font-size: 30px;
+  letter-spacing: 0.08em;
+}
+.status p {
+  margin: 0 0 18px;
+  color: var(--ink-light);
+  font-size: 14px;
+  line-height: 1.55;
+}
+.status-detail {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: var(--blue);
+  color: var(--white);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.progress-panel {
+  position: fixed;
+  right: 24px;
+  top: 132px;
+  z-index: 15;
+  width: 156px;
+  padding: 13px;
+  border: 1px solid rgba(184, 135, 24, 0.2);
+  background: rgba(251, 248, 241, 0.72);
+  backdrop-filter: blur(18px);
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+.progress-panel strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 21px;
+  letter-spacing: 0.08em;
+}
+.minimap {
+  position: relative;
+  height: 54px;
+  margin-top: 11px;
+  border: 1px solid rgba(120, 92, 45, 0.18);
+  background:
+    radial-gradient(circle at 50% 56%, rgba(184,135,24,0.22) 0 4px, transparent 5px),
+    radial-gradient(circle at 22% 42%, rgba(24,23,19,0.2) 0 3px, transparent 4px),
+    radial-gradient(circle at 78% 40%, rgba(24,23,19,0.2) 0 3px, transparent 4px),
+    linear-gradient(90deg, transparent 49%, rgba(120,92,45,0.18) 50%, transparent 51%);
+}
+.minimap::after {
+  content: "MINIMAP";
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  color: var(--ink-light);
+  font-size: 8px;
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  width: min(460px, 100vw);
+  height: 100%;
+  transform: translateX(100%);
+  transition: transform 260ms ease;
+  border-left: 1px solid var(--border);
+  background: rgba(245, 243, 239, 0.96);
+  backdrop-filter: blur(18px);
+  overflow: auto;
+}
+.drawer.open { transform: translateX(0); }
+.drawer-inner { padding: 28px; }
+.drawer-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  float: right;
+  font-size: 20px;
+  line-height: 1;
+}
+.drawer-media {
+  clear: both;
+  aspect-ratio: 4 / 5;
+  margin: 52px 0 22px;
+  background: var(--parchment);
+}
+.drawer-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: rgba(255,255,255,0.74);
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  letter-spacing: 0.08em;
+}
+.drawer-tag {
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.drawer h2 {
+  margin: 0 0 6px;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  font-size: 34px;
+  letter-spacing: 0.06em;
+  line-height: 1.18;
+}
+.drawer .en {
+  margin: 0 0 24px;
+  color: var(--ink-mid);
+  font-size: 22px;
+  font-style: italic;
+  line-height: 1.22;
+}
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  margin-bottom: 22px;
+}
+.meta-label {
+  color: var(--ink-light);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.meta-value {
+  color: var(--ink-mid);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.desc {
+  color: var(--ink-mid);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0 0 14px;
+}
+.drawer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: var(--offwhite);
+  transition: opacity 500ms ease, visibility 500ms ease;
+}
+.loading.out {
+  opacity: 0;
+  visibility: hidden;
+}
+.loading-box {
+  width: min(360px, calc(100vw - 56px));
+  text-align: center;
+}
+.loading-box h1 {
+  margin: 0 0 8px;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  letter-spacing: 0.18em;
+}
+.loading-box p {
+  margin: 0 0 28px;
+  color: var(--ink-light);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.bar {
+  height: 1px;
+  background: var(--border);
+  overflow: hidden;
+}
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  transition: width 420ms ease;
+}
+.no-webgl {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: none;
+  place-items: center;
+  padding: 28px;
+  background: var(--offwhite);
+  text-align: center;
+}
+@media (max-width: 900px) {
+  .topbar { left: 16px; right: 16px; top: 16px; }
+  .nav-actions { display: none; }
+  .progress-panel { display: none; }
+  .filters-panel { left: 16px; right: 16px; width: auto; bottom: 16px; transform: none; align-items: stretch; grid-template-columns: 1fr; }
+  .status { top: auto; left: 16px; right: 16px; bottom: 96px; width: auto; max-width: none; }
+}
+@media (max-width: 580px) {
+  .topbar { padding: 12px; }
+  .filters-panel { left: 12px; right: 12px; bottom: 12px; }
+  .filters { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .filter-btn { white-space: nowrap; }
+  .view-actions::after { display: none; }
+  .status { left: 12px; right: 12px; bottom: 104px; padding: 18px; }
+  .status h1 { font-size: 26px; }
+  .drawer-inner { padding: 20px; }
+  .meta { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<nav class="topbar" aria-label="VR 展厅导航 Explore navigation">
+  <a class="exit-link" href="index-v2.html" data-zh="退出展览" data-en="Exit">退出展览</a>
+  <div class="hall-brand">
+    <span class="hall-kicker">GRAND HALL · 主厅</span>
+    <span class="hall-title">遇·境</span>
+    <span class="hall-en">Heritage Realms</span>
+  </div>
+</nav>
+
+<div class="nav-actions" aria-label="VR 展厅页面导航">
+  <a href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+  <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+  <a href="about.html" data-zh="关于" data-en="About">关于</a>
+  <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+  </span>
+</div>
+
+<section class="filters-panel" aria-label="VR 展厅控制 Explore controls">
+  <div class="filters" id="craft-filters"></div>
+  <div class="view-actions">
+    <button class="icon-btn" id="prev-btn" type="button" data-zh="← 上一件" data-en="← Prev">← 上一件</button>
+    <button class="icon-btn" id="next-btn" type="button" data-zh="下一件 →" data-en="Next →">下一件 →</button>
+  </div>
+</section>
+
+<section class="status" aria-live="polite">
+  <div class="status-kicker" id="status-count">10 件作品 · 技艺视图</div>
+  <h1 id="status-title">VR 展厅</h1>
+  <p id="status-desc">以轻量 3D 场景辅助理解工艺与形态；正式浏览、详情与询价仍以藏品目录为主。</p>
+  <a class="status-detail" id="status-detail" href="collections.html" data-zh="探索详情 →" data-en="Explore Details →">探索详情 →</a>
+</section>
+
+<aside class="progress-panel" aria-label="探索进度">
+  <span data-zh="已探索" data-en="Explored">已探索</span>
+  <strong id="explored-count">00 / 12</strong>
+  <div class="minimap" aria-hidden="true"></div>
+</aside>
+
+<aside class="drawer" id="drawer" aria-label="展品详情 Artifact detail">
+  <div class="drawer-inner">
+    <button class="drawer-close" id="drawer-close" type="button" aria-label="关闭详情" data-zh-aria="关闭详情" data-en-aria="Close detail">×</button>
+    <div class="drawer-media" id="drawer-media"></div>
+    <div class="drawer-tag" id="drawer-tag"></div>
+    <h2 id="drawer-title"></h2>
+    <p class="en" id="drawer-en"></p>
+    <div class="meta" id="drawer-meta"></div>
+    <p class="desc" id="drawer-desc"></p>
+    <p class="desc" id="drawer-desc-en"></p>
+    <div class="drawer-actions">
+      <a class="solid-btn" id="drawer-inquire" href="#">询价 →</a>
+      <a class="icon-btn" id="drawer-collection" href="collections.html">返回藏品</a>
+    </div>
+  </div>
+</aside>
+
+<div class="loading" id="loading">
+  <div class="loading-box">
+    <h1>新生万物</h1>
+    <p data-zh="正在加载 3D 器物场景" data-en="Loading 3D craft hall">正在加载 3D 器物场景</p>
+    <div class="bar"><span id="bar"></span></div>
+  </div>
+</div>
+
+<div class="no-webgl" id="no-webgl">
+  <div>
+    <h1 data-zh="暂无法显示 3D 场景" data-en="3D View Unavailable">暂无法显示 3D 场景</h1>
+    <p data-zh="当前浏览器无法初始化 WebGL，仍可继续浏览藏品目录。" data-en="Your browser cannot initialize WebGL. Collections remain available.">当前浏览器无法初始化 WebGL，仍可继续浏览藏品目录。</p>
+    <p><a class="solid-btn" href="collections.html" data-zh="打开藏品" data-en="Open Collections">打开藏品</a></p>
+  </div>
+</div>
+
+<script src="data/artifacts.js"></script>
+<script src="data/i18n.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const USE_REAL_IMAGES = false;
+const CATEGORY_COLORS = {
+  furniture: ["#C4A870", "#6B3A18"],
+  objects: ["#8BB5C4", "#2A5870"],
+  fashion: ["#C4A8B0", "#6B1A3A"],
+  decorative: ["#B4C4A0", "#3A5820"]
+};
+const CRAFT_LABELS = {
+  textiles: { zh: "织锦", en: "Textiles" },
+  shadowpuppet: { zh: "皮影", en: "Shadow Puppet" },
+  ceramics: { zh: "汝窑", en: "Ceramics" },
+  furniture: { zh: "家具", en: "Furniture" },
+  embroidery: { zh: "刺绣", en: "Embroidery" },
+  metalwork: { zh: "金属漆器", en: "Metal & Lacquer" },
+  jewelry: { zh: "珠宝", en: "Jewelry" },
+  lacquerware: { zh: "大漆", en: "Lacquerware" },
+  glass: { zh: "玻璃", en: "Glass" },
+  music: { zh: "丝竹乐器", en: "Musical Instrument" },
+  installation: { zh: "装置", en: "Installation" },
+  mixedmedia: { zh: "混合媒介", en: "Mixed Media" },
+  bonsai: { zh: "盆景", en: "Bonsai" },
+  flowercraft: { zh: "花艺", en: "Flower Craft" },
+  painting: { zh: "绘画", en: "Painting" },
+  ink: { zh: "水墨", en: "Ink" },
+  natural: { zh: "自然雕塑", en: "Natural Sculpture" }
+};
+const CATEGORY_LABELS = {
+  furniture: { zh: "家具", en: "Furniture" },
+  objects: { zh: "器物", en: "Objects" },
+  fashion: { zh: "服饰与珠宝", en: "Fashion & Jewelry" },
+  decorative: { zh: "观赏品", en: "Decorative" }
+};
+const ORIGIN_EN = {
+  "中国": "China",
+  "河南省汝州市": "Ruzhou, Henan Province",
+  "江苏省苏州市": "Suzhou, Jiangsu Province"
+};
+const HALL_MAX_ITEMS = 12;
+const HALL_FEATURED_IDS = [
+  "sun-qiye-nine-dragon-crown",
+  "he-yang-glass-laurel",
+  "li-xiaofeng-porcelain-clothing",
+  "su-xianzhong-paper",
+  "xu-jiegen-listening",
+  "wu-haoyu-neolithic",
+  "huang-wei-ceremonial-robe",
+  "diao-juan-crimson",
+  "feng-mantian-ruanxian",
+  "fan-anqi-xuan-paper",
+  "zhi-min-hetu-luoshu"
+];
+
+function buildHallItems(items) {
+  const picked = [];
+  const used = new Set();
+  HALL_FEATURED_IDS.forEach(id => {
+    const item = items.find(entry => entry.id === id);
+    if (item && !used.has(item.id) && picked.length < HALL_MAX_ITEMS) {
+      picked.push(item);
+      used.add(item.id);
+    }
+  });
+  items.forEach(item => {
+    const hasCraft = picked.some(entry => entry.craftCategory === item.craftCategory);
+    if (!hasCraft && !used.has(item.id) && picked.length < HALL_MAX_ITEMS) {
+      picked.push(item);
+      used.add(item.id);
+    }
+  });
+  items.forEach(item => {
+    if (!used.has(item.id) && picked.length < HALL_MAX_ITEMS) {
+      picked.push(item);
+      used.add(item.id);
+    }
+  });
+  return picked;
+}
+
+const HALL_ITEMS = buildHallItems(ARTIFACTS);
+
+function isEn() {
+  return window.LIVING_I18N && LIVING_I18N.getLang() === "en";
+}
+
+function pick(zh, en) {
+  return isEn() ? en : zh;
+}
+
+function craftLabel(id) {
+  const label = CRAFT_LABELS[id];
+  if (!label) return id;
+  return pick(label.zh, label.en);
+}
+
+function categoryLabel(item) {
+  const label = CATEGORY_LABELS[item.functionalCategory] || { zh: item.functionalCategoryLabel, en: item.functionalCategoryLabel };
+  return pick(label.zh, label.en);
+}
+
+if (!window.THREE) {
+  document.getElementById("loading").classList.add("out");
+  document.getElementById("no-webgl").style.display = "grid";
+  throw new Error("Three.js unavailable");
+}
+
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+renderer.setClearColor(0xFBF8F1);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xFBF8F1, 10, 28);
+const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 80);
+
+scene.add(new THREE.AmbientLight(0xf8f4eb, 0.56));
+const key = new THREE.DirectionalLight(0xfffbf2, 1.0);
+key.position.set(6, 10, 8);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+key.shadow.camera.left = -15;
+key.shadow.camera.right = 15;
+key.shadow.camera.top = 15;
+key.shadow.camera.bottom = -15;
+scene.add(key);
+const cool = new THREE.DirectionalLight(0xd9e6ef, 0.34);
+cool.position.set(-6, 4, -7);
+scene.add(cool);
+
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(70, 70),
+  new THREE.MeshStandardMaterial({ color: 0xf1ebe0, roughness: 0.82, metalness: 0.02 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const backWall = new THREE.Mesh(
+  new THREE.BoxGeometry(30, 5.2, 0.18),
+  new THREE.MeshStandardMaterial({ color: 0xf7f1e7, roughness: 0.88 })
+);
+backWall.position.set(0, 2.6, -4.8);
+backWall.receiveShadow = true;
+scene.add(backWall);
+
+const sideWallMat = new THREE.MeshStandardMaterial({ color: 0xf3eddf, roughness: 0.9 });
+const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.16, 4.8, 18), sideWallMat);
+leftWall.position.set(-12.6, 2.4, 3.6);
+leftWall.rotation.y = -0.18;
+leftWall.receiveShadow = true;
+scene.add(leftWall);
+const rightWall = leftWall.clone();
+rightWall.position.x = 12.6;
+rightWall.rotation.y = 0.18;
+scene.add(rightWall);
+
+const ceilingRing = new THREE.Mesh(
+  new THREE.TorusGeometry(4.8, 0.028, 16, 128),
+  new THREE.MeshBasicMaterial({ color: 0xd4a64a, transparent: true, opacity: 0.72 })
+);
+ceilingRing.position.set(0, 5.15, 1.2);
+ceilingRing.rotation.x = Math.PI / 2;
+scene.add(ceilingRing);
+const softHalo = new THREE.PointLight(0xfff3d6, 1.45, 13, 1.9);
+softHalo.position.set(0, 4.7, 1.2);
+scene.add(softHalo);
+
+function makeChapterTexture() {
+  const cv = document.createElement("canvas");
+  cv.width = 768;
+  cv.height = 256;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#fbf8f1";
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.strokeStyle = "rgba(184,135,24,0.42)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(18, 18, cv.width - 36, cv.height - 36);
+  ctx.fillStyle = "#b88718";
+  ctx.font = "28px Arial";
+  ctx.textAlign = "center";
+  ctx.letterSpacing = "4px";
+  ctx.fillText("CHAPTER II · 陶瓷 / CERAMICS", cv.width / 2, 104);
+  ctx.fillStyle = "#181713";
+  ctx.font = "52px serif";
+  ctx.fillText("Heritage Realms", cv.width / 2, 168);
+  const texture = new THREE.CanvasTexture(cv);
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return texture;
+}
+const chapterSign = new THREE.Mesh(
+  new THREE.PlaneGeometry(3.8, 1.26),
+  new THREE.MeshBasicMaterial({ map: makeChapterTexture(), transparent: true })
+);
+chapterSign.position.set(-5.8, 2.55, -4.68);
+scene.add(chapterSign);
+
+function addArcGuide(radius, opacity) {
+  const pts = [];
+  for (let i = 0; i <= 96; i++) {
+    const a = -Math.PI * 0.54 + (i / 96) * Math.PI * 1.08;
+    pts.push(new THREE.Vector3(Math.sin(a) * radius, 0.012, -Math.cos(a) * radius + radius - 4));
+  }
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color: 0xc9973a, transparent: true, opacity });
+  scene.add(new THREE.Line(geo, mat));
+}
+addArcGuide(5.2, 0.24);
+addArcGuide(8.3, 0.14);
+
+function computeGalleryPositions(count) {
+  const positions = [];
+  const innerRadius = 4.6;
+  const outerRadius = 7.2;
+  const spread = Math.PI * 0.86;
+  for (let i = 0; i < count; i++) {
+    const outer = i % 2 === 0;
+    const groupIndex = Math.floor(i / 2);
+    const groupCount = outer ? Math.ceil(count / 2) : Math.floor(count / 2);
+    const radius = outer ? outerRadius : innerRadius;
+    const angle = -spread / 2 + (groupIndex / Math.max(1, groupCount - 1)) * spread;
+    positions.push(new THREE.Vector3(
+      radius * Math.sin(angle),
+      0,
+      -radius * Math.cos(angle) + radius - 4
+    ));
+  }
+  return positions;
+}
+
+const positions = computeGalleryPositions(HALL_ITEMS.length);
+const artGroups = [];
+const hitMeshes = [];
+let activeCraft = "all";
+let selectedIndex = -1;
+let hoverIndex = -1;
+let camPos = new THREE.Vector3(0, 2.4, 10.8);
+let camTgt = new THREE.Vector3(0, 0.9, 1.2);
+let targetCamPos = camPos.clone();
+let targetCamTgt = camTgt.clone();
+
+function makeLabelTexture(item) {
+  const cv = document.createElement("canvas");
+  cv.width = 768;
+  cv.height = 960;
+  const ctx = cv.getContext("2d");
+  const colors = CATEGORY_COLORS[item.functionalCategory] || CATEGORY_COLORS.decorative;
+  const grad = ctx.createLinearGradient(0, 0, cv.width, cv.height);
+  grad.addColorStop(0, colors[0]);
+  grad.addColorStop(1, colors[1]);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = "rgba(255,255,255,0.13)";
+  ctx.fillRect(48, 48, cv.width - 96, cv.height - 96);
+  ctx.strokeStyle = "rgba(255,255,255,0.38)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(70, 70, cv.width - 140, cv.height - 140);
+  ctx.fillStyle = "rgba(255,255,255,0.84)";
+  ctx.textAlign = "center";
+  ctx.font = "34px serif";
+  wrapText(ctx, item.name, cv.width / 2, 410, 560, 48);
+  ctx.font = "italic 30px serif";
+  wrapText(ctx, item.nameEn, cv.width / 2, 520, 590, 40);
+  ctx.font = "24px serif";
+  ctx.fillText(item.artistEn, cv.width / 2, 760);
+  const texture = new THREE.CanvasTexture(cv);
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return texture;
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const chars = text.includes(" ") ? text.split(" ") : Array.from(text);
+  let line = "";
+  chars.forEach((part, idx) => {
+    const next = text.includes(" ") ? line + part + " " : line + part;
+    if (ctx.measureText(next).width > maxWidth && idx > 0) {
+      ctx.fillText(line.trim(), x, y);
+      line = text.includes(" ") ? part + " " : part;
+      y += lineHeight;
+    } else {
+      line = next;
+    }
+  });
+  ctx.fillText(line.trim(), x, y);
+}
+
+function makeArtifactGeometry(item) {
+  if (item.shape === "flat") return new THREE.BoxGeometry(1.08, 1.42, 0.08);
+  const profile = SHAPE_PROFILES[item.shape] || SHAPE_PROFILES.vase;
+  const scale = item.shape === "bowl" ? 1.35 : item.shape === "washer" ? 1.55 : 1.22;
+  const points = profile.map(([r, y]) => new THREE.Vector2(r * scale, y * scale));
+  return new THREE.LatheGeometry(points, 56);
+}
+
+function makePedestal() {
+  const group = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0xd8d0c2, roughness: 0.72, metalness: 0.06 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0xb88718, roughness: 0.42, metalness: 0.42 });
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.54, 0.6, 0.16, 42), mat);
+  base.position.y = 0.08;
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 0.62, 42), mat);
+  plinth.position.y = 0.47;
+  const trim = new THREE.Mesh(new THREE.TorusGeometry(0.49, 0.012, 8, 54), trimMat);
+  trim.position.y = 0.8;
+  trim.rotation.x = Math.PI / 2;
+  const baseTrim = new THREE.Mesh(new THREE.TorusGeometry(0.59, 0.012, 8, 54), trimMat);
+  baseTrim.position.y = 0.16;
+  baseTrim.rotation.x = Math.PI / 2;
+  base.castShadow = plinth.castShadow = true;
+  base.receiveShadow = plinth.receiveShadow = true;
+  group.add(base, plinth, trim, baseTrim);
+  return group;
+}
+
+HALL_ITEMS.forEach((item, index) => {
+  const group = new THREE.Group();
+  const pedestal = makePedestal();
+  group.add(pedestal);
+
+  const texture = makeLabelTexture(item);
+  const mat = new THREE.MeshPhysicalMaterial({
+    map: texture,
+    roughness: item.shape === "flat" ? 0.55 : 0.2,
+    metalness: item.craftCategory === "metalwork" || item.craftCategory === "jewelry" ? 0.28 : 0.03,
+    clearcoat: 0.7,
+    clearcoatRoughness: 0.16
+  });
+  const mesh = new THREE.Mesh(makeArtifactGeometry(item), mat);
+  mesh.position.y = item.shape === "flat" ? 1.32 : 0.84;
+  mesh.castShadow = true;
+  mesh.userData.index = index;
+  if (item.shape === "flat") mesh.rotation.y = Math.PI;
+  group.add(mesh);
+
+  group.position.copy(positions[index]);
+  group.rotation.y = -Math.atan2(group.position.x, group.position.z - 1);
+  group.userData = { index, targetOpacity: 1, currentOpacity: 1, targetScale: 1, homeY: 0 };
+  scene.add(group);
+  artGroups.push(group);
+  hitMeshes.push(mesh);
+});
+
+function setAllCamera() {
+  selectedIndex = -1;
+  targetCamPos.set(0, 2.4, 10.8);
+  targetCamTgt.set(0, 0.9, 1.2);
+}
+
+function setCraftCamera(craft) {
+  if (craft === "all") {
+    setAllCamera();
+    return;
+  }
+  const matching = HALL_ITEMS.map((item, index) => item.craftCategory === craft ? positions[index] : null).filter(Boolean);
+  if (!matching.length) return;
+  const center = matching.reduce((acc, pos) => acc.add(pos), new THREE.Vector3()).multiplyScalar(1 / matching.length);
+  targetCamTgt.copy(center).add(new THREE.Vector3(0, 0.9, 0));
+  targetCamPos.copy(center).add(new THREE.Vector3(0, 2.2, 5.2));
+}
+
+function filterByCraft(craft) {
+  activeCraft = craft;
+  selectedIndex = -1;
+  artGroups.forEach((group, index) => {
+    const match = craft === "all" || HALL_ITEMS[index].craftCategory === craft;
+    group.userData.targetOpacity = match ? 1 : 0.15;
+    group.userData.targetScale = match ? 1 : 0.88;
+  });
+  setCraftCamera(craft);
+  updateStatus();
+  renderCraftFilters();
+}
+
+function craftCategories() {
+  const counts = {};
+  HALL_ITEMS.forEach(item => { counts[item.craftCategory] = (counts[item.craftCategory] || 0) + 1; });
+  return [
+    { id: "all", label: `${pick("全部", "All")} (${HALL_ITEMS.length})` },
+    ...Object.keys(counts).map(id => ({ id, label: `${craftLabel(id)} (${counts[id]})` }))
+  ];
+}
+
+function renderCraftFilters() {
+  const el = document.getElementById("craft-filters");
+  el.innerHTML = craftCategories().map(cat => `
+    <button type="button" class="filter-btn ${cat.id === activeCraft ? "active" : ""}" data-craft="${cat.id}">${cat.label}</button>
+  `).join("");
+  el.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => filterByCraft(btn.dataset.craft));
+  });
+}
+
+function visibleIndexes() {
+  return HALL_ITEMS.map((item, index) => activeCraft === "all" || item.craftCategory === activeCraft ? index : -1).filter(index => index >= 0);
+}
+
+function stepSelection(delta) {
+  const indexes = visibleIndexes();
+  if (!indexes.length) return;
+  const currentPos = indexes.indexOf(selectedIndex);
+  const nextPos = currentPos < 0 ? (delta > 0 ? 0 : indexes.length - 1) : (currentPos + delta + indexes.length) % indexes.length;
+  enterDetail(indexes[nextPos]);
+}
+
+function enterDetail(index) {
+  selectedIndex = index;
+  const pos = positions[index];
+  targetCamTgt.copy(pos).add(new THREE.Vector3(0, 1.08, 0));
+  targetCamPos.copy(pos).add(new THREE.Vector3(pos.x > 0 ? 1.1 : -1.1, 1.7, 3.0));
+  fillDrawer(HALL_ITEMS[index]);
+  document.getElementById("drawer").classList.add("open");
+  updateStatus(index);
+}
+
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("open");
+  selectedIndex = -1;
+  setCraftCamera(activeCraft);
+  updateStatus();
+}
+
+function fillDrawer(item) {
+  const colors = CATEGORY_COLORS[item.functionalCategory] || CATEGORY_COLORS.decorative;
+  const gradient = `linear-gradient(160deg, ${colors[0]} 0%, ${colors[1]} 100%)`;
+  document.getElementById("drawer-media").innerHTML = USE_REAL_IMAGES
+    ? `<img src="${item.image}" alt="${item.name} ${item.nameEn}" style="width:100%;height:100%;object-fit:cover;display:block">`
+    : `<div class="drawer-placeholder" style="background:${gradient}">${item.name}</div>`;
+  document.getElementById("drawer-tag").textContent = item.tag;
+  document.getElementById("drawer-title").textContent = pick(item.name, item.nameEn);
+  document.getElementById("drawer-en").textContent = pick(item.nameEn, item.name);
+  document.getElementById("drawer-meta").innerHTML = [
+    [pick("艺术家", "Artist"), pick(item.artist, item.artistEn)],
+    [pick("年份", "Year"), item.year],
+    [pick("尺寸", "Dimensions"), item.dimensions],
+    [pick("工艺", "Technique"), pick(item.technique, item.techniqueEn)],
+    [pick("来源", "Origin"), pick(item.origin, item.originEn || ORIGIN_EN[item.origin] || item.origin)],
+    [pick("单元", "Unit"), pick(item.exhibitionUnit, item.exhibitionUnitEn)]
+  ].map(([label, value]) => `<div><div class="meta-label">${label}</div><div class="meta-value">${value}</div></div>`).join("");
+  document.getElementById("drawer-desc").textContent = pick(item.desc1, item.desc1En);
+  document.getElementById("drawer-desc-en").textContent = "";
+  document.getElementById("drawer-inquire").href = `mailto:info@livingcraft.com?subject=${encodeURIComponent("Inquiry: " + item.name)}`;
+  document.getElementById("drawer-inquire").textContent = pick("询价 →", "Inquire →");
+  document.getElementById("drawer-collection").href = `collections.html#category=${encodeURIComponent(item.functionalCategory)}`;
+  document.getElementById("drawer-collection").textContent = pick("返回藏品", "Back to Collections");
+}
+
+function updateStatus(index) {
+  const detail = document.getElementById("status-detail");
+  const explored = document.getElementById("explored-count");
+  if (typeof index === "number") {
+    const item = HALL_ITEMS[index];
+    document.getElementById("status-count").textContent = `${categoryLabel(item)} · ${item.tag}`;
+    document.getElementById("status-title").textContent = pick(item.name, item.nameEn);
+    document.getElementById("status-desc").textContent = pick(item.nameEn, item.name);
+    detail.href = `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+    detail.textContent = pick("探索详情 →", "Explore Details →");
+    explored.textContent = `${String(index + 1).padStart(2, "0")} / ${String(HALL_ITEMS.length).padStart(2, "0")}`;
+    return;
+  }
+  const count = visibleIndexes().length;
+  document.getElementById("status-count").textContent = pick(`${count} 件作品 · 技艺视图`, `${count} work${count === 1 ? "" : "s"} · Craft view`);
+  document.getElementById("status-title").textContent = activeCraft === "all" ? pick("数字展厅", "Digital Exhibition Hall") : craftLabel(activeCraft);
+  document.getElementById("status-desc").textContent = pick("以温和的 3D 空间辅助理解工艺与形态，详情、来源与询价进入藏品目录完成。", "A refined 3D space for craft discovery. Details, provenance and inquiry continue through Collections.");
+  detail.href = "collections.html";
+  detail.textContent = pick("打开藏品目录 →", "Open Collections →");
+  explored.textContent = `00 / ${String(HALL_ITEMS.length).padStart(2, "0")}`;
+}
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+function setPointer(event) {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+}
+canvas.addEventListener("mousemove", event => {
+  setPointer(event);
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(hitMeshes, false);
+  hoverIndex = -1;
+  for (const hit of hits) {
+    const idx = hit.object.userData.index;
+    if (activeCraft === "all" || HALL_ITEMS[idx].craftCategory === activeCraft) {
+      hoverIndex = idx;
+      break;
+    }
+  }
+  canvas.style.cursor = hoverIndex >= 0 ? "pointer" : "default";
+});
+canvas.addEventListener("click", event => {
+  setPointer(event);
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(hitMeshes, false);
+  for (const hit of hits) {
+    const idx = hit.object.userData.index;
+    if (activeCraft === "all" || HALL_ITEMS[idx].craftCategory === activeCraft) {
+      enterDetail(idx);
+      break;
+    }
+  }
+});
+
+document.getElementById("drawer-close").addEventListener("click", closeDrawer);
+document.getElementById("prev-btn").addEventListener("click", () => stepSelection(-1));
+document.getElementById("next-btn").addEventListener("click", () => stepSelection(1));
+window.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeDrawer();
+  if (event.key === "ArrowLeft") stepSelection(-1);
+  if (event.key === "ArrowRight") stepSelection(1);
+});
+
+function handleDeepLink() {
+  const hash = window.location.hash;
+  if (!hash.startsWith("#artifact=")) return;
+  const id = decodeURIComponent(hash.replace("#artifact=", ""));
+  const index = HALL_ITEMS.findIndex(item => item.id === id);
+  if (index >= 0) {
+    filterByCraft("all");
+    setTimeout(() => enterDetail(index), 320);
+  }
+}
+
+function animate() {
+  const time = performance.now() * 0.001;
+  artGroups.forEach((group, index) => {
+    const ud = group.userData;
+    ud.currentOpacity += (ud.targetOpacity - ud.currentOpacity) * 0.08;
+    group.scale.setScalar(group.scale.x + (ud.targetScale - group.scale.x) * 0.08);
+    const float = Math.sin(time * 0.8 + index * 1.13) * 0.035;
+    group.position.y = float + (hoverIndex === index ? 0.06 : 0);
+    if (selectedIndex === index) group.rotation.y += 0.006;
+    group.traverse(child => {
+      if (child.material) {
+        child.material.transparent = true;
+        child.material.opacity = ud.currentOpacity;
+      }
+    });
+  });
+  camPos.lerp(targetCamPos, 0.065);
+  camTgt.lerp(targetCamTgt, 0.065);
+  camera.position.copy(camPos);
+  camera.lookAt(camTgt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+renderCraftFilters();
+updateStatus();
+setAllCamera();
+animate();
+document.addEventListener("languagechange", () => {
+  renderCraftFilters();
+  updateStatus(selectedIndex >= 0 ? selectedIndex : undefined);
+  if (selectedIndex >= 0) fillDrawer(HALL_ITEMS[selectedIndex]);
+});
+
+const bar = document.getElementById("bar");
+let progress = 0;
+const loader = setInterval(() => {
+  progress = Math.min(100, progress + 18);
+  bar.style.width = `${progress}%`;
+  if (progress >= 100) {
+    clearInterval(loader);
+    setTimeout(() => {
+      document.getElementById("loading").classList.add("out");
+      handleDeepLink();
+    }, 320);
+  }
+}, 110);
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

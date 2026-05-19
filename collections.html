@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · 藏品 Collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --white: #FFFFFF;
+  --offwhite: #F5F3EF;
+  --parchment: #EAE6DD;
+  --ink: #0F0F0D;
+  --ink-mid: #3A3228;
+  --ink-light: #8A8078;
+  --gold: #C9973A;
+  --gold-light: #E8C878;
+  --border: #E0DAD0;
+  --max: 1468px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(245, 243, 239, 0.95);
+  backdrop-filter: blur(14px);
+}
+.nav-inner {
+  max-width: var(--max);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  letter-spacing: 0.14em;
+}
+.brand-stack { line-height: 1.15; }
+.brand-cn { display: block; font-size: 15px; letter-spacing: 0.18em; }
+.brand-en { display: block; color: var(--ink-light); font-family: "Cormorant Garamond", serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; }
+.version-badge {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 30px);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-side {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-light);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-light);
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-transform: uppercase;
+}
+.lang-switch button.active { color: var(--gold); }
+.nav-cta {
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--white);
+  padding: 9px 15px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 44px 24px 86px;
+}
+.header {
+  display: grid;
+  grid-template-columns: minmax(420px, 0.95fr) minmax(430px, 0.72fr);
+  gap: clamp(46px, 6vw, 88px);
+  align-items: center;
+  padding-bottom: 30px;
+}
+.kicker {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 16px 0 0;
+  font-size: clamp(48px, 4.15vw, 64px);
+  font-family: "Noto Serif SC", serif;
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+}
+.title-en {
+  margin-top: 8px;
+  color: var(--ink-mid);
+  font-size: clamp(20px, 1.6vw, 25px);
+  font-style: italic;
+  line-height: 1;
+}
+.header p {
+  margin: 0;
+  color: var(--ink-mid);
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+.header-copy-en {
+  display: none;
+  margin-top: 12px;
+  color: var(--ink-light);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+}
+.archive-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid rgba(15,15,13,0.36);
+  border-bottom: 1px solid rgba(15,15,13,0.36);
+  margin-bottom: 40px;
+}
+.archive-stat {
+  min-height: 66px;
+  padding: 14px 20px;
+  border-right: 1px solid rgba(15,15,13,0.22);
+}
+.archive-stat:last-child { border-right: 0; }
+.archive-stat-label {
+  margin-bottom: 7px;
+  color: var(--ink);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.archive-stat-value {
+  color: var(--ink);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 42px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--ink-mid);
+}
+.catalogue-heading {
+  padding-top: 0;
+}
+.catalogue-heading .kicker {
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.catalogue-title {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  font-family: "Noto Serif SC", "Cormorant Garamond", serif;
+  font-size: clamp(28px, 2.35vw, 34px);
+  font-weight: 300;
+  line-height: 1.04;
+}
+.catalogue-title .count {
+  margin-left: 12px;
+  color: var(--ink-light);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  vertical-align: baseline;
+}
+.auction-entry {
+  margin: 0;
+  border: 1px solid rgba(15,15,13,0.24);
+  background:
+    linear-gradient(90deg, rgba(11,8,6,0.99) 0%, rgba(13,9,7,0.98) 56%, rgba(17,13,10,0.94) 78%, rgba(38,31,25,0.86) 100%),
+    url("assets/artifacts/london-2026/zhi-min-hetu-luoshu-celestial.png") center / cover;
+  color: var(--white);
+  min-height: 190px;
+  padding: 24px 36px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 34px;
+}
+.auction-entry .kicker {
+  color: var(--gold-light);
+  margin-bottom: 10px;
+  letter-spacing: 0.14em;
+}
+.auction-entry h2 {
+  margin: 0;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(30px, 2.55vw, 38px);
+  font-weight: 200;
+  letter-spacing: 0.03em;
+}
+.auction-entry h2 span {
+  margin-left: 18px;
+  color: rgba(255,255,255,0.72);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 0.56em;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.auction-entry p {
+  max-width: 690px;
+  margin: 9px 0 0;
+  color: rgba(255,255,255,0.72);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.auction-entry-meta {
+  margin-top: 17px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  color: rgba(255,255,255,0.72);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.auction-entry-meta span {
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid rgba(255,255,255,0.22);
+}
+.auction-entry-meta span:last-child {
+  border-right: 0;
+  margin-right: 0;
+  padding-right: 0;
+}
+.auction-entry-actions {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 158px;
+}
+.auction-entry-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: var(--gold);
+  color: var(--white);
+  padding: 0 22px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.auction-entry-link.secondary {
+  background: transparent;
+  color: var(--white);
+}
+.auction-entry-link:hover {
+  border-color: var(--gold-light);
+  background: var(--gold-light);
+  color: var(--ink);
+}
+.collection-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  align-items: flex-start;
+  gap: 40px;
+  padding-top: 32px;
+}
+.filter-sidebar {
+  position: sticky;
+  top: 86px;
+  width: auto;
+  min-height: 520px;
+  padding: 22px 22px 26px;
+  border: 1px solid rgba(15,15,13,0.32);
+  background: rgba(255,255,255,0.16);
+}
+.filter-intro {
+  margin-bottom: 30px;
+}
+.filter-title {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.filter-copy {
+  max-width: 250px;
+  margin: 0;
+  color: var(--ink);
+  font-family: "Noto Serif SC", serif;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.filter-group + .filter-group { margin-top: 31px; }
+.filter-heading {
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(15,15,13,0.32);
+  border-radius: 0;
+  padding: 0 0 9px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  margin: 0 0 12px;
+  text-align: left;
+  line-height: 1.2;
+}
+.filter-heading:hover { color: var(--ink); }
+.filter-heading:focus-visible {
+  outline: 1px solid rgba(15,15,13,0.42);
+  outline-offset: 2px;
+}
+.filter-heading-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.filter-caret {
+  display: inline-block;
+  width: 10px;
+  color: currentColor;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  transform: rotate(0deg);
+  transition: transform 160ms ease;
+}
+.filter-group.is-collapsed .filter-caret { transform: rotate(-90deg); }
+.filter-group.is-collapsed .filters { display: none; }
+.filter-heading .i18n-sub {
+  display: none;
+}
+.filter-heading-count {
+  color: var(--ink-light);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+.filters {
+  display: grid;
+  gap: 0;
+}
+.filter-btn,
+.view-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  min-height: 32px;
+  padding: 0 13px;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+.filter-btn {
+  width: 100%;
+  min-height: auto;
+  padding: 9px 0 9px 16px;
+  line-height: 1.25;
+  border-left: 2px solid transparent;
+  background: transparent;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14px;
+}
+.filter-main {
+  display: block;
+  min-width: 0;
+}
+.filter-main.has-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.filter-main.has-dot::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.filter-btn .i18n-sub {
+  margin-top: 0.12em;
+  font-size: 0.64em;
+}
+.filter-btn:hover { color: var(--gold); }
+.view-btn:hover { border-color: var(--gold); color: var(--gold); }
+.filter-btn.active {
+  background: transparent;
+  border-left-color: var(--gold);
+  color: var(--gold);
+}
+.filter-count {
+  color: var(--ink-light);
+  font-size: 0.84em;
+}
+.filter-range {
+  flex: 0 0 auto;
+  color: var(--ink-light);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.filter-reset {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 34px;
+  border: 1px solid rgba(15,15,13,0.22);
+  background: transparent;
+  color: var(--ink-mid);
+  cursor: pointer;
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+}
+.filter-reset:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.view-btn {
+  border: 1px solid var(--ink-mid);
+  min-width: 66px;
+  min-height: 36px;
+  padding: 0 16px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.view-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--offwhite);
+}
+.view-tools {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  align-self: end;
+}
+.count {
+  color: var(--ink-light);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 66px 32px;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+}
+.grid.list-mode {
+  display: block;
+}
+.card {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.card-img-wrap {
+  aspect-ratio: 4 / 5;
+  background: var(--parchment);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid transparent;
+  transition: border-color 180ms ease;
+}
+.lot-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 3;
+  background: rgba(15,15,13,0.82);
+  color: var(--gold-light);
+  padding: 8px 11px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.lot-badge.available {
+  background: rgba(255,255,255,0.9);
+  color: var(--ink-mid);
+}
+.lot-badge.auction::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: 2px;
+}
+.card-visual {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transform: scale(1);
+  filter: none;
+  transition: transform 0.42s cubic-bezier(.2,.8,.2,1);
+}
+.card:hover .card-visual,
+.card:focus-visible .card-visual,
+.card-img-wrap:hover .card-visual {
+  opacity: 1;
+  transform: scale(1.025);
+  filter: none;
+}
+.card:hover .card-img-wrap,
+.card:focus-visible .card-img-wrap {
+  border-color: rgba(201,151,58,0.72);
+}
+.card-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  color: rgba(255,255,255,0.74);
+  font-family: "Noto Serif SC", serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-visual,
+  .card-img-wrap,
+  .card-info,
+  .card-cta,
+  .card-cta::after {
+    transition: none;
+  }
+}
+.card-info {
+  padding: 13px 2px 0;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 158px;
+  transition: border-color 180ms ease;
+}
+.card:hover .card-info,
+.card:focus-visible .card-info {
+  border-top-color: var(--gold);
+}
+.card-cat {
+  color: var(--ink-light);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.card-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 18px;
+}
+.card-name {
+  font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.3;
+  margin-bottom: 5px;
+  min-height: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-name-en {
+  color: var(--ink-mid);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.2;
+  min-height: 2.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-year {
+  padding-top: 3px;
+  color: var(--ink-mid);
+  font-family: "Cormorant Garamond", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.card-year.text-year {
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+.card-meta {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  color: var(--ink-mid);
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.35;
+  min-height: 17px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-craft {
+  display: none;
+  margin-top: 6px;
+  color: var(--ink);
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.35;
+  min-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-cta {
+  margin-top: auto;
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  background: transparent;
+  font-family: "Noto Serif SC", Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+.card-cta-secondary {
+  margin-top: 0;
+  border-top-color: rgba(201,151,58,0.24);
+  color: var(--gold);
+}
+.card-cta-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+.card-cta::after {
+  content: "→";
+  color: var(--ink);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  line-height: 1;
+  transform: translateX(-4px);
+  transition: color 180ms ease, transform 180ms ease;
+}
+.card:hover .card-cta,
+.card:focus-visible .card-cta,
+.card-cta:hover {
+  border-top-color: var(--gold);
+  color: var(--gold);
+}
+.card:hover .card-cta::after,
+.card:focus-visible .card-cta::after,
+.card-cta:hover::after {
+  color: var(--gold);
+  transform: translateX(0);
+}
+.collection-table {
+  width: 100%;
+  border-top: 1px solid var(--border);
+}
+.table-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.28fr) minmax(220px, 1.28fr) minmax(170px, 1fr) minmax(170px, 0.86fr) minmax(80px, 0.28fr);
+  gap: clamp(22px, 3.4vw, 58px);
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.table-head {
+  min-height: 44px;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+.table-item {
+  position: relative;
+  min-height: 70px;
+  padding-right: 34px;
+  cursor: pointer;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 16px;
+}
+.table-item:hover {
+  background: rgba(255,255,255,0.38);
+}
+.table-item::after {
+  content: "→";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  color: var(--gold);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  opacity: 0;
+  transform: translate(-8px, -50%);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+.table-item:hover::after,
+.table-item:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+.table-title-main {
+  color: var(--ink);
+  font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+.table-title-sub {
+  margin-top: 4px;
+  color: var(--ink-mid);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.15;
+}
+.table-lot {
+  display: inline-flex;
+  margin-top: 9px;
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.table-no {
+  color: var(--ink-light);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+.table-year {
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 1180px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 920px) {
+  .nav-links { display: none; }
+  .header { grid-template-columns: 1fr; }
+  .archive-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .archive-stat:nth-child(2) { border-right: 0; }
+  .archive-stat:nth-child(-n+2) { border-bottom: 1px solid var(--ink-light); }
+  .toolbar { align-items: flex-start; }
+  .auction-entry { grid-template-columns: 1fr; padding: 28px; }
+  .auction-entry-actions { flex-wrap: wrap; }
+  .collection-layout { grid-template-columns: 1fr; }
+  .filter-sidebar { position: static; width: 100%; min-height: auto; }
+  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table-row { grid-template-columns: 1.2fr 1fr; gap: 16px 28px; padding: 14px 0; }
+  .table-head { display: none; }
+  .table-item { min-height: auto; }
+}
+@media (max-width: 620px) {
+  .nav-inner { padding: 12px 16px; height: auto; flex-wrap: wrap; }
+  .nav { height: auto; }
+  .page { padding: 42px 18px 66px; }
+  .archive-strip { grid-template-columns: 1fr; }
+  .archive-stat,
+  .archive-stat:nth-child(2),
+  .archive-stat:nth-child(-n+2) {
+    border-right: 0;
+    border-bottom: 1px solid var(--ink-light);
+  }
+  .archive-stat:last-child { border-bottom: 0; }
+  .toolbar { top: 76px; flex-direction: column; }
+  .filters { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 14px; }
+  .view-tools { width: 100%; justify-content: space-between; }
+  .card-name { font-size: 15px; min-height: 2.64em; }
+  .card-name-en { font-size: 13px; }
+  .card-info { padding-top: 13px; margin-top: 12px; min-height: 174px; }
+  .card-meta,
+  .card-craft { font-size: 12px; }
+  .card-cta { padding-top: 11px; font-size: 12.5px; letter-spacing: 0.03em; }
+  .table-row { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<nav class="nav" aria-label="主导航 Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index-v2.html"><span class="brand-stack"><span class="brand-cn">新生万物</span><span class="brand-en">Living Craft · MADverse</span></span></a>
+    <div class="nav-links">
+      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a class="active" href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
+    </div>
+    <div class="nav-side">
+      <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+      </span>
+      <a class="nav-cta" href="vr-preview/" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+  <header class="header">
+    <div>
+      <div class="kicker" data-zh="档案 · 02 · 仅限询价" data-en="Archive · 02 · Inquiry-based">档案 · 02 · 仅限询价</div>
+      <h1 data-zh="藏品·目录" data-en="Collections">藏品·目录</h1>
+      <div class="title-en">Collections</div>
+    </div>
+    <p>
+      按用途与工艺梳理的策展目录，每件作品都来自具名工坊。仅作询价、意向登记、授权或线上拍卖厅模拟竞价之用——不作零售销售。
+      <span class="header-copy-en">A curated catalogue organised by function and craft. Each work is presented for inquiry, registration of interest, licensing or the online auction room simulation, never as a retail purchase.</span>
+    </p>
+  </header>
+
+  <section class="archive-strip" aria-label="Collections summary">
+    <div class="archive-stat">
+      <div class="archive-stat-label">目录</div>
+      <div class="archive-stat-value" id="archive-total">— 件</div>
+    </div>
+    <div class="archive-stat">
+      <div class="archive-stat-label">询价制</div>
+      <div class="archive-stat-value">无零售 · 模拟竞价</div>
+    </div>
+    <div class="archive-stat">
+      <div class="archive-stat-label">渠道</div>
+      <div class="archive-stat-value">询价 · 登记 · 授权</div>
+    </div>
+    <div class="archive-stat">
+      <div class="archive-stat-label">线上拍卖</div>
+      <div class="archive-stat-value">6 件 LOT</div>
+    </div>
+  </section>
+
+  <section class="auction-entry" aria-label="Online Auction Room">
+    <div>
+      <div class="kicker">线上拍卖厅 · 模拟竞价</div>
+      <h2>线上拍卖厅<span>Online Auction Room</span></h2>
+      <p>六件入选 LOT 可进入直播式拍卖界面，查看当前价、下一口价、倒计时、直播讲解并进行前端模拟竞价。v0.5 不产生真实成交。</p>
+      <div class="auction-entry-meta"><span>6 · LOT</span><span>当前价</span><span>模拟竞价</span></div>
+    </div>
+    <div class="auction-entry-actions">
+      <a class="auction-entry-link" href="auction-room.html">进入拍卖厅 →</a>
+      <a class="auction-entry-link secondary" href="auction-preview.html#lots">查看 LOT →</a>
+    </div>
+  </section>
+
+  <section class="toolbar" aria-label="藏品筛选 Collection filters">
+    <div class="catalogue-heading">
+      <div class="kicker">目录</div>
+      <h2 class="catalogue-title"><span>在档作品</span><span class="count" id="work-count">— 0 / 0</span></h2>
+    </div>
+    <div class="view-tools">
+      <button class="view-btn active" id="grid-view" type="button">网格</button>
+      <button class="view-btn" id="list-view" type="button">索引</button>
+    </div>
+  </section>
+
+  <div class="collection-layout">
+    <aside class="filter-sidebar" aria-label="藏品分类筛选">
+      <div class="filter-intro">
+        <h2 class="filter-title">筛选目录</h2>
+        <p class="filter-copy">可按状态、价位、类目或工艺交叉筛选。</p>
+      </div>
+      <div class="filter-group" data-filter-group="status">
+        <button class="filter-heading" type="button" data-filter-toggle="status" aria-expanded="true" aria-controls="status-filters">
+          <span class="filter-heading-label"><span class="filter-caret" aria-hidden="true">▾</span><span>状态</span></span>
+          <span class="filter-heading-count" data-filter-count="status">3</span>
+        </button>
+        <div class="filters" id="status-filters"></div>
+      </div>
+      <div class="filter-group" data-filter-group="price">
+        <button class="filter-heading" type="button" data-filter-toggle="price" aria-expanded="true" aria-controls="price-filters">
+          <span class="filter-heading-label"><span class="filter-caret" aria-hidden="true">▾</span><span>价位</span></span>
+          <span class="filter-heading-count" data-filter-count="price">4</span>
+        </button>
+        <div class="filters" id="price-filters"></div>
+      </div>
+      <div class="filter-group" data-filter-group="functional">
+        <button class="filter-heading" type="button" data-filter-toggle="functional" aria-expanded="true" aria-controls="functional-filters">
+          <span class="filter-heading-label"><span class="filter-caret" aria-hidden="true">▾</span><span>类目</span></span>
+          <span class="filter-heading-count" data-filter-count="functional">4</span>
+        </button>
+        <div class="filters" id="functional-filters"></div>
+      </div>
+      <div class="filter-group" data-filter-group="craft">
+        <button class="filter-heading" type="button" data-filter-toggle="craft" aria-expanded="false" aria-controls="craft-filters">
+          <span class="filter-heading-label"><span class="filter-caret" aria-hidden="true">▾</span><span>技艺</span></span>
+          <span class="filter-heading-count" data-filter-count="craft">13</span>
+        </button>
+        <div class="filters" id="craft-filters"></div>
+      </div>
+      <button class="filter-reset" id="reset-filters" type="button">重置筛选</button>
+    </aside>
+    <section class="grid" id="grid" aria-live="polite"></section>
+  </div>
+</main>
+
+<script src="data/artifacts.js"></script>
+<script src="data/auction.js"></script>
+<script src="data/i18n.js"></script>
+<script>
+const USE_REAL_IMAGES = true;
+const IMAGE_FALLBACKS = {
+};
+const CATEGORY_COLORS = {
+  furniture: "linear-gradient(160deg, #C4A870 0%, #6B3A18 100%)",
+  objects: "linear-gradient(160deg, #8BB5C4 0%, #2A5870 100%)",
+  fashion: "linear-gradient(160deg, #C4A8B0 0%, #6B1A3A 100%)",
+  decorative: "linear-gradient(160deg, #B4C4A0 0%, #3A5820 100%)"
+};
+let activeFunctional = "all";
+let activeCraft = "all";
+let activeStatus = "all";
+let activePrice = "all";
+let viewMode = "grid";
+const filterCollapseState = {
+  status: false,
+  price: false,
+  functional: false,
+  craft: true
+};
+const CATEGORY_LABELS = {
+  all: { zh: "全部类目", en: "All Categories" },
+  furniture: { zh: "家具", en: "Furniture" },
+  objects: { zh: "器物", en: "Objects" },
+  fashion: { zh: "服饰与珠宝", en: "Fashion & Jewelry" },
+  decorative: { zh: "观赏品", en: "Decorative" }
+};
+const CRAFT_LABELS = {
+  all: { zh: "全部技艺", en: "All Crafts" },
+  textiles: { zh: "织锦", en: "Brocade" },
+  shadowpuppet: { zh: "皮影", en: "Shadow Puppet" },
+  ceramics: { zh: "陶瓷", en: "Ceramics" },
+  furniture: { zh: "家具工艺", en: "Furniture" },
+  embroidery: { zh: "刺绣", en: "Embroidery" },
+  metalwork: { zh: "金属工艺", en: "Metalwork" },
+  jewelry: { zh: "珠宝", en: "Jewelry" },
+  lacquerware: { zh: "漆器", en: "Lacquer" },
+  glass: { zh: "玻璃", en: "Glass" },
+  music: { zh: "丝竹乐器", en: "Musical Instrument" },
+  installation: { zh: "装置", en: "Installation" },
+  mixedmedia: { zh: "混合媒介", en: "Mixed Media" },
+  bonsai: { zh: "盆景", en: "Bonsai" },
+  flowercraft: { zh: "花艺", en: "Flower Craft" },
+  painting: { zh: "绘画", en: "Painting" },
+  ink: { zh: "水墨", en: "Ink" },
+  natural: { zh: "自然雕塑", en: "Natural Sculpture" }
+};
+const STATUS_FILTERS = [
+  { id: "all", label: { zh: "全部作品", en: "All Works" } },
+  { id: "auction", label: { zh: "拍卖预展", en: "Auction Preview" }, marker: true },
+  { id: "available", label: { zh: "可询价", en: "Available for Inquiry" } }
+];
+const PRICE_FILTERS = [
+  { id: "all", label: { zh: "全部价位", en: "All Prices" } },
+  { id: "entry", label: { zh: "入门典藏", en: "Entry Collection" }, range: "< ¥80k" },
+  { id: "collector", label: { zh: "鉴藏级", en: "Collector Level" }, range: "¥80k–500k" },
+  { id: "museum", label: { zh: "殿堂级", en: "Museum Level" }, range: "¥500k+" },
+  { id: "inquiry", label: { zh: "面议", en: "POA" }, range: "POA" }
+];
+
+function isEn() {
+  return window.LIVING_I18N && LIVING_I18N.getLang() === "en";
+}
+
+function pick(zh, en) {
+  return isEn() ? en : zh;
+}
+
+function statusMatches(item) {
+  return activeStatus === "all"
+    || (activeStatus === "auction" && (item.auctionLot || item.auctionPreview))
+    || (activeStatus === "available" && !(item.auctionLot || item.auctionPreview));
+}
+
+function priceTier(item) {
+  return item.priceTier || item.priceRange || "inquiry";
+}
+
+function priceMatches(item, price = activePrice) {
+  if (price === "all") return true;
+  if (price === "inquiry") return ["inquiry", "poa", "POA"].includes(priceTier(item));
+  return priceTier(item) === price;
+}
+
+function countFor(category) {
+  return ARTIFACTS.filter(item => {
+    const functionalMatch = category === "all" || item.functionalCategory === category;
+    const craftMatch = activeCraft === "all" || item.craftCategory === activeCraft;
+    return functionalMatch && craftMatch && statusMatches(item) && priceMatches(item);
+  }).length;
+}
+
+function dualLabel(label) {
+  return `${pick(label.zh, label.en)}<span class="i18n-sub">${pick(label.en, label.zh)}</span>`;
+}
+
+function labelMarkup(label) {
+  const primary = pick(label.zh, label.en);
+  const secondary = isEn() ? label.zh : "";
+  return `<span class="filter-main">${primary}${secondary ? `<span class="i18n-sub">${secondary}</span>` : ""}</span>`;
+}
+
+function labelWithCount(label, count) {
+  return labelMarkup(label);
+}
+
+function categoryLabelWithCount(cat) {
+  const label = CATEGORY_LABELS[cat.id] || { zh: cat.label, en: cat.label };
+  if (cat.id === "all") return labelMarkup(label);
+  return `<span class="filter-main">${label.en} ${label.zh}</span>`;
+}
+
+function availableCrafts() {
+  const source = activeFunctional === "all"
+    ? ARTIFACTS.filter(item => statusMatches(item) && priceMatches(item))
+    : ARTIFACTS.filter(item => item.functionalCategory === activeFunctional && statusMatches(item) && priceMatches(item));
+  const counts = {};
+  source.forEach(item => {
+    counts[item.craftCategory] = (counts[item.craftCategory] || 0) + 1;
+  });
+  const order = ["ceramics", "embroidery", "textiles", "glass", "lacquerware", "music", "installation", "mixedmedia", "bonsai", "flowercraft", "painting", "ink", "natural", "metalwork", "jewelry", "furniture", "shadowpuppet"];
+  const crafts = Object.keys(counts).sort((a, b) => {
+    const ia = order.indexOf(a);
+    const ib = order.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
+  return [
+    { id: "all", count: source.length },
+    ...crafts.map(id => ({ id, count: counts[id] }))
+  ];
+}
+
+function craftLabelWithCount(craft) {
+  const label = CRAFT_LABELS[craft.id] || { zh: craft.id, en: craft.id };
+  return labelMarkup(label);
+}
+
+function statusCount(status) {
+  return ARTIFACTS.filter(item => {
+    const functionalMatch = activeFunctional === "all" || item.functionalCategory === activeFunctional;
+    const craftMatch = activeCraft === "all" || item.craftCategory === activeCraft;
+    const statusMatch = status === "all"
+      || (status === "auction" && (item.auctionLot || item.auctionPreview))
+      || (status === "available" && !(item.auctionLot || item.auctionPreview));
+    return functionalMatch && craftMatch && statusMatch && priceMatches(item);
+  }).length;
+}
+
+function statusLabelWithCount(status) {
+  const primary = pick(status.label.zh, status.label.en);
+  const secondary = isEn() ? status.label.zh : "";
+  const markerClass = status.marker ? " has-dot" : "";
+  return `<span class="filter-main${markerClass}">${primary}${secondary ? `<span class="i18n-sub">${secondary}</span>` : ""}</span>`;
+}
+
+function priceCount(price) {
+  return ARTIFACTS.filter(item => {
+    const functionalMatch = activeFunctional === "all" || item.functionalCategory === activeFunctional;
+    const craftMatch = activeCraft === "all" || item.craftCategory === activeCraft;
+    return functionalMatch && craftMatch && statusMatches(item) && priceMatches(item, price);
+  }).length;
+}
+
+function priceLabelMarkup(price) {
+  const title = pick(price.label.zh, price.label.en);
+  const range = price.range ? `<span class="filter-range">${price.range}</span>` : "";
+  return `<span class="filter-main">${title}</span>${range}`;
+}
+
+function filteredArtifacts() {
+  return ARTIFACTS.filter(item => {
+    const functionalMatch = activeFunctional === "all" || item.functionalCategory === activeFunctional;
+    const craftMatch = activeCraft === "all" || item.craftCategory === activeCraft;
+    return functionalMatch && craftMatch && statusMatches(item) && priceMatches(item);
+  });
+}
+
+function cardMedia(item) {
+  if (USE_REAL_IMAGES) {
+    return `<div class="card-visual"><img src="${resolvedImage(item)}" alt="${item.name} ${item.nameEn}" loading="lazy"></div>`;
+  }
+  return `<div class="card-visual card-placeholder" style="background:${CATEGORY_COLORS[item.functionalCategory]}">${pick(item.name, item.nameEn)}</div>`;
+}
+function resolvedImage(item) {
+  return IMAGE_FALLBACKS[item.id] || item.image;
+}
+
+function artifactCode(item) {
+  const index = ARTIFACTS.findIndex(artifact => artifact.id === item.id) + 1;
+  return `HR-${String(index).padStart(3, "0")}`;
+}
+
+function lotBadge(item) {
+  const statusText = (item.auctionLot || item.auctionPreview)
+    ? `${item.lotNumber || "LOT"} · 线上拍卖`
+    : "可询价";
+  return `<div class="lot-badge ${(item.auctionLot || item.auctionPreview) ? "auction" : "available"}">${statusText}</div>`;
+}
+
+function tableLotBadge(item) {
+  if (!(item.auctionLot || item.auctionPreview)) return "";
+  return `<span class="table-lot">${item.lotNumber || "LOT"} · Online Auction</span>`;
+}
+
+function craftText(item) {
+  return pick(item.technique, item.techniqueEn);
+}
+
+function compactCraftText(item) {
+  const text = craftText(item);
+  return text.split(/[，,、]/)[0].trim();
+}
+
+function cardArtistYearLine(item) {
+  return `${pick(item.artist, item.artistEn)} · ${item.year}`;
+}
+
+function bilingualMeta(en, zh) {
+  const english = (en || "").trim();
+  const chinese = (zh || "").trim();
+  if (!english) return chinese;
+  if (!chinese || english.toLowerCase() === chinese.toLowerCase()) return english;
+  if (/^(tbc|to be confirmed|unknown)$/i.test(english) && chinese) return chinese;
+  return `${english} ${chinese}`;
+}
+
+function cardArtistCraftLine(item) {
+  const artist = bilingualMeta(item.artistEn, item.artist);
+  const craft = CRAFT_LABELS[item.craftCategory] || CATEGORY_LABELS[item.functionalCategory] || { zh: item.craftCategory, en: item.craftCategory };
+  return `${artist} · ${bilingualMeta(craft.en, craft.zh)}`;
+}
+
+function cardYearClass(item) {
+  return /^\d{3,4}/.test(String(item.year || "").trim()) ? "" : " text-year";
+}
+
+function materialLabel(item) {
+  const materialMap = {
+    ceramics: { zh: "瓷", en: "Porcelain" },
+    embroidery: { zh: "丝线", en: "Silk Thread" },
+    textiles: { zh: "织物", en: "Textile" },
+    lacquerware: { zh: "漆", en: "Lacquer" },
+    metalwork: { zh: "金属", en: "Metal" },
+    jewelry: { zh: "珠宝材料", en: "Jewelry Material" },
+    furniture: { zh: "木作", en: "Wood" },
+    shadowpuppet: { zh: "牛皮", en: "Ox Hide" },
+    glass: { zh: "玻璃", en: "Glass" },
+    music: { zh: "乐器", en: "Instrument" },
+    installation: { zh: "综合装置", en: "Installation" },
+    mixedmedia: { zh: "混合媒介", en: "Mixed Media" },
+    bonsai: { zh: "盆景", en: "Bonsai" },
+    flowercraft: { zh: "花艺", en: "Flower Craft" },
+    painting: { zh: "绘画", en: "Painting" },
+    ink: { zh: "水墨", en: "Ink" },
+    natural: { zh: "自然材料", en: "Natural Material" }
+  };
+  const label = materialMap[item.craftCategory] || { zh: "综合材料", en: "Mixed Material" };
+  return pick(label.zh, label.en);
+}
+
+function cardCraftLine(item) {
+  return `${compactCraftText(item)} · ${materialLabel(item)}`;
+}
+
+function cardCtaText(item) {
+  return (item.auctionLot || item.auctionPreview) ? "查看 LOT" : "查看详情";
+}
+
+function auctionPreviewHref(item) {
+  return `auction-preview.html?lot=${encodeURIComponent(item.id)}#${lotAnchor(item)}`;
+}
+
+function auctionRoomHref(item) {
+  return `auction-room.html?lot=${encodeURIComponent(item.id)}`;
+}
+
+function lotAnchor(item) {
+  return `lot-${item.id}`;
+}
+
+function auctionRoomAction(item) {
+  if (!(item.auctionLot || item.auctionPreview)) return `<span class="card-cta card-cta-secondary card-cta-placeholder" aria-hidden="true">&nbsp;</span>`;
+  return `<a class="card-cta card-cta-secondary" href="${auctionRoomHref(item)}" onclick="event.stopPropagation()">进入拍卖厅</a>`;
+}
+
+function cardPrimaryHref(item) {
+  return (item.auctionLot || item.auctionPreview) ? auctionPreviewHref(item) : detailHref(item);
+}
+
+function originText(item) {
+  return pick(item.origin || "中国", item.originEn || item.origin || "China");
+}
+
+function inquiryHref(item) {
+  return `mailto:info@livingcraft.com?subject=${encodeURIComponent("Inquiry: " + item.name)}`;
+}
+
+function detailHref(item) {
+  return `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+}
+
+function renderFilters() {
+  const headingCounts = {
+    status: STATUS_FILTERS.length,
+    price: PRICE_FILTERS.length - 1,
+    functional: FUNCTIONAL_CATEGORIES.length - 1,
+    craft: Math.max(availableCrafts().length - 1, 0)
+  };
+  Object.entries(headingCounts).forEach(([group, count]) => {
+    const node = document.querySelector(`[data-filter-count="${group}"]`);
+    if (node) node.textContent = String(count);
+  });
+
+  const statusFilters = document.getElementById("status-filters");
+  statusFilters.innerHTML = STATUS_FILTERS.map(status => `
+    <button type="button" class="filter-btn ${status.id === activeStatus ? "active" : ""}" data-status="${status.id}">
+      ${statusLabelWithCount(status)}
+    </button>
+  `).join("");
+  statusFilters.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeStatus = btn.dataset.status;
+      const craftIds = availableCrafts().map(craft => craft.id);
+      if (!craftIds.includes(activeCraft)) activeCraft = "all";
+      writeHash();
+      renderFilters();
+      renderCards();
+    });
+  });
+
+  const priceFilters = document.getElementById("price-filters");
+  priceFilters.innerHTML = PRICE_FILTERS.map(price => `
+    <button type="button" class="filter-btn ${price.id === activePrice ? "active" : ""}" data-price="${price.id}">
+      ${priceLabelMarkup(price)}
+    </button>
+  `).join("");
+  priceFilters.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activePrice = btn.dataset.price;
+      const craftIds = availableCrafts().map(craft => craft.id);
+      if (!craftIds.includes(activeCraft)) activeCraft = "all";
+      writeHash();
+      renderFilters();
+      renderCards();
+    });
+  });
+
+  const functionalFilters = document.getElementById("functional-filters");
+  functionalFilters.innerHTML = FUNCTIONAL_CATEGORIES.map(cat => `
+    <button type="button" class="filter-btn ${cat.id === activeFunctional ? "active" : ""}" data-category="${cat.id}">
+      ${categoryLabelWithCount(cat)}
+    </button>
+  `).join("");
+  functionalFilters.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeFunctional = btn.dataset.category;
+      const craftIds = availableCrafts().map(craft => craft.id);
+      if (!craftIds.includes(activeCraft)) activeCraft = "all";
+      writeHash();
+      renderFilters();
+      renderCards();
+    });
+  });
+
+  const craftFilters = document.getElementById("craft-filters");
+  craftFilters.innerHTML = availableCrafts().map(craft => `
+    <button type="button" class="filter-btn ${craft.id === activeCraft ? "active" : ""}" data-craft="${craft.id}">
+      ${craftLabelWithCount(craft)}
+    </button>
+  `).join("");
+  craftFilters.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeCraft = btn.dataset.craft;
+      writeHash();
+      renderFilters();
+      renderCards();
+    });
+  });
+}
+
+function renderCards() {
+  const filtered = filteredArtifacts();
+  const grid = document.getElementById("grid");
+  const archiveTotal = document.getElementById("archive-total");
+  if (archiveTotal) archiveTotal.textContent = `${ARTIFACTS.length} 件`;
+  document.getElementById("work-count").textContent = `— ${filtered.length} / ${ARTIFACTS.length}`;
+  grid.classList.toggle("list-mode", viewMode === "list");
+  if (viewMode === "list") {
+    grid.innerHTML = `
+      <div class="collection-table" role="table" aria-label="${pick("藏品列表", "Collection list")}">
+        <div class="table-row table-head" role="row">
+          <div role="columnheader">${pick("编号", "No.")}</div>
+          <div role="columnheader">${pick("作品", "Work")}</div>
+          <div role="columnheader">${pick("工艺", "Craft")}</div>
+          <div role="columnheader">${pick("产地", "Origin")}</div>
+          <div role="columnheader">${pick("年份", "Year")}</div>
+        </div>
+        ${filtered.map(item => `
+          <article class="table-row table-item" data-id="${item.id}" role="row" tabindex="0" aria-label="${pick("查看 " + item.name + " 详情", "Open details for " + item.nameEn)}">
+            <div class="table-no" role="cell">${artifactCode(item)}</div>
+            <div role="cell">
+              <div class="table-title-main">${pick(item.name, item.nameEn)}</div>
+              <div class="table-title-sub">${pick(item.nameEn, item.name)}</div>
+              ${tableLotBadge(item)}
+            </div>
+            <div role="cell">${craftText(item)}</div>
+            <div role="cell">${originText(item)}</div>
+            <div class="table-year" role="cell">${item.year}</div>
+          </article>
+        `).join("")}
+      </div>
+    `;
+    bindOpenHandlers(".table-item");
+    return;
+  }
+
+  grid.innerHTML = filtered.map(item => `
+    <article class="card" data-id="${item.id}" role="link" tabindex="0" aria-label="${pick("查看 " + item.name + " 详情", "Open details for " + item.nameEn)}">
+      <div class="card-img-wrap">
+        ${cardMedia(item)}
+        ${lotBadge(item)}
+      </div>
+      <div class="card-info">
+        <div class="card-heading">
+          <div>
+            <div class="card-name">${pick(item.name, item.nameEn)}</div>
+            <div class="card-name-en">${pick(item.nameEn, item.name)}</div>
+          </div>
+          <div class="card-year${cardYearClass(item)}">${item.year}</div>
+        </div>
+        <div class="card-meta">
+          ${cardArtistCraftLine(item)}
+        </div>
+        <a class="card-cta" href="${cardPrimaryHref(item)}" onclick="event.stopPropagation()">${cardCtaText(item)}</a>
+        ${auctionRoomAction(item)}
+      </div>
+    </article>
+  `).join("");
+
+  bindOpenHandlers(".card");
+}
+
+function bindOpenHandlers(selector) {
+  document.querySelectorAll(selector).forEach(card => {
+    const open = () => {
+      const item = ARTIFACTS.find(artifact => artifact.id === card.dataset.id);
+      if (item) window.location.href = detailHref(item);
+    };
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
+function readHash() {
+  const hash = window.location.hash.replace(/^#/, "");
+  if (!hash) return;
+  const params = new URLSearchParams(hash);
+  const category = params.get("category");
+  const craft = params.get("craft");
+  const status = params.get("status");
+  const price = params.get("price");
+  const view = params.get("view");
+  if (category) {
+    if (FUNCTIONAL_CATEGORIES.some(cat => cat.id === category)) {
+      activeFunctional = category;
+    }
+  }
+  if (["auction", "available", "all"].includes(status)) activeStatus = status;
+  if (PRICE_FILTERS.some(item => item.id === price)) activePrice = price;
+  if (craft && availableCrafts().some(item => item.id === craft)) activeCraft = craft;
+  if (view === "list" || view === "grid") viewMode = view;
+}
+
+function writeHash() {
+  const params = new URLSearchParams();
+  if (activeFunctional !== "all") params.set("category", activeFunctional);
+  if (activeCraft !== "all") params.set("craft", activeCraft);
+  if (activeStatus !== "all") params.set("status", activeStatus);
+  if (activePrice !== "all") params.set("price", activePrice);
+  if (viewMode === "list") params.set("view", "list");
+  const hash = params.toString();
+  window.history.replaceState(null, "", hash ? `#${hash}` : "collections.html");
+}
+
+function updateViewButtons() {
+  document.getElementById("grid-view").classList.toggle("active", viewMode === "grid");
+  document.getElementById("list-view").classList.toggle("active", viewMode === "list");
+}
+
+function updateFilterCollapseUi() {
+  Object.entries(filterCollapseState).forEach(([group, collapsed]) => {
+    const groupNode = document.querySelector(`[data-filter-group="${group}"]`);
+    const toggle = document.querySelector(`[data-filter-toggle="${group}"]`);
+    if (groupNode) groupNode.classList.toggle("is-collapsed", collapsed);
+    if (toggle) toggle.setAttribute("aria-expanded", String(!collapsed));
+  });
+}
+
+function bindFilterToggles() {
+  document.querySelectorAll("[data-filter-toggle]").forEach(toggle => {
+    toggle.addEventListener("click", () => {
+      const group = toggle.dataset.filterToggle;
+      filterCollapseState[group] = !filterCollapseState[group];
+      updateFilterCollapseUi();
+    });
+  });
+}
+
+function resetFilters() {
+  activeFunctional = "all";
+  activeCraft = "all";
+  activeStatus = "all";
+  activePrice = "all";
+  writeHash();
+  renderFilters();
+  renderCards();
+}
+
+document.getElementById("grid-view").addEventListener("click", () => {
+  viewMode = "grid";
+  updateViewButtons();
+  writeHash();
+  renderCards();
+});
+document.getElementById("list-view").addEventListener("click", () => {
+  viewMode = "list";
+  updateViewButtons();
+  writeHash();
+  renderCards();
+});
+document.getElementById("reset-filters").addEventListener("click", resetFilters);
+
+readHash();
+bindFilterToggles();
+updateFilterCollapseUi();
+updateViewButtons();
+renderFilters();
+renderCards();
+document.addEventListener("languagechange", () => {
+  renderFilters();
+  renderCards();
+});
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

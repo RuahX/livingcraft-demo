@@ -1,0 +1,3694 @@
+<!DOCTYPE html>
+<html lang="zh" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>新生万物 · MADverse — Heritage Realms</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#F5F0E8; overflow:hidden; font-family:'Georgia',serif; }
+canvas { display:block; }
+
+/* Loading */
+#loading {
+  position:fixed; inset:0; background:#F5F0E8;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:1000; transition:opacity 1s ease;
+}
+#loading h1 { font-size:48px; color:#1A160C; letter-spacing:0.2em; margin-bottom:8px; font-weight:400; }
+#loading p  { font-size:13px; color:#8B6914; letter-spacing:0.15em; margin-bottom:40px; text-transform:uppercase; }
+.load-bar { width:200px; height:1px; background:#D4C4A0; position:relative; overflow:hidden; }
+.load-bar::after {
+  content:''; position:absolute; inset:0; background:#8B6914;
+  transform:translateX(-100%); animation:loadAnim 1.5s ease forwards 0.3s;
+}
+@keyframes loadAnim { to { transform:translateX(0); } }
+
+/* HUD */
+#hud { position:fixed; inset:0; pointer-events:none; z-index:100; opacity:0; transition:opacity 0.8s ease; }
+#hud.visible { opacity:1; }
+#hud-topleft { position:absolute; top:24px; left:28px; pointer-events:all; }
+#btn-back {
+  display:none; background:none; border:none;
+  color:rgba(26,22,12,0.5); font-size:11px; letter-spacing:0.1em;
+  cursor:pointer; font-family:inherit; padding:0; margin-bottom:8px; transition:color 0.2s;
+}
+#btn-back:hover { color:rgba(26,22,12,0.9); }
+#btn-back.show { display:block; }
+.preview-return-links {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:7px;
+  margin:0 0 14px;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+}
+.preview-return-links a {
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:0 10px;
+  color:rgba(26,22,12,0.66);
+  border:1px solid rgba(139,105,20,0.18);
+  background:rgba(245,240,232,0.58);
+  backdrop-filter:blur(12px);
+  transition:color 0.2s, border-color 0.2s, background 0.2s;
+  pointer-events:all;
+}
+.preview-return-links a:hover {
+  color:rgba(26,22,12,0.96);
+  border-color:rgba(139,105,20,0.38);
+  background:rgba(245,240,232,0.82);
+}
+#scene-label { font-size:11px; color:rgba(139,105,20,0.6); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:4px; }
+#scene-title {
+  font-size:28px; color:rgba(26,22,12,0.85); font-weight:400; letter-spacing:0.05em;
+  opacity:0; transform:translateY(4px); transition:opacity 0.6s, transform 0.6s;
+}
+#scene-title.show { opacity:1; transform:translateY(0); }
+#scene-title-en { font-size:13px; color:rgba(26,22,12,0.4); font-style:italic; margin-top:2px; letter-spacing:0.04em; }
+#hud-topright { position:absolute; top:28px; right:28px; text-align:right; }
+#explored-label { font-size:9px; letter-spacing:0.12em; color:rgba(26,22,12,0.3); text-transform:uppercase; margin-bottom:3px; }
+#explored-count { font-size:18px; color:rgba(26,22,12,0.5); letter-spacing:0.05em; }
+#nav-hint {
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+  font-size:11px; color:rgba(26,22,12,0.35); letter-spacing:0.08em; text-align:center;
+  animation:hintFade 12s ease forwards;
+}
+@keyframes hintFade { 0%,40% { opacity:1; } 100% { opacity:0; pointer-events:none; } }
+#minimap {
+  position:absolute; bottom:24px; right:24px; width:90px; height:90px;
+  border:0.5px solid rgba(139,105,20,0.3); background:rgba(245,240,232,0.7);
+  backdrop-filter:blur(4px);
+}
+#minimap canvas { width:100%; height:100%; }
+#minimap-label { position:absolute; top:-14px; left:0; font-size:8px; letter-spacing:0.1em; color:rgba(139,105,20,0.5); text-transform:uppercase; }
+
+/* Info Panel */
+#info-panel {
+  position:fixed; right:0; top:0; bottom:0; width:340px;
+  background:rgba(22,18,10,0.93); backdrop-filter:blur(12px);
+  transform:translateX(100%); transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  z-index:200; overflow-y:auto; padding:28px 28px 40px; pointer-events:all;
+}
+#info-panel.open { transform:translateX(0); }
+#panel-close {
+  position:absolute; top:20px; right:20px; background:none; border:none;
+  color:rgba(255,255,255,0.4); font-size:18px; cursor:pointer; font-family:inherit; transition:color 0.2s;
+}
+#panel-close:hover { color:rgba(255,255,255,0.9); }
+#panel-chapter { font-size:9px; letter-spacing:0.14em; color:#C8A050; text-transform:uppercase; margin-bottom:16px; }
+#panel-name-cn { font-size:26px; color:#F5F0E8; font-weight:400; margin-bottom:4px; line-height:1.2; }
+#panel-name-en { font-size:13px; color:rgba(245,240,232,0.45); font-style:italic; margin-bottom:20px; }
+.panel-tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.panel-tag { font-size:9px; padding:3px 10px; border:0.5px solid rgba(200,160,80,0.4); color:#C8A050; letter-spacing:0.08em; text-transform:uppercase; }
+.panel-section-label { font-size:9px; letter-spacing:0.12em; color:rgba(245,240,232,0.3); text-transform:uppercase; margin-bottom:8px; padding-bottom:8px; border-bottom:0.5px solid rgba(255,255,255,0.08); }
+#panel-desc { font-size:12px; color:rgba(245,240,232,0.65); line-height:1.8; margin-bottom:20px; }
+#panel-ai { font-size:12px; color:rgba(245,240,232,0.55); line-height:1.8; margin-bottom:24px; font-style:italic; border-left:2px solid rgba(200,160,80,0.4); padding-left:12px; }
+.hotspot-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.hotspot-btn { font-size:10px; padding:5px 12px; background:rgba(200,160,80,0.12); border:0.5px solid rgba(200,160,80,0.5); color:#C8A050; cursor:pointer; font-family:inherit; letter-spacing:0.06em; transition:background 0.2s; }
+.hotspot-btn:hover, .hotspot-btn.active { background:rgba(200,160,80,0.32); }
+#panel-hotspot-detail { font-size:11px; color:rgba(245,240,232,0.5); line-height:1.7; min-height:36px; }
+
+/* Floating curator labels */
+#artifact-ui-layer {
+  position:fixed; inset:0; pointer-events:none; z-index:185;
+}
+.artifact-label,
+.artifact-hover-card,
+.artifact-detail-card {
+  position:fixed;
+  transform:translate(-50%,-100%);
+  opacity:0;
+  transition:opacity 0.22s ease, transform 0.22s ease;
+  pointer-events:none;
+  font-family:Georgia, serif;
+}
+.artifact-label {
+  min-width:150px;
+  padding:8px 12px;
+  background:rgba(245,240,232,0.68);
+  border:0.5px solid rgba(200,160,80,0.48);
+  backdrop-filter:blur(8px);
+  color:#1A160C;
+  text-align:left;
+}
+.artifact-label.visible { opacity:1; transform:translate(-50%,-112%); }
+.artifact-label .kicker,
+.artifact-hover-card .kicker,
+.artifact-detail-card .kicker {
+  font-size:8px; letter-spacing:0.16em; text-transform:uppercase; color:#8B6914; margin-bottom:4px;
+}
+.artifact-label .name { font-size:14px; color:#1A160C; white-space:nowrap; }
+.artifact-hover-card {
+  width:260px;
+  padding:16px 18px;
+  background:rgba(22,18,10,0.82);
+  border:0.5px solid rgba(200,160,80,0.62);
+  backdrop-filter:blur(14px);
+  color:#F5F0E8;
+}
+.artifact-hover-card.visible,
+.artifact-detail-card.visible { opacity:1; pointer-events:auto; transform:translate(-50%,-106%); }
+.artifact-hover-card .title { font-size:21px; line-height:1.15; margin-bottom:4px; }
+.artifact-hover-card .en { font-size:12px; font-style:italic; color:rgba(245,240,232,0.58); margin-bottom:10px; }
+.artifact-hover-card .meta { font-size:10px; color:#C8A050; letter-spacing:0.08em; margin-bottom:10px; }
+.artifact-hover-card .tags { display:flex; flex-wrap:wrap; gap:5px; }
+.artifact-hover-card .tags span,
+.artifact-detail-card .actions span {
+  font-size:9px; color:#C8A050; border:0.5px solid rgba(200,160,80,0.45); padding:4px 8px;
+}
+.artifact-detail-card {
+  width:330px;
+  padding:22px 24px 24px;
+  background:linear-gradient(180deg,rgba(22,18,10,0.9),rgba(22,18,10,0.78));
+  border:0.5px solid rgba(200,160,80,0.68);
+  backdrop-filter:blur(16px);
+  color:#F5F0E8;
+  box-shadow:0 28px 80px rgba(22,18,10,0.18);
+}
+.artifact-detail-card .close {
+  position:absolute; top:14px; right:14px;
+  width:28px; height:28px;
+  border:0.5px solid rgba(200,160,80,0.38);
+  background:rgba(245,240,232,0.04);
+  color:rgba(245,240,232,0.6);
+  cursor:pointer;
+}
+.artifact-detail-card .title { font-size:27px; line-height:1.12; margin-bottom:4px; }
+.artifact-detail-card .en { font-size:13px; font-style:italic; color:rgba(245,240,232,0.55); margin-bottom:16px; }
+.artifact-detail-card .desc { font-size:12px; line-height:1.8; color:rgba(245,240,232,0.72); margin-bottom:18px; }
+.artifact-detail-card .actions { display:flex; flex-wrap:wrap; gap:7px; }
+
+/* Portal Tooltip */
+#portal-tooltip {
+  position:fixed; left:28px; bottom:80px;
+  background:rgba(22,18,10,0.88); backdrop-filter:blur(8px);
+  padding:16px 20px; max-width:260px;
+  transform:translateY(10px); opacity:0; transition:opacity 0.3s, transform 0.3s;
+  pointer-events:all;
+}
+#portal-tooltip.show { opacity:1; transform:translateY(0); }
+#portal-tooltip-label { font-size:9px; color:#C8A050; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px; }
+#portal-tooltip-title { font-size:18px; color:#F5F0E8; margin-bottom:4px; }
+#portal-tooltip-desc { font-size:11px; color:rgba(245,240,232,0.5); line-height:1.6; margin-bottom:12px; }
+#portal-tooltip-btn { font-size:10px; padding:7px 16px; background:#8B6914; border:none; color:#fff; cursor:pointer; font-family:inherit; letter-spacing:0.08em; text-transform:uppercase; transition:background 0.2s; }
+#portal-tooltip-btn:hover { background:#A07820; }
+
+/* Portal Proximity Hints */
+#portal-hint-layer {
+  position:fixed; inset:0; pointer-events:none; z-index:160;
+}
+.portal-hint {
+  position:fixed; left:50%; top:50%; width:208px;
+  padding:14px 16px 16px;
+  background:rgba(245,240,232,0.88);
+  border:0.5px solid rgba(200,160,80,0.62);
+  color:#1A160C;
+  transform:translate(-50%,-118%) translateY(8px);
+  opacity:0;
+  transition:opacity 0.28s ease, transform 0.28s ease;
+  backdrop-filter:blur(8px);
+  box-shadow:0 16px 40px rgba(80,58,24,0.12);
+  text-align:center;
+  pointer-events:none;
+}
+.portal-hint.near {
+  opacity:1;
+  transform:translate(-50%,-118%) translateY(0);
+  pointer-events:auto;
+}
+.portal-hint-kicker {
+  font-size:9px; letter-spacing:0.16em; color:#8B6914;
+  text-transform:uppercase; margin-bottom:6px;
+}
+.portal-hint-title {
+  font-size:24px; line-height:1.05; color:#1A160C; font-weight:400;
+  margin-bottom:4px;
+}
+.portal-hint-en {
+  font-size:12px; line-height:1.25; color:rgba(26,22,12,0.52);
+  font-style:italic; margin-bottom:12px;
+}
+.portal-hint-btn {
+  width:100%; padding:8px 10px;
+  border:0.5px solid rgba(139,105,20,0.72);
+  background:#C8A050;
+  color:#1A160C;
+  font-size:10px; letter-spacing:0.1em; font-family:inherit;
+  cursor:pointer;
+  transition:background 0.2s ease, color 0.2s ease;
+}
+.portal-hint-btn:hover { background:#8B6914; color:#F5F0E8; }
+
+/* Transition overlay */
+#transition-overlay {
+  position:fixed; inset:0; background:#F5F0E8; opacity:0;
+  pointer-events:none; z-index:500; transition:opacity 0.55s ease;
+}
+#transition-overlay.active { opacity:1; pointer-events:all; }
+
+/* Spark 2.0 Model Lab diagnostics */
+#spark-lab-panel {
+  position:fixed;
+  left:24px;
+  bottom:24px;
+  width:310px;
+  padding:14px 16px 16px;
+  z-index:190;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.22s ease, transform 0.22s ease;
+  background:rgba(8,7,5,0.82);
+  border:0.5px solid rgba(200,160,80,0.48);
+  color:#EDE3CE;
+  backdrop-filter:blur(12px);
+  font-family:Arial, sans-serif;
+}
+#spark-lab-panel.visible {
+  opacity:1;
+  transform:translateY(0);
+}
+.spark-kicker {
+  font-size:9px;
+  letter-spacing:0.18em;
+  color:#C8A050;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.spark-title {
+  font-family:Georgia, serif;
+  font-size:18px;
+  line-height:1.1;
+  margin-bottom:10px;
+}
+.spark-grid {
+  display:grid;
+  grid-template-columns:86px 1fr;
+  row-gap:5px;
+  column-gap:12px;
+  font-size:10px;
+  line-height:1.45;
+}
+.spark-grid .label {
+  color:rgba(237,227,206,0.42);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+.spark-grid .value {
+  color:rgba(237,227,206,0.82);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.spark-note {
+  margin-top:11px;
+  padding-top:10px;
+  border-top:0.5px solid rgba(200,160,80,0.22);
+  color:rgba(237,227,206,0.52);
+  font-size:10px;
+  line-height:1.55;
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+
+<div id="loading">
+  <h1>遗·境</h1>
+  <p>Heritage Realms · MADverse</p>
+  <div class="load-bar"></div>
+</div>
+
+<div id="hud">
+  <div id="hud-topleft">
+    <button id="btn-back">← 遗·境</button>
+    <div class="preview-return-links" aria-label="Site navigation">
+      <a href="exhibition-london-2026.html">Back to London 2026 →</a>
+      <a href="collections.html">Explore Collections →</a>
+    </div>
+    <div id="scene-label">GRAND HALL · 主厅</div>
+    <div id="scene-title">遗·境<div id="scene-title-en">Heritage Realms</div></div>
+  </div>
+  <div id="hud-topright">
+    <div id="explored-label">Explored</div>
+    <div id="explored-count">0 / <span id="total-count">0</span></div>
+  </div>
+  <div id="nav-hint">点击画面锁定鼠标 &nbsp;·&nbsp; WASD / 方向键移动 &nbsp;·&nbsp; 靠近门洞按 E 进入</div>
+  <div id="minimap">
+    <div id="minimap-label">Minimap</div>
+    <canvas id="minimap-canvas" width="90" height="90"></canvas>
+  </div>
+</div>
+
+<div id="info-panel">
+  <button id="panel-close">×</button>
+  <div id="panel-chapter"></div>
+  <div id="panel-name-cn"></div>
+  <div id="panel-name-en"></div>
+  <div class="panel-tags" id="panel-tags"></div>
+  <div class="panel-section-label">Description</div>
+  <div id="panel-desc"></div>
+  <div class="panel-section-label">AI Guide</div>
+  <div id="panel-ai"></div>
+  <div class="panel-section-label">Detail Hotspots</div>
+  <div class="hotspot-row" id="hotspot-row"></div>
+  <div id="panel-hotspot-detail"></div>
+</div>
+
+<div id="portal-tooltip">
+  <div id="portal-tooltip-label">Chapter Available</div>
+  <div id="portal-tooltip-title"></div>
+  <div id="portal-tooltip-desc"></div>
+  <button id="portal-tooltip-btn">进入 Enter →</button>
+</div>
+
+<div id="portal-hint-layer"></div>
+<div id="artifact-ui-layer"></div>
+<div id="spark-lab-panel">
+  <div class="spark-kicker">Model Lab · Format Test</div>
+  <div class="spark-title" id="spark-lab-title">Model Viewer</div>
+  <div class="spark-grid">
+    <div class="label">Mode</div><div class="value" id="spark-lab-mode">-</div>
+    <div class="label">Format</div><div class="value" id="spark-lab-format">-</div>
+    <div class="label">File</div><div class="value" id="spark-lab-file">-</div>
+    <div class="label">Runtime</div><div class="value" id="spark-lab-spark">-</div>
+    <div class="label">Preview</div><div class="value" id="spark-lab-preview">-</div>
+    <div class="label">Renderer</div><div class="value" id="spark-lab-renderer">-</div>
+    <div class="label">FPS</div><div class="value" id="spark-lab-fps">-</div>
+  </div>
+  <div class="spark-note" id="spark-lab-note">PLY/SPZ 走 Spark；OBJ/GLB 走 Three.js mesh loader；大世界建议转 RAD。</div>
+</div>
+
+<div id="transition-overlay"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/",
+    "@sparkjsdev/spark": "./spark-dist/spark.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+// ══════════════════════════════════════════════
+// 0. CONSTANTS & DATA
+// ══════════════════════════════════════════════
+class FirstPersonControls {
+  constructor(camera) {
+    this.camera = camera;
+    this.yaw = Math.PI;
+    this.pitch = 0;
+    this.keys = {};
+    this.locked = false;
+    this.wallBoxes = [];
+    this.doorways = [];
+    this._doorPrompt = null;
+  }
+
+  init(canvas) {
+    canvas.addEventListener('click', () => {
+      if (!this.locked) canvas.requestPointerLock?.();
+    });
+    document.addEventListener('pointerlockchange', () => {
+      this.locked = !!document.pointerLockElement;
+    });
+    document.addEventListener('mousemove', e => {
+      if (!this.locked) return;
+      this.yaw -= e.movementX * 0.002;
+      this.pitch = Math.max(-1.0, Math.min(1.0, this.pitch - e.movementY * 0.002));
+    });
+    document.addEventListener('keydown', e => {
+      this.keys[e.code] = true;
+      if (e.code === 'KeyE' && this._doorPrompt) {
+        transitionTo(this._doorPrompt.targetRoom);
+      }
+    });
+    document.addEventListener('keyup', e => { this.keys[e.code] = false; });
+  }
+
+  update(dt) {
+    this.camera.rotation.order = 'YXZ';
+    this.camera.rotation.y = this.yaw;
+    this.camera.rotation.x = this.pitch;
+
+    const speed = 4.5;
+    const fwd = new THREE.Vector3(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
+    const rgt = new THREE.Vector3(Math.cos(this.yaw), 0, -Math.sin(this.yaw));
+    const mv = new THREE.Vector3();
+
+    if (this.keys['KeyW'] || this.keys['ArrowUp']) mv.addScaledVector(fwd, 1);
+    if (this.keys['KeyS'] || this.keys['ArrowDown']) mv.addScaledVector(fwd, -1);
+    if (this.keys['KeyA'] || this.keys['ArrowLeft']) mv.addScaledVector(rgt, -1);
+    if (this.keys['KeyD'] || this.keys['ArrowRight']) mv.addScaledVector(rgt, 1);
+
+    if (mv.lengthSq() > 0) {
+      mv.normalize().multiplyScalar(speed * dt);
+      this._moveWithCollision(mv.x, mv.z);
+    }
+    this.camera.position.y = 1.7;
+    this._checkDoorways();
+  }
+
+  _moveWithCollision(dx, dz) {
+    const R = 0.32, pos = this.camera.position;
+    const box = (ox, oz) => new THREE.Box3(
+      new THREE.Vector3(pos.x + ox - R, 0.5, pos.z + oz - R),
+      new THREE.Vector3(pos.x + ox + R, 2.5, pos.z + oz + R)
+    );
+    const hit = b => this.wallBoxes.some(w => w.intersectsBox(b));
+    if (!hit(box(dx, dz))) { pos.x += dx; pos.z += dz; }
+    else if (!hit(box(dx, 0))) { pos.x += dx; }
+    else if (!hit(box(0, dz))) { pos.z += dz; }
+  }
+
+  _checkDoorways() {
+    const pos = this.camera.position;
+    let nearest = null, nearDist = 2.0;
+    for (const d of this.doorways) {
+      const c = d.box.getCenter(new THREE.Vector3());
+      const dist = pos.distanceTo(c);
+      if (dist < nearDist) { nearDist = dist; nearest = d; }
+    }
+    if (nearest !== this._doorPrompt) {
+      if (this._doorPrompt) {
+        this._doorPrompt.labelEl.style.opacity = '0';
+        this._doorPrompt.setNear?.(false);
+      }
+      this._doorPrompt = nearest;
+      if (nearest) {
+        nearest.labelEl.style.opacity = '1';
+        nearest.setNear?.(true);
+      }
+    }
+  }
+
+  setRoom(wallBoxes, doorways) {
+    if (this._doorPrompt) {
+      this._doorPrompt.labelEl.style.opacity = '0';
+      this._doorPrompt.setNear?.(false);
+    }
+    this.wallBoxes = wallBoxes || [];
+    this.doorways = doorways || [];
+    this._doorPrompt = null;
+  }
+}
+
+function buildDoorways(sceneId) {
+  document.querySelectorAll('.door-label').forEach(el => el.remove());
+
+  const DH = 1.4;
+  const map = {
+    grand: [
+      { pos: new THREE.Vector3(0, DH, 7), targetRoom:'silk', label:'Chapter I · 丝·路  ↑' },
+      { pos: new THREE.Vector3(0, DH, -7), targetRoom:'shadow', label:'Chapter IV · 光·影  ↓' },
+      { pos: new THREE.Vector3(-7, DH, 0), targetRoom:'earth', label:'Chapter II · 土·火  ←' },
+      { pos: new THREE.Vector3(7, DH, 0), targetRoom:'wood', label:'Chapter III · 木·心  →' },
+    ],
+    silk: [{ pos: new THREE.Vector3(0, DH, 11.5), targetRoom:'grand', label:'← 遗·境  Grand Hall' }],
+    earth: [{ pos: new THREE.Vector3(0, DH, 11.5), targetRoom:'grand', label:'← 遗·境  Grand Hall' }],
+    wood: [{ pos: new THREE.Vector3(0, DH, 11.5), targetRoom:'grand', label:'← 遗·境  Grand Hall' }],
+    shadow: [{ pos: new THREE.Vector3(0, DH, 11.5), targetRoom:'grand', label:'← 遗·境  Grand Hall' }],
+  };
+
+  return (map[sceneId] || []).map(d => {
+    const box = new THREE.Box3(
+      d.pos.clone().sub(new THREE.Vector3(1.1, DH, 0.9)),
+      d.pos.clone().add(new THREE.Vector3(1.1, DH, 0.9))
+    );
+    const el = document.createElement('div');
+    el.className = 'door-label';
+    el.style.cssText = [
+      'position:fixed','left:50%','bottom:56px','transform:translateX(-50%)',
+      'background:rgba(22,18,10,0.88)','backdrop-filter:blur(8px)',
+      'border:0.5px solid rgba(200,160,80,0.55)','padding:11px 28px',
+      'font-size:11px','letter-spacing:0.14em','color:#C8A050',
+      'text-transform:uppercase','opacity:0','transition:opacity 0.25s',
+      'pointer-events:none','z-index:160','white-space:nowrap',
+    ].join(';');
+    el.textContent = `按 E 进入 · ${d.label}`;
+    document.body.appendChild(el);
+    return { box, targetRoom: d.targetRoom, labelEl: el };
+  });
+}
+
+const SCENES_CFG = {
+  grand: { label:'GRAND HALL · 主厅', title:'遗·境', titleEn:'Heritage Realms',    fogColor:0xF0EAD8, fogDensity:0.016, hemiSky:0xFFF8F0, hemiGround:0xE8D8B8, hemiInt:0.9  },
+  silk:  { label:'CHAPTER I · 丝路',  title:'丝·路', titleEn:'Silk Road',           fogColor:0xEEE4D4, fogDensity:0.035, hemiSky:0xF4F0FF, hemiGround:0xE8E0D4, hemiInt:0.85 },
+  earth: { label:'CHAPTER II · 土与火', title:'土·火', titleEn:'Earth & Fire',       fogColor:0xEDE0C4, fogDensity:0.030, hemiSky:0xFFF4E0, hemiGround:0xE8C89A, hemiInt:0.90 },
+  wood:  { label:'CHAPTER III · 木心', title:'木·心', titleEn:'Heart of Wood',       fogColor:0xE8E0D0, fogDensity:0.030, hemiSky:0xFFF8E8, hemiGround:0xD4C89A, hemiInt:0.85 },
+  shadow:{ label:'CHAPTER IV · 光影',  title:'光·影', titleEn:'Light & Shadow',      fogColor:0x1A1408, fogDensity:0.055, hemiSky:0x100C06, hemiGround:0x060402, hemiInt:0.25 },
+};
+
+const PORTALS = [
+  { id:'silk',   no:'I',   pos:[-9,0,-14], title:'丝·路', titleEn:'Silk Road',     desc:'纤维、织绣、丝路文明', innerColor:0xE8E4F0 },
+  { id:'earth',  no:'II',  pos:[ 0,0,-20], title:'土·火', titleEn:'Earth & Fire',   desc:'陶瓷、建盏、窑炉光',   innerColor:0xF0E8D8 },
+  { id:'wood',   no:'III', pos:[ 9,0,-14], title:'木·心', titleEn:'Heart of Wood',  desc:'家具、漆器、格扇晨光', innerColor:0xE8EDE0 },
+  { id:'shadow', no:'IV',  pos:[ 0,0,-30], title:'光·影', titleEn:'Light & Shadow', desc:'装置、书法、墨迹粒子', innerColor:0x1A1410 },
+];
+
+const ARTIFACTS = {
+  grand: [],
+  silk: [
+    { id:'silk_001', nameCn:'苏绣·双面绣屏风', nameEn:'Suzhou Embroidery — Double-Sided Screen',
+      chapter:'Chapter I · 丝路', tags:['苏绣','双面绣','National Heritage'],
+      desc:'苏州刺绣以针法细腻著称，双面绣是其最高技艺——两面图案不同，针脚须从两个方向都完美呈现。',
+      ai:'两面看，两面不同——双面绣的针脚必须从两个方向都完美，一丝差错无处遁形。',
+      hotspots:[{id:'stitch',label:'针法细节',desc:'每平方厘米约400针，是普通刺绣的8倍。'},{id:'frame',label:'红木框架',desc:'以酸枝木为框，榫卯接合，不用一颗钉子。'}],
+      pos:new THREE.Vector3(0,0,-3), shape:'screen', scale:1.18 },
+    { id:'silk_002', nameCn:'云锦·龙纹织锦', nameEn:'Yunjin Cloud Brocade — Dragon Motif',
+      chapter:'Chapter I · 丝路', tags:['云锦','织锦','Imperial Craft'],
+      desc:'南京云锦以真金银线织入，是历代皇家御用面料，被列入人类非遗名录。',
+      ai:'织入一寸云锦，需要两位织工数小时协同——一人抛梭，一人引金线。',
+      hotspots:[{id:'gold-thread',label:'真金线',desc:'以真金捶打成0.15mm薄片，再切成细丝缠绕纱线。'}],
+      pos:new THREE.Vector3(-2.5,0,-6), shape:'brocade', scale:1.06 },
+    { id:'silk_003', nameCn:'缂丝·花鸟卷', nameEn:'Kesi Tapestry — Birds and Blossoms',
+      chapter:'Chapter I · 丝路', tags:['缂丝','花鸟','Song Aesthetic'],
+      desc:'以通经断纬织出细密画面，远看如绢本，近看可见每一段色线的独立边界。',
+      ai:'缂丝不是把图案印在织物上，而是把图案一线一线织成织物本身。',
+      hotspots:[{id:'weft',label:'通经断纬',desc:'纬线按图案分区穿插，边缘形成细微断痕。'}],
+      pos:new THREE.Vector3(2.5,0,-8), shape:'screen', scale:0.95 },
+    { id:'silk_004', nameCn:'蜀锦·几何纹样', nameEn:'Shu Brocade — Geometric Motif',
+      chapter:'Chapter I · 丝路', tags:['蜀锦','几何纹','Trade Route'],
+      desc:'以重复几何纹样呈现丝路贸易中的秩序感，适合作为章节尽头的视觉引导。',
+      ai:'重复的纹样像路线，也像时间，一格一格把观看者带向更深处。',
+      hotspots:[{id:'repeat',label:'纹样循环',desc:'几何单元的连续排列形成稳定节奏。'}],
+      pos:new THREE.Vector3(0,0,-12), shape:'brocade', scale:1.18 },
+  ],
+  earth: [
+    { id:'earth_001', nameCn:'建盏·油滴盏', nameEn:'Jianzhan Oil-Spot Tea Bowl',
+      chapter:'Chapter II · 土与火', tags:['建盏','宋代','1300°C 还原焰'],
+      desc:'宋代建窑谱系中的油滴釉，以铁质晶体在冷却瞬间析出形成银灰斑点，程序化 Voronoi 釉面呈现。',
+      ai:'每一滴油斑，都是窑火与铁质釉料在冷却瞬间的相遇。没有两只建盏的油滴相同。',
+      hotspots:[{id:'glaze',label:'釉色油滴',desc:'铁质釉料在降温中析出氧化铁晶体，形成银灰色斑点。'},{id:'rim',label:'口沿纹理',desc:'口沿处釉层较薄，能看到烧成时釉料流动留下的细微边界。'}],
+      pos:new THREE.Vector3(0,0,-3), shape:'bowl', scale:1.16 },
+    { id:'earth_002', nameCn:'唐三彩·凤首壶', nameEn:'Tang Sancai Phoenix-Head Ewer',
+      chapter:'Chapter II · 土与火', tags:['唐三彩','低温铅釉','Heritage Collection'],
+      desc:'唐代三彩陶器，以低温铅釉著称，黄绿褐三色自然流淌。凤首造型体现唐代开放包容的异域风情。',
+      ai:'三彩之美不在满铺，而在黄、绿、褐釉自然流淌时产生的偶然秩序。',
+      hotspots:[{id:'glaze-flow',label:'釉色流淌',desc:'低温铅釉在烧制中自然流动，形成颜色间的自然过渡。'},{id:'phoenix-head',label:'凤首造型',desc:'壶口塑成凤鸟回首状，唐代典型装饰语言。'}],
+      pos:new THREE.Vector3(-2.5,0,-6), shape:'ewer', scale:1.04 },
+    { id:'earth_003', nameCn:'龙泉青瓷·粉青釉梅瓶', nameEn:'Longquan Celadon — Powder-Blue Prunus Vase',
+      chapter:'Chapter II · 土与火', tags:['龙泉青瓷','宋代','Longquan'],
+      desc:'龙泉窑粉青釉，如冰似玉，是宋代美学"雅淡"精神的最高体现。',
+      ai:'粉青之色，取法天青——雨过天晴时那一瞬间天空的颜色。',
+      hotspots:[{id:'celadon',label:'粉青釉面',desc:'多层施釉，厚达2mm，在光线下呈现深浅不一的青色层次。'}],
+      pos:new THREE.Vector3(2.5,0,-8), shape:'vase', scale:1.18 },
+    { id:'earth_004', nameCn:'窑变·陶胎器', nameEn:'Kiln-Fired Earthen Vessel',
+      chapter:'Chapter II · 土与火', tags:['陶胎','窑火痕迹','Study Model'],
+      desc:'粗陶胎表面保留窑火灼痕，用于 Demo 阶段验证远观、靠近与聚焦三层交互。',
+      ai:'土与火的章节不只展示器物，也展示烧成过程中那些不可完全控制的时间、温度与偶然。',
+      hotspots:[{id:'clay',label:'陶胎肌理',desc:'表面颗粒与火痕用于提示真实 GLB 后续可替换。'}],
+      pos:new THREE.Vector3(0,0,-12), shape:'vase', scale:0.96 },
+  ],
+  wood: [
+    { id:'wood_001', nameCn:'明式圈椅', nameEn:'Ming Dynasty Round-Back Armchair',
+      chapter:'Chapter III · 木心', tags:['明式家具','黄花梨','Ming Dynasty'],
+      desc:'以黄花梨木制成，榫卯结构，不用一颗铁钉。圆形椅圈一木弯成，是明代家具最高成就之一。',
+      ai:'坐在圈椅里，背部贴合的弧度是工匠对人体最深的理解——不是装饰，是关怀。',
+      hotspots:[{id:'wood-grain',label:'黄花梨纹',desc:'黄花梨木纹如鬼脸，每块都独一无二，价比黄金。'},{id:'mortise',label:'榫卯接合',desc:'椅圈与椅腿以透榫相接，不用胶水，拆装自如。'}],
+      pos:new THREE.Vector3(0,0,-3), shape:'chair', scale:1.18 },
+    { id:'wood_002', nameCn:'花窗·格扇', nameEn:'Lattice Screen — Floral Window',
+      chapter:'Chapter III · 木心', tags:['格扇','木作','Joinery'],
+      desc:'以重复格栅形成半透空间，让木心章节从家具扩展到建筑与室内秩序。',
+      ai:'传统格扇既分隔空间，也让光线和视线继续流动。',
+      hotspots:[{id:'lattice',label:'格芯纹样',desc:'格芯由重复木条构成，后续可替换为真实雕花模型。'}],
+      pos:new THREE.Vector3(-2.5,0,-6), shape:'screen', scale:1.04 },
+    { id:'wood_003', nameCn:'漆器·朱漆盒', nameEn:'Vermilion Lacquer Box',
+      chapter:'Chapter III · 木心', tags:['漆器','朱漆','Layered Craft'],
+      desc:'漆层反复髹涂、打磨，形成温润而克制的表面光泽。',
+      ai:'漆器的光不刺眼，它像被时间磨平的水面。',
+      hotspots:[{id:'lacquer',label:'髹漆层次',desc:'多层漆面让边缘反光更柔和。'}],
+      pos:new THREE.Vector3(2.5,0,-8), shape:'brocade', scale:1.05 },
+    { id:'wood_004', nameCn:'榫卯·结构样本', nameEn:'Mortise and Tenon Study',
+      chapter:'Chapter III · 木心', tags:['榫卯','结构','Study Model'],
+      desc:'以抽象结构件展示不用金属连接的力学关系，作为走廊尽头的探索点。',
+      ai:'榫卯的秘密不在隐藏，而在看似简单的咬合里。',
+      hotspots:[{id:'joint',label:'咬合关系',desc:'凸榫与凹槽互相约束，形成可拆却稳定的结构。'}],
+      pos:new THREE.Vector3(0,0,-12), shape:'chair', scale:0.92 },
+  ],
+  shadow: [
+    { id:'shadow_001', nameCn:'书法·墨迹装置', nameEn:'Calligraphy Particle Installation',
+      chapter:'Chapter IV · 光影', tags:['当代装置','书法','Digital Heritage'],
+      desc:'1500个粒子从虚空中凝聚成"境"字笔画，展现传统书法在数字空间中的重生。',
+      ai:'字从虚无中来，又回到虚无——这是数字时代对"书法"的最诚实诠释。',
+      hotspots:[],
+      pos:new THREE.Vector3(0,0,-3), shape:'calligraphy', scale:1.2 },
+    { id:'shadow_002', nameCn:'玉璧·光环', nameEn:'Jade Bi — Halo Study',
+      chapter:'Chapter IV · 光影', tags:['玉器','光环','Reflective Study'],
+      desc:'以抽象圆形器物测试暗场中的轮廓光与半透明材质。',
+      ai:'玉的观看从不只看颜色，而是看光如何从边缘慢慢透出来。',
+      hotspots:[{id:'rim-light',label:'边缘透光',desc:'暗场中利用轮廓光强调圆形器物的体量。'}],
+      pos:new THREE.Vector3(-2.5,0,-6), shape:'bowl', scale:1.0 },
+    { id:'shadow_003', nameCn:'青铜·镜面', nameEn:'Bronze Mirror — Dark Reflection',
+      chapter:'Chapter IV · 光影', tags:['青铜','镜面','Ritual Object'],
+      desc:'用较暗金属材质提示古代青铜器在光影章节中的反射关系。',
+      ai:'青铜镜不是现代意义的镜子，它更像一片被时间压暗的光。',
+      hotspots:[{id:'patina',label:'包浆色泽',desc:'深色金属表面用于后续接入真实扫描纹理。'}],
+      pos:new THREE.Vector3(2.5,0,-8), shape:'brocade', scale:1.12 },
+    { id:'shadow_004', nameCn:'皮影·幕影', nameEn:'Shadow Puppet Screen',
+      chapter:'Chapter IV · 光影', tags:['皮影','投影','Moving Image'],
+      desc:'以屏风占位模拟皮影幕布，后续可加入可控投影动画。',
+      ai:'影子的生命来自背后的光，也来自观众愿意相信它在动。',
+      hotspots:[{id:'projection',label:'投影层',desc:'幕布与背光为后续动态皮影交互预留。'}],
+      pos:new THREE.Vector3(0,0,-12), shape:'screen', scale:1.0 },
+  ],
+};
+
+// ══════════════════════════════════════════════
+const ROOM_ALIASES = { earth:'ceramics' };
+function normalizeSceneId(id) { return ROOM_ALIASES[id] || id; }
+function isModelLabScene(id) { return id === 'model-lab' || String(id || '').startsWith('lab-'); }
+
+const ROOMS = {
+  grand: {
+    id:'grand',
+    titleZh:'遗·境',
+    titleEn:'Heritage Realms',
+    chapter:'GRAND HALL',
+    doors:[
+      { id:'silk-door', targetRoom:'silk', pos:[0,1.4,7], label:'CHAPTER I · 丝·路', titleZh:'丝·路', titleEn:'Silk Road' },
+      { id:'shadow-door', targetRoom:'shadow', pos:[0,1.4,-7], label:'CHAPTER IV · 光·影', titleZh:'光·影', titleEn:'Light & Shadow' },
+      { id:'ceramics-door', targetRoom:'ceramics', pos:[-7,1.4,0], label:'CHAPTER I · 陶瓷', titleZh:'陶瓷', titleEn:'Ceramics', moon:true },
+      { id:'wood-door', targetRoom:'wood', pos:[7,1.4,0], label:'CHAPTER III · 木·心', titleZh:'木·心', titleEn:'Heart of Wood' },
+      { id:'model-lab-door', targetRoom:'model-lab', pos:[3.7,1.4,3.5], label:'MODEL LAB · 模型格式测试馆', titleZh:'模型格式测试馆', titleEn:'Model Format Lab' },
+    ],
+  },
+  ceramics: {
+    id:'ceramics',
+    titleZh:'陶瓷',
+    titleEn:'Ceramics',
+    chapter:'CHAPTER I',
+    doors:[{ id:'ceramics-exit', targetRoom:'grand', pos:[0,1.4,11.5], label:'← 遗·境 Grand Hall', titleZh:'遗·境', titleEn:'Grand Hall' }],
+  },
+  silk: { id:'silk', titleZh:'丝·路', titleEn:'Silk Road', chapter:'CHAPTER I', doors:[{ id:'silk-exit', targetRoom:'grand', pos:[0,1.4,11.5], label:'← 遗·境 Grand Hall', titleZh:'遗·境', titleEn:'Grand Hall' }] },
+  wood: { id:'wood', titleZh:'木·心', titleEn:'Heart of Wood', chapter:'CHAPTER III', doors:[{ id:'wood-exit', targetRoom:'grand', pos:[0,1.4,11.5], label:'← 遗·境 Grand Hall', titleZh:'遗·境', titleEn:'Grand Hall' }] },
+  shadow: { id:'shadow', titleZh:'光·影', titleEn:'Light & Shadow', chapter:'CHAPTER IV', doors:[{ id:'shadow-exit', targetRoom:'grand', pos:[0,1.4,11.5], label:'← 遗·境 Grand Hall', titleZh:'遗·境', titleEn:'Grand Hall' }] },
+  'model-lab': { id:'model-lab', titleZh:'模型格式测试馆', titleEn:'Model Format Lab', chapter:'MODEL LAB',
+    doors:[
+      { id:'model-lab-exit',  targetRoom:'grand',        pos:[0,1.4,11.5],   label:'← 遗·境 Grand Hall', titleZh:'遗·境', titleEn:'Grand Hall' },
+      { id:'lab-door-doggy',  targetRoom:'lab-doggy',    pos:[-6.2,1.4,-2],  halfX:0.9,halfZ:1.2, label:'Doggy →' },
+      { id:'lab-door-dragon', targetRoom:'lab-dragon',   pos:[-6.2,1.4,-6],  halfX:0.9,halfZ:1.2, label:'Dragon Baby →' },
+      { id:'lab-door-horse',  targetRoom:'lab-horse',    pos:[-6.2,1.4,-10], halfX:0.9,halfZ:1.2, label:'Iron Horse →' },
+      { id:'lab-door-people', targetRoom:'lab-oldpeople',pos:[6.2,1.4,-2],   halfX:0.9,halfZ:1.2, label:'人物 →' },
+      { id:'lab-door-venus',  targetRoom:'lab-venus',    pos:[6.2,1.4,-6],   halfX:0.9,halfZ:1.2, label:'Venus →' },
+      { id:'lab-door-yong',   targetRoom:'lab-yongzheng',pos:[6.2,1.4,-10],  halfX:0.9,halfZ:1.2, label:'雍正 →' },
+      { id:'lab-door-hi3d-obj', targetRoom:'lab-hi3d-obj', pos:[0,1.4,-6.6], halfX:1.45,halfZ:1.0, label:'Hi3D OBJ →' },
+      { id:'lab-door-world',  targetRoom:'lab-world',    pos:[0,1.4,-11.2],  halfX:1.35,halfZ:1.0, label:'World Stream Lab ↓' },
+    ],
+  },
+};
+['lab-doggy','lab-dragon','lab-horse','lab-oldpeople','lab-venus','lab-yongzheng'].forEach(id=>{
+  ROOMS[id]={ id, titleZh:'3DGS 单体展室', titleEn:'3DGS Lab Room', chapter:'MODEL LAB',
+    doors:[{ id:id+'-exit', targetRoom:'model-lab', pos:[0,1.4,11.5], label:'← 模型测试馆', titleZh:'模型测试馆', titleEn:'Model Lab' }] };
+});
+ROOMS['lab-hi3d-obj']={ id:'lab-hi3d-obj', titleZh:'OBJ 网格模型展室', titleEn:'Hi3D OBJ Format Room', chapter:'MODEL LAB',
+  doors:[{ id:'lab-hi3d-obj-exit', targetRoom:'model-lab', pos:[0,1.4,11.5], label:'← 模型格式测试馆', titleZh:'模型格式测试馆', titleEn:'Model Format Lab' }] };
+ROOMS['lab-world']={ id:'lab-world', titleZh:'世界模型测试馆', titleEn:'World Stream Lab', chapter:'SPARK 2.0',
+  doors:[{ id:'lab-world-exit', targetRoom:'model-lab', pos:[0,1.4,11.5], label:'← 模型测试馆', titleZh:'模型测试馆', titleEn:'Model Lab' }] };
+
+SCENES_CFG.ceramics = {
+  label:'CHAPTER I · 陶瓷',
+  title:'陶瓷',
+  titleEn:'Ceramics',
+  fogColor:0xEFE7D8,
+  fogDensity:0.020,
+  hemiSky:0xFFF8EC,
+  hemiGround:0xDED0B8,
+  hemiInt:0.55,
+};
+SCENES_CFG.earth = SCENES_CFG.ceramics;
+SCENES_CFG['model-lab'] = {
+  label:'MODEL LAB · 模型格式测试馆',
+  title:'模型格式测试馆',
+  titleEn:'Model Format Lab',
+  fogColor:0x16120C,
+  fogDensity:0.004,
+  hemiSky:0x2C2418,
+  hemiGround:0x0A0806,
+  hemiInt:0.45,
+};
+['lab-doggy','lab-dragon','lab-horse','lab-oldpeople','lab-venus','lab-yongzheng'].forEach(id=>{
+  SCENES_CFG[id]={...SCENES_CFG['model-lab'], label:'MODEL LAB · '+id.replace('lab-','')};
+});
+SCENES_CFG['lab-hi3d-obj']={...SCENES_CFG['model-lab'], label:'MODEL LAB · HI3D OBJ', title:'OBJ 网格模型展室', titleEn:'Hi3D OBJ Format Room'};
+SCENES_CFG['lab-world']={...SCENES_CFG['model-lab'], label:'SPARK 2.0 · WORLD STREAM', title:'世界模型测试馆', titleEn:'World Stream Lab'};
+
+ARTIFACTS.ceramics = [
+  {
+    id:'blue-white-vase',
+    nameCn:'青花山水瓷瓶',
+    nameEn:'Blue-and-White Porcelain Vase',
+    categoryZh:'陶瓷',
+    categoryEn:'Ceramics',
+    chapter:'CHAPTER I · 陶瓷',
+    tags:['景德镇','青花','高温烧成','山水纹'],
+    desc:'一器之中，山水入瓷。青花纹样在数字展境中被重新唤醒，连接手工制瓷、图像叙事与全球观看。',
+    ai:'请留意瓶身曲线与青花留白：山水并不是贴在器物表面，而是随着器形转动，成为可以被环绕观看的图像空间。',
+    hotspots:[
+      { id:'glaze', label:'釉面', desc:'透明釉在高温中融化并包覆青花纹样，形成温润反光。' },
+      { id:'motif', label:'山水纹', desc:'山石、楼阁和花卉纹样把二维绘画转化为器物表面的连续叙事。' },
+      { id:'firing', label:'高温烧成', desc:'含钴颜料在高温中稳定显色，形成青花瓷标志性的蓝白对比。' },
+    ],
+    pos:new THREE.Vector3(0,0,-5.2),
+    shape:'bluewhite-vase',
+    scale:1.32,
+    primary:true,
+  },
+  {
+    id:'jian-ware',
+    nameCn:'建窑油滴盏',
+    nameEn:'Jian Ware Oil-Spot Tea Bowl',
+    categoryZh:'陶瓷',
+    categoryEn:'Ceramics',
+    chapter:'CHAPTER I · 陶瓷',
+    tags:['建盏','油滴','黑釉','宋代茶文化'],
+    desc:'黑釉如夜，斑纹如星。建盏凝结茶事、窑火与宋代审美。',
+    ai:'油滴斑不是人工绘制，而是釉料在窑火与冷却过程中的自然结晶。',
+    hotspots:[{ id:'oil', label:'油滴斑', desc:'铁质晶体在釉面析出，形成近似星点的银灰斑纹。' }],
+    pos:new THREE.Vector3(-2.8,0,-8.1),
+    shape:'bowl',
+    scale:1.05,
+  },
+  {
+    id:'tang-sancai-demo',
+    nameCn:'唐三彩凤首壶',
+    nameEn:'Tang Sancai Phoenix-Head Ewer',
+    categoryZh:'陶瓷',
+    categoryEn:'Ceramics',
+    chapter:'CHAPTER I · 陶瓷',
+    tags:['唐三彩','低温铅釉','色釉流淌'],
+    desc:'黄、绿、褐釉在烧制中自然流动，呈现唐代陶器开放而丰盈的装饰语言。',
+    ai:'三彩的美感来自颜色之间不可完全控制的流淌和交界。',
+    hotspots:[{ id:'flow', label:'色釉流淌', desc:'低温釉在烧制中形成自然过渡，后续可替换为真实 Hi3D 模型。' }],
+    pos:new THREE.Vector3(2.8,0,-8.4),
+    shape:'ewer',
+    scale:1.0,
+  },
+];
+ARTIFACTS.earth = ARTIFACTS.ceramics;
+
+const MODEL_ASSET_BASES = [
+  '3dgs单体模型',
+  './3dgs单体模型',
+  '/3dgs单体模型',
+];
+const HI3D_OBJ_ASSET_BASES = [
+  'model-format-tests/hi3d-gargoyle',
+  '../模型素材/Hitem3d-1777287637135',
+  '/模型素材/Hitem3d-1777287637135',
+];
+
+ARTIFACTS['model-lab'] = []; // hub — no PLY loading
+const LAB_ROOMS_DATA = [
+  { sceneId:'lab-doggy',     artId:'model-doggy',     file:'Doggy.ply',       nameCn:'Doggy 点云',       nameEn:'Doggy 3DGS',          tags:['PLY','犬类','姿态'],    desc:'测试四足动物点云的姿态、轮廓和质感表达。',         hotspots:[{id:'p',label:'PLY格式',desc:'PLYLoader 读取位置和颜色属性。'}] },
+  { sceneId:'lab-dragon',    artId:'model-dragon',    file:'Dragon baby.ply', nameCn:'Dragon Baby 点云', nameEn:'Dragon Baby 3DGS',    tags:['PLY','生物','曲面'],   desc:'测试曲面细节与轮廓密度。',                         hotspots:[{id:'s',label:'尺度归一',desc:'载入后自动居中并缩放到展台尺度。'}] },
+  { sceneId:'lab-horse',     artId:'model-horse',     file:'Iron Horse.ply',  nameCn:'Iron Horse 点云',  nameEn:'Iron Horse 3DGS',     tags:['PLY','硬表面','金属'], desc:'测试金属硬表面对象的点云轮廓和展台距离。',         hotspots:[{id:'c',label:'颜色兜底',desc:'无 color 属性时自动使用统一暖金材质。'}] },
+  { sceneId:'lab-oldpeople', artId:'model-oldpeople', file:'oldpeople.ply',    nameCn:'人物点云',         nameEn:'Oldpeople 3DGS',      tags:['PLY','人物','授权'],   desc:'测试人物类模型的尺度、距离和观看边界。',           hotspots:[{id:'e',label:'授权说明',desc:'正式上线前应补充模型来源与版权授权状态。'}] },
+  { sceneId:'lab-venus',     artId:'model-venus',     file:'Venus.ply',        nameCn:'Venus 点云',       nameEn:'Venus 3DGS',          tags:['PLY','雕塑','灯光'],   desc:'测试雕塑体块在局部射灯和暖色展墙下的体积感。',     hotspots:[{id:'l',label:'灯光测试',desc:'观察点云在 SpotLight 下的层次。'}] },
+  { sceneId:'lab-yongzheng', artId:'model-yongzheng', file:'yongzheng.ply',    nameCn:'雍正点云',         nameEn:'Yongzheng 3DGS',      tags:['PLY','肖像','档案'],   desc:'测试历史人物/肖像类模型的展陈距离和注释层。',       hotspots:[{id:'x',label:'语境区分',desc:'建议模型测试馆与正式展览保持清晰分区。'}] },
+  {
+    sceneId:'lab-hi3d-obj',
+    artId:'model-hi3d-obj',
+    file:'model.obj',
+    materialFile:'model.mtl',
+    textureFile:'diffuse_0.png',
+    format:'OBJ',
+    loaderType:'mesh',
+    loaderLabel:'OBJLoader + MTLLoader',
+    assetBases:HI3D_OBJ_ASSET_BASES,
+    nameCn:'Hi3D 石像鬼 OBJ',
+    nameEn:'Hi3D Gargoyle OBJ Mesh',
+    categoryZh:'格式测试',
+    categoryEn:'Format Test',
+    chapter:'MODEL LAB · OBJ 网格模型',
+    tags:['OBJ','MTL','PNG贴图','Hi3D v2.1','非3DGS'],
+    desc:'对应图 2 的下载格式：当前本地素材是 OBJ + MTL + 4096 贴图，不是 3DGS 点云。这里用于验证网格模型在测试展厅里的加载、贴图、尺度归一和展台关系。',
+    ai:'点击展台加载 model.obj。该模型约 1,043,120 顶点 / 1,996,116 面，走 Three.js 网格加载链路，不走 Spark SplatMesh。',
+    hotspots:[
+      {id:'format',label:'OBJ格式',desc:'图 2 的格式菜单包含 glb / obj / stl / fbx / usdz / 3mf；当前先测试已下载的 OBJ。'},
+      {id:'material',label:'MTL + PNG贴图',desc:'model.mtl 引用 diffuse_0.png，加载后应保留石像表面的颜色与苔痕。'},
+      {id:'boundary',label:'非3DGS',desc:'这里明确作为 mesh format test，避免把网格模型误标为 3DGS。'},
+    ],
+    supportedFormats:['glb','obj','stl','fbx','usdz','3mf'],
+  },
+];
+const MODEL_LAB_PEDESTAL_TOP_Y = 0.76;
+const MODEL_LAB_DEFAULT_TRANSFORM = {
+  fitMax:1.9,
+  fallbackFitMax:1.55,
+  baseY:MODEL_LAB_PEDESTAL_TOP_Y,
+  fallbackBaseY:MODEL_LAB_PEDESTAL_TOP_Y,
+  offset:[0,0,0],
+  rotation:[0,0,0],
+  scale:1,
+};
+const MODEL_LAB_TRANSFORMS = {
+  'model-doggy':     { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-dragon':    { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-horse':     { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-oldpeople': { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-venus':     { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-yongzheng': { fitMax:1.9, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+  'model-hi3d-obj':  { fitMax:2.3, baseY:MODEL_LAB_PEDESTAL_TOP_Y, offset:[0,0,0], rotation:[0,0,0], scale:1 },
+};
+function normalizeVector3Array(value, fallback=[0,0,0]) {
+  const source = Array.isArray(value) ? value : fallback;
+  return [0,1,2].map(i => Number.isFinite(Number(source[i])) ? Number(source[i]) : Number(fallback[i] || 0));
+}
+function getModelLabTransform(data, options={}) {
+  const modelTransform = {
+    ...MODEL_LAB_DEFAULT_TRANSFORM,
+    ...(MODEL_LAB_TRANSFORMS[data?.id] || {}),
+    ...(data?.modelTransform || {}),
+  };
+  const fitMax = Number(modelTransform[options.fallback ? 'fallbackFitMax' : 'fitMax']);
+  const baseY = Number(modelTransform[options.fallback ? 'fallbackBaseY' : 'baseY']);
+  const scale = Number(modelTransform.scale);
+  return {
+    fitMax:Number.isFinite(fitMax) ? fitMax : MODEL_LAB_DEFAULT_TRANSFORM.fitMax,
+    baseY:Number.isFinite(baseY) ? baseY : MODEL_LAB_DEFAULT_TRANSFORM.baseY,
+    offset:normalizeVector3Array(modelTransform.offset),
+    rotation:normalizeVector3Array(modelTransform.rotation),
+    scale:Number.isFinite(scale) ? scale : 1,
+  };
+}
+LAB_ROOMS_DATA.forEach(d=>{
+  ARTIFACTS[d.sceneId]=[{
+    id:d.artId, nameCn:d.nameCn, nameEn:d.nameEn,
+    categoryZh:d.categoryZh || '模型测试', categoryEn:d.categoryEn || 'Model Lab', chapter:d.chapter || 'MODEL LAB · PLY 点云测试',
+    tags:d.tags, desc:d.desc, ai:d.ai || ('点击展台加载 '+d.file+'（约60MB，稍候片刻）。'),
+    hotspots:d.hotspots,
+    pos:new THREE.Vector3(0,0,-3), shape:'point-cloud-placeholder', scale:1.0, modelFile:d.file,
+    modelFormat:d.format || 'PLY',
+    loaderType:d.loaderType || 'spark-splat',
+    loaderLabel:d.loaderLabel || 'SparkRenderer 2.0',
+    modelAssetBases:d.assetBases,
+    materialFile:d.materialFile,
+    textureFile:d.textureFile,
+    supportedFormats:d.supportedFormats,
+    modelTransform:{...(MODEL_LAB_TRANSFORMS[d.artId] || MODEL_LAB_DEFAULT_TRANSFORM)},
+    primary:true,
+  }];
+});
+ARTIFACTS['lab-world']=[{
+  id:'world-stream-slot',
+  nameCn:'世界模型流式测试位',
+  nameEn:'Spark RAD Streaming Slot',
+  categoryZh:'世界模型',
+  categoryEn:'World Model',
+  chapter:'SPARK 2.0 · WORLD STREAM',
+  tags:['RAD','Streaming LoD','World Scene'],
+  desc:'为后续自有世界模型预留的流式大场景测试位。导出 RAD 后在配置中替换 streamFile 即可接入。',
+  ai:'Spark 2.0 的大场景建议使用 RAD LoD 数据，而不是直接把完整 PLY 作为单体展品加载。',
+  hotspots:[{id:'rad',label:'RAD 路径',desc:'建议路径：assets/vr/worlds/<world-id>/<world-id>.rad。'}],
+  pos:new THREE.Vector3(0,0,-4),
+  shape:'point-cloud-placeholder',
+  scale:1.0,
+  streamFile:'assets/vr/worlds/heritage-realm/heritage-realm.rad',
+  primary:true,
+}];
+
+function buildDoorwaysResolved(sceneId) {
+  document.querySelectorAll('.door-label').forEach(el => el.remove());
+  const normalizedId = normalizeSceneId(sceneId);
+  const doors = ROOMS[normalizedId]?.doors || [];
+  const sceneRecord = SCENES_BUILT?.[normalizedId];
+
+  return doors.map(d => {
+    const pos = new THREE.Vector3(...d.pos);
+    const half = new THREE.Vector3(d.halfX || 1.1, 1.4, d.halfZ || 0.9);
+    const box = new THREE.Box3(pos.clone().sub(half), pos.clone().add(half));
+    const el = document.createElement('div');
+    el.className = 'door-label';
+    el.style.cssText = [
+      'position:fixed','left:50%','bottom:56px','transform:translateX(-50%)',
+      'background:rgba(22,18,10,0.88)','backdrop-filter:blur(8px)',
+      'border:0.5px solid rgba(200,160,80,0.55)','padding:11px 28px',
+      'font-size:11px','letter-spacing:0.14em','color:#C8A050',
+      'text-transform:uppercase','opacity:0','transition:opacity 0.25s',
+      'pointer-events:none','z-index:160','white-space:nowrap',
+    ].join(';');
+    el.textContent = `按 E 进入 · ${d.label}`;
+    document.body.appendChild(el);
+    const visual = sceneRecord?.scene?.userData?.doorVisuals?.[normalizeSceneId(d.targetRoom)];
+    return {
+      box,
+      targetRoom: normalizeSceneId(d.targetRoom),
+      labelEl: el,
+      setNear: visual?.userData?.setNear,
+    };
+  });
+}
+
+// 1. RENDERER & COMPOSER
+// ══════════════════════════════════════════════
+const DEFAULT_RENDER_PIXEL_RATIO_CAP = 1.5;
+const MODEL_LAB_RENDER_PIXEL_RATIO_CAP = 1.15;
+function rendererPixelRatioForScene(sceneId='grand') {
+  const cap = isModelLabScene(sceneId) ? MODEL_LAB_RENDER_PIXEL_RATIO_CAP : DEFAULT_RENDER_PIXEL_RATIO_CAP;
+  return Math.min(window.devicePixelRatio || 1, cap);
+}
+function applyRendererPixelRatio(sceneId='grand') {
+  renderer.setPixelRatio(rendererPixelRatioForScene(sceneId));
+}
+
+const renderer = new THREE.WebGLRenderer({ antialias:false, powerPreference:'high-performance' });
+applyRendererPixelRatio('grand');
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+renderer.domElement.style.cssText = 'position:fixed;inset:0;';
+
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+const GALLERY_ENV_MAP = pmremGenerator.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 150);
+camera.position.set(0, 1.7, 4);
+
+const clock = new THREE.Clock();
+const controls = new FirstPersonControls(camera);
+
+let SparkRendererClass=null;
+let SparkSplatMeshClass=null;
+let sparkRenderer=null;
+let sparkReadyPromise=null;
+
+function attachSparkRenderer(scene) {
+  if(sparkRenderer && scene && sparkRenderer.parent !== scene) scene.add(sparkRenderer);
+}
+
+async function ensureSparkRenderer() {
+  if(sparkReadyPromise)return sparkReadyPromise;
+  sparkReadyPromise = import('@sparkjsdev/spark').then(mod=>{
+    SparkRendererClass = mod.SparkRenderer || null;
+    SparkSplatMeshClass = mod.SplatMesh || mod.SparkSplatMesh || null;
+    if(!SparkSplatMeshClass) throw new Error('SplatMesh export not found in @sparkjsdev/spark');
+    if(SparkRendererClass && !sparkRenderer){
+      sparkRenderer = new SparkRendererClass({
+        renderer,
+        maxStdDev: Math.sqrt(5),
+        minAlpha: 0.5 * (1.0 / 255.0),
+        minPixelRadius: 0.24,
+        blurAmount: 0.08,
+        lodSplatScale: 0.65,
+        lodRenderScale: 1.25,
+        coneFov0: 55,
+        coneFov: 120,
+        coneFoveate: 0.45,
+        behindFoveate: 0.22,
+      });
+      attachSparkRenderer(activeSceneObj?.scene);
+    }
+    return mod;
+  }).catch(err=>{
+    console.warn('Spark renderer unavailable; keeping procedural placeholders.', err);
+    return null;
+  });
+  return sparkReadyPromise;
+}
+
+let composer = null;
+function rebuildComposer(scene) {
+  attachSparkRenderer(scene);
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.28, 0.5, 0.88);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+}
+
+// ══════════════════════════════════════════════
+// 2. SHARED HELPERS
+// ══════════════════════════════════════════════
+const VERT = `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
+
+function makeCircleTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(0.45,'rgba(255,255,255,0.8)'); g.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0,0,64,64);
+  return new THREE.CanvasTexture(c);
+}
+const CIRCLE_TEX = makeCircleTexture();
+
+// ══════════════════════════════════════════════
+// 3. SCENE BUILDERS
+// ══════════════════════════════════════════════
+
+function buildGround(scene, config={}) {
+  const { w=60, d=80, tileColor=0xEADFC7, groutColor=0xC8B898, tilesX=10, tilesZ=18 } = config;
+  const mat = new THREE.ShaderMaterial({
+    uniforms: {
+      uTile:  { value:new THREE.Color(tileColor)  },
+      uGrout: { value:new THREE.Color(groutColor) },
+      uCount: { value:new THREE.Vector2(tilesX, tilesZ) },
+    },
+    vertexShader: VERT,
+    fragmentShader: `
+      uniform vec3 uTile,uGrout; uniform vec2 uCount; varying vec2 vUv;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+      void main(){
+        vec2 t=fract(vUv*uCount); float g=step(0.97,max(t.x,t.y));
+        float n=h(floor(vUv*uCount))*0.032;
+        gl_FragColor=vec4(mix(uTile+n,uGrout,g),1.);
+      }
+    `,
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w,d), mat);
+  mesh.rotation.x = -Math.PI/2; mesh.receiveShadow=true;
+  scene.add(mesh);
+}
+
+function ensureSolidColliders(scene) {
+  scene.userData.solidColliders ||= [];
+  return scene.userData.solidColliders;
+}
+
+function addSolidCollider(scene, min, max) {
+  const box = new THREE.Box3(new THREE.Vector3(...min), new THREE.Vector3(...max));
+  ensureSolidColliders(scene).push(box);
+  return box;
+}
+
+function createProceduralPlasterMaterial(color=0xEDE2D0) {
+  const mat = new THREE.MeshStandardMaterial({
+    color,
+    roughness:0.92,
+    metalness:0.0,
+    side:THREE.DoubleSide,
+  });
+  mat.defines = { USE_UV:'' };
+  mat.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <common>',
+      `#include <common>
+      float plasterHash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float plasterNoise(vec2 p){
+        vec2 i=floor(p), f=fract(p);
+        float a=plasterHash(i), b=plasterHash(i+vec2(1.,0.));
+        float c=plasterHash(i+vec2(0.,1.)), d=plasterHash(i+vec2(1.,1.));
+        vec2 u=f*f*(3.-2.*f);
+        return mix(a,b,u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;
+      }
+      float plasterFbm(vec2 p){
+        float v=0., a=.5;
+        for(int i=0;i<5;i++){v+=a*plasterNoise(p);p*=2.17;a*=.52;}
+        return v;
+      }`
+    );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <color_fragment>',
+      `#include <color_fragment>
+      float grain = plasterFbm(vUv * 18.0) * 0.045 + plasterNoise(vUv * 220.0) * 0.018;
+      float edge = min(min(vUv.x,1.0-vUv.x),min(vUv.y,1.0-vUv.y));
+      diffuseColor.rgb *= 0.96 + grain;
+      diffuseColor.rgb *= 0.94 + smoothstep(0.0,0.18,edge) * 0.08;`
+    );
+  };
+  mat.customProgramCacheKey = () => 'xemta-procedural-plaster-v1';
+  return mat;
+}
+
+function buildMicrocementFloor(scene, config={}) {
+  const { w=14, d=24, color=0xD8D0C2 } = config;
+  const mat = createProceduralPlasterMaterial(color);
+  mat.roughness = 0.86;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w,d,1,1), mat);
+  mesh.rotation.x = -Math.PI/2;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  const gridMat = new THREE.LineBasicMaterial({ color:0xBFAF92, transparent:true, opacity:0.18 });
+  const pts = [];
+  for(let x=-w/2;x<=w/2+0.01;x+=2){
+    pts.push(x,0.012,-d/2, x,0.012,d/2);
+  }
+  for(let z=-d/2;z<=d/2+0.01;z+=2){
+    pts.push(-w/2,0.012,z, w/2,0.012,z);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+  scene.add(new THREE.LineSegments(geo, gridMat));
+}
+
+function createBlueWhiteVaseTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#F7F3E8';
+  ctx.fillRect(0,0,1024,512);
+  ctx.strokeStyle = '#315F82';
+  ctx.lineWidth = 8;
+  ctx.globalAlpha = 0.85;
+  for(let y of [72, 430]){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    for(let x=0;x<=1024;x+=24) ctx.lineTo(x, y + Math.sin(x*0.018)*8);
+    ctx.stroke();
+  }
+  ctx.lineWidth = 5;
+  for(let i=0;i<5;i++){
+    const ox = 80 + i*190;
+    ctx.beginPath();
+    ctx.moveTo(ox,345);
+    for(let s=0;s<90;s++){
+      const x = ox + s*1.6;
+      const y = 330 - Math.abs(Math.sin(s*0.08+i))*92 - Math.abs(Math.sin(s*0.17))*34;
+      s===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.font = '28px Georgia';
+    ctx.fillStyle = 'rgba(49,95,130,0.58)';
+    ctx.fillText('山', ox+35, 355);
+  }
+  ctx.globalAlpha = 0.65;
+  for(let i=0;i<32;i++){
+    const x = 30 + Math.random()*964;
+    const y = 115 + Math.random()*250;
+    ctx.beginPath();
+    ctx.ellipse(x,y,8+Math.random()*8,3+Math.random()*5,Math.random()*Math.PI,0,Math.PI*2);
+    ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  return tex;
+}
+
+function createLandscapeDiscTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 768;
+  const ctx = canvas.getContext('2d');
+  const g = ctx.createRadialGradient(384,384,20,384,384,384);
+  g.addColorStop(0,'#FFF9EA');
+  g.addColorStop(0.58,'#EFE2C7');
+  g.addColorStop(1,'#D9C9A8');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,768,768);
+  ctx.strokeStyle = 'rgba(80,66,42,0.28)';
+  ctx.lineWidth = 4;
+  for(let l=0;l<4;l++){
+    ctx.beginPath();
+    for(let i=0;i<=110;i++){
+      const x = (i/110)*768;
+      const y = 560-l*78-Math.abs(Math.sin(i*0.09+l))*95-Math.abs(Math.sin(i*0.17))*34;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function createFloatingLabelElement(artifact) {
+  const el = document.createElement('div');
+  el.className = 'artifact-label';
+  el.innerHTML = `
+    <div class="kicker">${artifact.categoryZh || '陶瓷'} ${artifact.categoryEn || 'CERAMICS'}</div>
+    <div class="name">${artifact.nameCn}</div>
+  `;
+  document.getElementById('artifact-ui-layer').appendChild(el);
+  return el;
+}
+
+function buildCeramicsBackdrop(scene) {
+  const disc = new THREE.Mesh(
+    new THREE.CircleGeometry(2.25,96),
+    new THREE.MeshBasicMaterial({ map:createLandscapeDiscTexture(), transparent:true, opacity:0.72 })
+  );
+  disc.position.set(0,3.05,-11.93);
+  scene.add(disc);
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(2.28,0.035,12,128),
+    new THREE.MeshStandardMaterial({ color:0xC8A050, emissive:0xC8A050, emissiveIntensity:0.08, roughness:0.26, metalness:0.55 })
+  );
+  ring.position.set(0,3.05,-11.90);
+  scene.add(ring);
+  const glow = new THREE.PointLight(0xFFE9B8,1.25,7.5,2);
+  glow.position.set(0,3.1,-11.25);
+  scene.add(glow);
+}
+
+function buildVolumetricBeam(scene, pos) {
+  const mat = new THREE.ShaderMaterial({
+    transparent:true,
+    depthWrite:false,
+    side:THREE.DoubleSide,
+    blending:THREE.AdditiveBlending,
+    uniforms:{ uColor:{ value:new THREE.Color(0xFFF2C8) } },
+    vertexShader:VERT,
+    fragmentShader:`
+      uniform vec3 uColor; varying vec2 vUv;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+      void main(){
+        float edge=smoothstep(0.52,0.08,abs(vUv.x-0.5));
+        float fade=smoothstep(1.0,0.18,vUv.y);
+        float dust=h(floor(vUv*vec2(28.,80.)))*0.18;
+        gl_FragColor=vec4(uColor,(edge*fade*0.10)+dust*edge*0.025);
+      }
+    `,
+  });
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(1.0,4.2,64,1,true), mat);
+  beam.position.set(pos.x,3.15,pos.z);
+  beam.rotation.x = Math.PI;
+  beam.renderOrder = 12;
+  beam.frustumCulled = false;
+  scene.add(beam);
+  return beam;
+}
+
+function buildGlassVitrine(scene, pos) {
+  const group = new THREE.Group();
+  group.position.copy(pos);
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color:0xF9F4E8,
+    transparent:true,
+    opacity:0.34,
+    roughness:0.03,
+    metalness:0,
+    transmission:0.72,
+    ior:1.48,
+    thickness:0.08,
+    envMap:GALLERY_ENV_MAP,
+    envMapIntensity:1.12,
+    side:THREE.FrontSide,
+    depthWrite:false,
+  });
+  const edgeMat = new THREE.MeshStandardMaterial({ color:0xC8A050, roughness:0.32, metalness:0.62 });
+  const W=1.35,D=1.35,H=1.72,Y=1.66;
+  const panes = [
+    { geo:new THREE.PlaneGeometry(W,H), p:[0,Y,D/2], r:[0,0,0] },
+    { geo:new THREE.PlaneGeometry(W,H), p:[0,Y,-D/2], r:[0,Math.PI,0] },
+    { geo:new THREE.PlaneGeometry(D,H), p:[-W/2,Y,0], r:[0,Math.PI/2,0] },
+    { geo:new THREE.PlaneGeometry(D,H), p:[W/2,Y,0], r:[0,-Math.PI/2,0] },
+    { geo:new THREE.PlaneGeometry(W,D), p:[0,Y+H/2,0], r:[Math.PI/2,0,0] },
+  ];
+  panes.forEach(({geo,p,r})=>{
+    const pane = new THREE.Mesh(geo, glassMat);
+    pane.position.set(...p);
+    pane.rotation.set(...r);
+    group.add(pane);
+  });
+  [[-W/2,-D/2],[-W/2,D/2],[W/2,-D/2],[W/2,D/2]].forEach(([x,z])=>{
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(0.025,H,0.025), edgeMat);
+    edge.position.set(x,Y,z);
+    group.add(edge);
+  });
+  scene.add(group);
+  addSolidCollider(scene, [pos.x-0.82,0,pos.z-0.82], [pos.x+0.82,2.6,pos.z+0.82]);
+  return group;
+}
+
+function buildSparkModelStage(scene, pos) {
+  const group = new THREE.Group();
+  const panelMat = new THREE.MeshBasicMaterial({
+    color:0x050403,
+    transparent:true,
+    opacity:0.92,
+    side:THREE.DoubleSide,
+  });
+  const panel = new THREE.Mesh(new THREE.PlaneGeometry(4.2,3.35), panelMat);
+  panel.position.set(0,2.25,-1.28);
+  group.add(panel);
+
+  const frameMat = new THREE.MeshStandardMaterial({color:0xC8A050,roughness:0.28,metalness:0.55});
+  [[0,1.72,4.35,0.035],[0,-1.72,4.35,0.035],[-2.18,0,0.035,3.45],[2.18,0,0.035,3.45]].forEach(([x,y,w,h])=>{
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(w,h,0.035), frameMat);
+    bar.position.set(x,2.25+y,-1.24);
+    group.add(bar);
+  });
+
+  const plinth = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.04,1.22,0.26,64),
+    new THREE.MeshStandardMaterial({color:0x241C12,roughness:0.72,metalness:0.05})
+  );
+  plinth.position.set(0,0.13,0);
+  group.add(plinth);
+
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(1.12,0.012,8,96),
+    new THREE.MeshBasicMaterial({color:0xD8B15C,transparent:true,opacity:0.72})
+  );
+  ring.rotation.x = Math.PI/2;
+  ring.position.y = 0.285;
+  group.add(ring);
+
+  const key = new THREE.PointLight(0xFFE0A0,2.0,5.2,1.7);
+  key.position.set(0,2.3,1.65);
+  group.add(key);
+  const rim = new THREE.PointLight(0x6AA8FF,0.7,4.5,1.6);
+  rim.position.set(-1.55,1.8,-1.2);
+  group.add(rim);
+
+  group.position.copy(pos);
+  scene.add(group);
+  return group;
+}
+
+function buildMoonGate(scene, opts) {
+  const { position, rotationY=0, targetRoom='ceramics' } = opts;
+  const shape = new THREE.Shape();
+  shape.absarc(0,0,1.55,0,Math.PI*2,false);
+  const hole = new THREE.Path();
+  hole.absarc(0,0,1.08,0,Math.PI*2,true);
+  shape.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(shape,{ depth:0.34, bevelEnabled:true, bevelSize:0.025, bevelThickness:0.018, bevelSegments:3 });
+  geo.center();
+  const mat = createProceduralPlasterMaterial(0xE9DECB);
+  const group = new THREE.Group();
+  group.position.copy(position);
+  group.rotation.y = rotationY;
+  const ring = new THREE.Mesh(geo, mat);
+  ring.castShadow = ring.receiveShadow = true;
+  group.add(ring);
+  const gold = new THREE.Mesh(new THREE.TorusGeometry(1.11,0.018,10,128), new THREE.MeshStandardMaterial({
+    color:0xC8A050, emissive:0xC8A050, emissiveIntensity:0.10, roughness:0.24, metalness:0.62,
+  }));
+  group.add(gold);
+  const veilCvs=document.createElement('canvas'); veilCvs.width=veilCvs.height=256;
+  const vCtx=veilCvs.getContext('2d');
+  const vg=vCtx.createRadialGradient(128,128,0,128,128,128);
+  vg.addColorStop(0,'#FFF4E0'); vg.addColorStop(0.55,'#F5E8CE'); vg.addColorStop(1,'#E0CEAD');
+  vCtx.fillStyle=vg; vCtx.fillRect(0,0,256,256);
+  const veilTex=new THREE.CanvasTexture(veilCvs); veilTex.colorSpace=THREE.SRGBColorSpace;
+  const veil = new THREE.Mesh(new THREE.CircleGeometry(1.02,72), new THREE.MeshBasicMaterial({
+    map:veilTex, transparent:true, opacity:0.82, depthWrite:false, side:THREE.DoubleSide,
+  }));
+  veil.position.z = -0.19;
+  group.add(veil);
+  const signCanvas = document.createElement('canvas');
+  signCanvas.width = 512; signCanvas.height = 180;
+  const ctx = signCanvas.getContext('2d');
+  ctx.clearRect(0,0,512,180);
+  ctx.fillStyle = 'rgba(22,18,10,0.74)';
+  ctx.fillRect(0,0,512,180);
+  ctx.strokeStyle = 'rgba(200,160,80,0.75)';
+  ctx.strokeRect(8,8,496,164);
+  ctx.fillStyle = '#C8A050';
+  ctx.font = 'bold 30px Georgia';
+  ctx.fillText('CHAPTER I · 陶瓷', 38, 70);
+  ctx.fillStyle = 'rgba(245,240,232,0.76)';
+  ctx.font = 'italic 28px Georgia';
+  ctx.fillText('Ceramics', 38, 118);
+  const signTex = new THREE.CanvasTexture(signCanvas);
+  signTex.colorSpace = THREE.SRGBColorSpace;
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(1.8,0.64), new THREE.MeshBasicMaterial({ map:signTex, transparent:true }));
+  sign.position.set(0,2.02,0.03);
+  group.add(sign);
+  const backLight = new THREE.PointLight(0xFFE0A6,1.4,4.6,2);
+  backLight.position.set(0,1.35,-0.42);
+  group.add(backLight);
+  group.userData.targetRoom = targetRoom;
+  group.userData.setNear = near => {
+    gold.material.emissiveIntensity = near ? 0.36 : 0.10;
+    veil.material.opacity = near ? 0.30 : 0.18;
+    sign.material.opacity = near ? 1.0 : 0.82;
+  };
+  scene.add(group);
+  scene.userData.doorVisuals ||= {};
+  scene.userData.doorVisuals[targetRoom] = group;
+  return group;
+}
+
+function buildModelLabSign(scene) {
+  const group = new THREE.Group();
+  group.position.set(6.88,0,3.5);
+  const panelCanvas = document.createElement('canvas');
+  panelCanvas.width = 640;
+  panelCanvas.height = 360;
+  const ctx = panelCanvas.getContext('2d');
+  ctx.fillStyle = 'rgba(22,18,10,0.88)';
+  ctx.fillRect(0,0,640,360);
+  ctx.strokeStyle = 'rgba(200,160,80,0.68)';
+  ctx.strokeRect(16,16,608,328);
+  ctx.fillStyle = '#C8A050';
+  ctx.font = 'bold 34px Georgia';
+  ctx.fillText('MODEL LAB', 44, 92);
+  ctx.font = '28px Georgia';
+  ctx.fillText('模型格式测试馆', 44, 144);
+  ctx.fillStyle = 'rgba(245,240,232,0.68)';
+  ctx.font = '18px sans-serif';
+  ctx.fillText('按 E 进入 · PLY / OBJ / RAD test rooms', 44, 218);
+  ctx.fillText('3DGS PLY · Hi3D OBJ · World streaming slot', 44, 258);
+  const tex = new THREE.CanvasTexture(panelCanvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const panel = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.82,1.02),
+    new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide})
+  );
+  panel.position.y = 1.92;
+  panel.rotation.y = -Math.PI / 2;
+  panel.renderOrder = 4;
+  const glow = new THREE.PointLight(0xFFE0A6,0.8,2.8,2);
+  glow.position.set(-0.36,1.92,0);
+  group.add(panel,glow);
+  scene.add(group);
+  return group;
+}
+
+function buildModelLabBackdrop(scene) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ECE3D4';
+  ctx.fillRect(0,0,1024,512);
+  ctx.strokeStyle = 'rgba(139,105,20,0.18)';
+  ctx.lineWidth = 2;
+  for(let i=0;i<18;i++){
+    const y = 60 + i*23;
+    ctx.beginPath();
+    ctx.moveTo(80,y);
+    ctx.lineTo(944,y + Math.sin(i)*8);
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(26,22,12,0.68)';
+  ctx.font = 'bold 56px Georgia';
+  ctx.fillText('MODEL FORMAT TESTING', 88, 210);
+  ctx.fillStyle = 'rgba(139,105,20,0.78)';
+  ctx.font = '28px sans-serif';
+  ctx.fillText('PLY / OBJ / GLB 格式验证 · 尺度归一 · 授权检查', 92, 270);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const wall = new THREE.Mesh(
+    new THREE.PlaneGeometry(7.4,3.7),
+    new THREE.MeshBasicMaterial({map:tex})
+  );
+  wall.position.set(0,3.15,-11.88);
+  scene.add(wall);
+}
+
+function buildSkyDome(scene, top=0xF5F0E8, bot=0xEDE8DC) {
+  const mat = new THREE.ShaderMaterial({
+    side:THREE.BackSide,
+    uniforms:{ uTop:{value:new THREE.Color(top)}, uBot:{value:new THREE.Color(bot)} },
+    vertexShader:`varying float vY;void main(){vY=position.y;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform vec3 uTop,uBot;varying float vY;void main(){gl_FragColor=vec4(mix(uBot,uTop,smoothstep(-20.,50.,vY)),1.);}`,
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(100,24,12), mat));
+}
+
+function buildMountainLayers(scene) {
+  [
+    { z:-22, alpha:0.20, r:0.60,g:0.55,b:0.50 },
+    { z:-32, alpha:0.13, r:0.70,g:0.66,b:0.62 },
+    { z:-42, alpha:0.08, r:0.80,g:0.77,b:0.73 },
+    { z:-52, alpha:0.04, r:0.88,g:0.85,b:0.82 },
+  ].forEach(l => {
+    const canvas = document.createElement('canvas');
+    canvas.width=2048; canvas.height=512;
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath(); ctx.moveTo(0, 512);
+    const segs=64;
+    for(let i=0;i<=segs;i++){
+      const x=(i/segs)*canvas.width;
+      const y = 512 - (Math.abs(Math.sin(i*0.18))*0.42 + Math.abs(Math.sin(i*0.31+0.8))*0.28 + Math.abs(Math.sin(i*0.07+1.4))*0.22)*canvas.height*0.62;
+      ctx.lineTo(x, Math.max(y, 60));
+    }
+    ctx.lineTo(canvas.width,512); ctx.closePath();
+    ctx.fillStyle=`rgba(${Math.round(l.r*255)},${Math.round(l.g*255)},${Math.round(l.b*255)},${l.alpha+0.12})`;
+    ctx.fill();
+    const tex = new THREE.CanvasTexture(canvas); tex.colorSpace=THREE.SRGBColorSpace;
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(120,14),
+      new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:l.alpha,depthWrite:false})
+    );
+    mesh.position.set(0,5,l.z);
+    scene.add(mesh);
+  });
+}
+
+function buildFloatingMountains(scene) {
+  const configs=[
+    {pos:new THREE.Vector3( 34,18,-26),scale:1.1},
+    {pos:new THREE.Vector3(  5,22,-38),scale:0.82},
+    {pos:new THREE.Vector3(-28,14,-32),scale:0.68},
+  ];
+  return configs.map((cfg,idx)=>{
+    const g = new THREE.Group();
+    const pts=[];
+    for(let i=0;i<=18;i++){
+      const t=i/18;
+      const r=t<0.18?t/0.18*2.5:t<0.65?2.5*(1-(t-0.18)/0.47*0.58):(1-t)/0.35*1.0;
+      pts.push(new THREE.Vector2(Math.max(0,r),t*9-2));
+    }
+    const bMat=new THREE.ShaderMaterial({
+      side:THREE.DoubleSide,transparent:true,depthWrite:false,
+      vertexShader:VERT,
+      fragmentShader:`
+        varying vec2 vUv;
+        void main(){
+          float alpha=smoothstep(0.,0.1,vUv.y)*0.86;
+          vec3 d=vec3(0.44,0.40,0.36),l=vec3(0.88,0.84,0.80);
+          gl_FragColor=vec4(mix(l,d,smoothstep(0.12,0.76,vUv.y)),alpha);
+        }
+      `,
+    });
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(pts,10),bMat));
+    // cloud wisps at base
+    for(let c=0;c<2;c++){
+      const cm=new THREE.Mesh(
+        new THREE.PlaneGeometry(3.5+c*1.4,0.65+c*0.25),
+        new THREE.MeshBasicMaterial({color:0xF5F0E8,transparent:true,opacity:0.3-c*0.08,depthWrite:false})
+      );
+      cm.position.y=-1.5+c*0.3; cm.rotation.x=-0.06;
+      g.add(cm);
+    }
+    g.position.copy(cfg.pos); g.scale.setScalar(cfg.scale);
+    scene.add(g);
+    return {group:g,baseY:cfg.pos.y,phase:idx*2.1};
+  });
+}
+
+function buildPath(scene) {
+  const curve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3( 0,  0, 4.5),
+    new THREE.Vector3(-1.4,0,-0.5),
+    new THREE.Vector3( 0,  0,-6),
+    new THREE.Vector3( 2.2,0,-12),
+    new THREE.Vector3( 0,  0,-18),
+    new THREE.Vector3(-1.8,0,-24),
+    new THREE.Vector3( 0,  0,-30),
+  ]);
+
+  // Flat ribbon: PlaneGeometry along curve (NOT TubeGeometry)
+  const pts = curve.getPoints(140);
+  const W = 1.8;
+  const positions=[], uvs=[], indices=[];
+  for(let i=0;i<pts.length;i++){
+    const curr=pts[i], next=pts[Math.min(i+1,pts.length-1)];
+    const dir=new THREE.Vector3().subVectors(next,curr).normalize();
+    const perp=new THREE.Vector3(-dir.z,0,dir.x);
+    const t=i/(pts.length-1);
+    positions.push(curr.x-perp.x*W/2, 0.008, curr.z-perp.z*W/2);
+    positions.push(curr.x+perp.x*W/2, 0.008, curr.z+perp.z*W/2);
+    uvs.push(0,t,1,t);
+    if(i<pts.length-1){
+      const b=i*2;
+      indices.push(b,b+1,b+2, b+1,b+3,b+2);
+    }
+  }
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+  geo.setIndex(indices); geo.computeVertexNormals();
+
+  const pathMat=new THREE.ShaderMaterial({
+    uniforms:{ uTime:{value:0}, uFog:{value:new THREE.Color(0xF0EAD8)} },
+    vertexShader:`
+      varying vec2 vUv; varying vec3 vWorld;
+      void main(){vUv=uv;vWorld=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}
+    `,
+    fragmentShader:`
+      uniform float uTime; uniform vec3 uFog; varying vec2 vUv; varying vec3 vWorld;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+      void main(){
+        vec2 tile=fract(vUv*vec2(3.,16.)); float grout=step(0.95,max(tile.x,tile.y));
+        float n=h(floor(vUv*vec2(3.,16.)))*0.025;
+        vec3 stone=vec3(0.88,0.84,0.76)+n, groutC=vec3(0.70,0.66,0.60);
+        vec3 col=mix(stone,groutC,grout*0.55);
+        float cx=abs(vUv.x-0.5);
+        float glow=smoothstep(0.46,0.,cx)*exp(-fract(vUv.y*5.-uTime*0.18)*7.)*0.65;
+        col+=vec3(1.,.92,.62)*glow;
+        float fog=smoothstep(0.,1.,(vWorld.z+10.)/-22.);
+        col=mix(col,uFog,fog*0.65);
+        gl_FragColor=vec4(col,1.);
+      }
+    `,
+    side:THREE.DoubleSide,
+  });
+  scene.add(new THREE.Mesh(geo,pathMat));
+
+  // Edge light dots — use circle texture to avoid square artifacts
+  const edgePosArr=[];
+  for(let i=0;i<80;i++){
+    const t=i/80; const pt=curve.getPoint(t); const tan=curve.getTangent(t);
+    const perp=new THREE.Vector3(-tan.z,0,tan.x).normalize();
+    const side=(i%2===0?1:-1)*1.1;
+    edgePosArr.push(pt.x+perp.x*side, 0.05, pt.z+perp.z*side);
+  }
+  const eGeo=new THREE.BufferGeometry();
+  eGeo.setAttribute('position',new THREE.Float32BufferAttribute(edgePosArr,3));
+  scene.add(new THREE.Points(eGeo,new THREE.PointsMaterial({
+    map:CIRCLE_TEX,color:0xFFE8A0,size:0.12,transparent:true,opacity:0.55,
+    blending:THREE.AdditiveBlending,depthWrite:false,alphaTest:0.01,
+  })));
+
+  return { curve, mat:pathMat };
+}
+
+function buildLightPillar(scene) {
+  const mat=new THREE.ShaderMaterial({
+    side:THREE.DoubleSide,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+    uniforms:{ uTime:{value:0} },
+    vertexShader:VERT,
+    fragmentShader:`
+      uniform float uTime; varying vec2 vUv;
+      void main(){
+        float alpha=(1.-vUv.y)*smoothstep(.5,0.,abs(vUv.x-.5))*(.5+sin(uTime*.22)*.08)*.4;
+        gl_FragColor=vec4(1.,.97,.88,alpha);
+      }
+    `,
+  });
+  const pillar=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.5,60,12,1,true),mat);
+  pillar.position.set(0,30,-38);
+  scene.add(pillar);
+  const glow=new THREE.Mesh(
+    new THREE.CircleGeometry(2.2,48),
+    new THREE.MeshBasicMaterial({color:0xFFEAA0,transparent:true,opacity:0.12,depthWrite:false})
+  );
+  glow.rotation.x=-Math.PI/2; glow.position.set(0,0.015,-38);
+  scene.add(glow);
+  const pillarLight=new THREE.PointLight(0xFFF8E8,0.8,16);
+  pillarLight.position.set(0,1,-38);
+  scene.add(pillarLight);
+  return { mat };
+}
+
+function buildPedestal(pos, artifactId) {
+  const g=new THREE.Group();
+  const mat=new THREE.MeshStandardMaterial({color:0xF2EDE3,roughness:0.28,metalness:0.02});
+  // 3-tier pedestal — top surface at y≈0.75
+  [{r:1.08,h:0.07,y:0.035},{r:0.84,h:0.10,y:0.12},{r:0.67,h:0.56,y:0.48}].forEach(t=>{
+    const m=new THREE.Mesh(new THREE.CylinderGeometry(t.r,t.r*1.04,t.h,48),mat);
+    m.position.y=t.y; m.castShadow=m.receiveShadow=true;
+    g.add(m);
+  });
+  // Under-glow
+  const glowLight=new THREE.PointLight(0xFFE8A0,0.65,2.0);
+  glowLight.position.y=0.05; g.add(glowLight);
+  // Ground decal
+  const dMat=new THREE.ShaderMaterial({
+    uniforms:{uC:{value:new THREE.Color(0xFFE8A0)},uO:{value:0.22}},
+    vertexShader:VERT,
+    fragmentShader:`uniform vec3 uC;uniform float uO;varying vec2 vUv;void main(){float d=length(vUv-.5)*2.;float a=smoothstep(1.,.05,d)*uO;gl_FragColor=vec4(uC,a);}`,
+    transparent:true,depthWrite:false,side:THREE.DoubleSide,
+  });
+  const decal=new THREE.Mesh(new THREE.CircleGeometry(1.75,48),dMat);
+  decal.rotation.x=-Math.PI/2; decal.position.y=0.003; g.add(decal);
+  g.position.copy(pos); g.userData.artifactId=artifactId;
+  return g;
+}
+
+function buildArtifactMesh(shape) {
+  switch(shape){
+    case 'bowl': {
+      const pts=[
+        new THREE.Vector2(0.14,0),new THREE.Vector2(0.38,0.04),new THREE.Vector2(0.60,0.22),
+        new THREE.Vector2(0.72,0.45),new THREE.Vector2(0.68,0.60),new THREE.Vector2(0.40,0.70),new THREE.Vector2(0.14,0.66),
+      ];
+      return new THREE.Mesh(new THREE.LatheGeometry(pts,72),new THREE.ShaderMaterial({
+        uniforms:{time:{value:0},eStr:{value:0}},
+        vertexShader:`varying vec2 vUv;varying vec3 vN;void main(){vUv=uv;vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+        fragmentShader:`
+          varying vec2 vUv;varying vec3 vN;uniform float time,eStr;
+          vec2 h2(vec2 p){p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));return fract(sin(p)*43758.5);}
+          float voro(vec2 x){vec2 n=floor(x),f=fract(x);float m=8.;for(int j=-1;j<=1;j++)for(int i=-1;i<=1;i++){vec2 o=h2(n+vec2(i,j))+vec2(sin(time*.18),cos(time*.16))*.14;m=min(m,length(vec2(i,j)+o-f));}return m;}
+          void main(){
+            float v=voro(vUv*12.);float spot=smoothstep(.24,.50,v);
+            float rim=pow(1.-max(dot(vN,vec3(0,0,1)),0.),2.);
+            float top=.70+max(vN.y,0.)*.25;
+            vec3 base=vec3(.25,.13,.07),tea=vec3(.45,.25,.13),oil=vec3(.86,.76,.58);
+            vec3 col=mix(mix(base,tea,vUv.y),oil,spot*.52)*top;
+            col+=rim*vec3(.80,.36,.10)*.24+eStr*vec3(.95,.66,.22);
+            gl_FragColor=vec4(col,1.);
+          }
+        `,
+      }));
+    }
+    case 'ewer': {
+      const g=new THREE.Group();
+      const m=new THREE.MeshStandardMaterial({color:0xB9652F,roughness:0.44,metalness:0.08});
+      const tm=new THREE.MeshStandardMaterial({color:0xD39A4A,roughness:0.34,metalness:0.18});
+      const body=new THREE.Mesh(new THREE.SphereGeometry(0.52,36,22),m); body.scale.set(1,1.1,0.88);
+      const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.17,0.24,0.62,32),m); neck.position.y=0.60;
+      const lip=new THREE.Mesh(new THREE.TorusGeometry(0.19,0.022,10,36),tm); lip.position.y=0.93;
+      const handle=new THREE.Mesh(new THREE.TorusGeometry(0.34,0.022,10,40,Math.PI),m);
+      handle.position.set(0.46,0.28,0); handle.rotation.z=Math.PI/2;
+      const spout=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.07,0.50,16),m);
+      spout.position.set(-0.42,0.42,0); spout.rotation.z=Math.PI/2.7;
+      const belt=new THREE.Mesh(new THREE.TorusGeometry(0.42,0.012,8,52),tm); belt.rotation.x=Math.PI/2; belt.position.y=0.12;
+      g.add(body,neck,lip,handle,spout,belt);
+      return g;
+    }
+    case 'bluewhite-vase': {
+      const pts=[];
+      for(let i=0;i<=34;i++){
+        const t=i/34;
+        let r;
+        if(t<0.08) r=0.12+t/0.08*0.16;
+        else if(t<0.22) r=0.22+Math.sin((t-0.08)/0.14*Math.PI)*0.08;
+        else if(t<0.70) r=0.31+Math.sin((t-0.22)/0.48*Math.PI)*0.18;
+        else if(t<0.88) r=0.28-(t-0.70)/0.18*0.10;
+        else r=0.16+(t-0.88)/0.12*0.05;
+        pts.push(new THREE.Vector2(Math.max(0.08,r), t*1.42));
+      }
+      const body = new THREE.Mesh(
+        new THREE.LatheGeometry(pts,96),
+        new THREE.MeshStandardMaterial({
+          map:createBlueWhiteVaseTexture(),
+          color:0xffffff,
+          roughness:0.28,
+          metalness:0.02,
+          envMap:GALLERY_ENV_MAP,
+          envMapIntensity:0.52,
+        })
+      );
+      body.castShadow = body.receiveShadow = true;
+      const group = new THREE.Group();
+      group.add(body);
+      const rimMat = new THREE.MeshStandardMaterial({ color:0x315F82, roughness:0.34, metalness:0.05 });
+      [0.16,0.64,1.18,1.39].forEach((y,idx)=>{
+        const tor = new THREE.Mesh(new THREE.TorusGeometry(idx===3?0.22:0.34,0.008,8,72), rimMat);
+        tor.position.y = y;
+        tor.rotation.x = Math.PI/2;
+        group.add(tor);
+      });
+      return group;
+    }
+    case 'vase': {
+      const pts2=[];
+      for(let i=0;i<=22;i++){const t=i/22;const r=t<0.12?t/0.12*0.20:t<0.80?0.20+Math.sin(t*Math.PI)*0.12:(1-t)/0.20*0.16;pts2.push(new THREE.Vector2(Math.max(0,r),t*1.0));}
+      return new THREE.Mesh(new THREE.LatheGeometry(pts2,32),new THREE.MeshStandardMaterial({color:0x8AA090,roughness:0.48,metalness:0.02}));
+    }
+    case 'screen': {
+      const g=new THREE.Group();
+      for(let i=0;i<3;i++){
+        const p=new THREE.Mesh(new THREE.BoxGeometry(0.34,1.0,0.03),new THREE.MeshStandardMaterial({color:0x8B6030,roughness:0.55}));
+        p.position.x=(i-1)*0.36; g.add(p);
+      }
+      return g;
+    }
+    case 'brocade': {
+      return new THREE.Mesh(new THREE.BoxGeometry(0.82,0.52,0.02),new THREE.MeshStandardMaterial({color:0xC8A040,roughness:0.36,metalness:0.28}));
+    }
+    case 'chair': {
+      const g=new THREE.Group();
+      const wm=new THREE.MeshStandardMaterial({color:0x8B6030,roughness:0.52});
+      const seat=new THREE.Mesh(new THREE.BoxGeometry(0.65,0.05,0.55),wm); seat.position.y=0.45; g.add(seat);
+      const arc=new THREE.Mesh(new THREE.TorusGeometry(0.32,0.024,8,28,Math.PI),wm);
+      arc.position.set(0,0.79,0); arc.rotation.z=Math.PI/2; g.add(arc);
+      [[-0.28,-0.26],[0.28,-0.26],[-0.28,0.22],[0.28,0.22]].forEach(([x,z])=>{
+        const leg=new THREE.Mesh(new THREE.CylinderGeometry(0.022,0.026,0.45,8),wm);
+        leg.position.set(x,0.225,z); g.add(leg);
+      });
+      return g;
+    }
+    case 'calligraphy': {
+      const count=1500,pos=new Float32Array(count*3);
+      for(let i=0;i<count;i++){pos[i*3]=(Math.random()-.5)*1.2;pos[i*3+1]=Math.random()*1.5;pos[i*3+2]=(Math.random()-.5)*0.28;}
+      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+      return new THREE.Points(geo,new THREE.PointsMaterial({
+        map:CIRCLE_TEX,color:0x1A160C,size:0.03,transparent:true,opacity:0.72,alphaTest:0.01,
+      }));
+    }
+    case 'point-cloud-placeholder': {
+      const group = new THREE.Group();
+      const count = 520;
+      const pos = new Float32Array(count*3);
+      for(let i=0;i<count;i++){
+        const a = Math.random()*Math.PI*2;
+        const r = 0.16 + Math.random()*0.42;
+        pos[i*3] = Math.cos(a)*r;
+        pos[i*3+1] = Math.random()*1.15;
+        pos[i*3+2] = Math.sin(a)*r;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({
+        map:CIRCLE_TEX,
+        color:0x8B6914,
+        size:0.035,
+        transparent:true,
+        opacity:0.68,
+        alphaTest:0.01,
+      }));
+      pts.position.y = 0.05;
+      const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(1.05,1.3,1.05),
+        new THREE.MeshBasicMaterial({ color:0xC8A050, wireframe:true, transparent:true, opacity:0.22 })
+      );
+      frame.position.y = 0.58;
+      group.add(pts,frame);
+      group.userData.placeholder = true;
+      return group;
+    }
+    default:
+      return new THREE.Mesh(new THREE.SphereGeometry(0.24,16,10),new THREE.MeshStandardMaterial({color:0xC8A050,roughness:0.5}));
+  }
+}
+
+function buildPortalTrail(scene, cfg) {
+  const start=new THREE.Vector3(cfg.pos[0],0.014,cfg.pos[2]+0.2);
+  const user=new THREE.Vector3(0,0.014,4.2);
+  const dir=new THREE.Vector3().subVectors(user,start).setY(0).normalize();
+  const len=Math.min(6.2,start.distanceTo(user));
+  const end=start.clone().addScaledVector(dir,len);
+  const right=new THREE.Vector3(dir.z,0,-dir.x).normalize();
+  const w0=0.18, w1=0.62;
+  const verts=[
+    ...start.clone().addScaledVector(right,-w0).toArray(),
+    ...start.clone().addScaledVector(right, w0).toArray(),
+    ...end.clone().addScaledVector(right,-w1).toArray(),
+    ...end.clone().addScaledVector(right, w1).toArray(),
+  ];
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,0,1,1,1],2));
+  geo.setIndex([0,1,2,1,3,2]);
+  const mat=new THREE.ShaderMaterial({
+    uniforms:{ uC:{value:new THREE.Color(0xC8A050)} },
+    vertexShader:VERT,
+    fragmentShader:`
+      uniform vec3 uC; varying vec2 vUv;
+      void main(){
+        float center=smoothstep(.5,0.,abs(vUv.x-.5));
+        float fade=smoothstep(1.,0.,vUv.y);
+        gl_FragColor=vec4(uC,center*fade*.16);
+      }
+    `,
+    transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,
+  });
+  const trail=new THREE.Mesh(geo,mat);
+  scene.add(trail);
+  return trail;
+}
+
+function buildPortalHint(cfg) {
+  const layer=document.getElementById('portal-hint-layer');
+  const hint=document.createElement('div');
+  hint.className='portal-hint';
+  hint.dataset.portalId=cfg.id;
+  hint.innerHTML=`
+    <div class="portal-hint-kicker">Chapter ${cfg.no}</div>
+    <div class="portal-hint-title">${cfg.title}</div>
+    <div class="portal-hint-en">${cfg.titleEn}</div>
+    <button class="portal-hint-btn" type="button">点击进入 · Enter</button>
+  `;
+  hint.querySelector('button').addEventListener('click',e=>{
+    e.stopPropagation();
+    transitionTo(cfg.id);
+  });
+  layer.appendChild(hint);
+  return hint;
+}
+
+function buildPortalRing(scene, cfg) {
+  const group=new THREE.Group();
+  group.position.set(cfg.pos[0],0,cfg.pos[2]);
+  scene.add(group);
+
+  const ringMat=new THREE.MeshStandardMaterial({
+    color:0xC8A050,
+    emissive:0xC8A050,
+    emissiveIntensity:0.4,
+    roughness:0.24,
+    metalness:0.68,
+  });
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.42,0.025,12,96),ringMat);
+  ring.position.y=1.65;
+  ring.userData.portalId=cfg.id;
+  group.add(ring);
+
+  const inner=new THREE.Mesh(
+    new THREE.CircleGeometry(1.34,72),
+    new THREE.MeshBasicMaterial({
+      color:cfg.innerColor,
+      transparent:true,
+      opacity:0.08,
+      depthWrite:false,
+      side:THREE.DoubleSide,
+    })
+  );
+  inner.position.y=1.65;
+  inner.position.z=0.012;
+  group.add(inner);
+
+  const post=new THREE.Mesh(
+    new THREE.CylinderGeometry(0.012,0.012,1.65,12),
+    new THREE.MeshStandardMaterial({
+      color:0xC8A050,
+      emissive:0xC8A050,
+      emissiveIntensity:0.18,
+      roughness:0.32,
+      metalness:0.58,
+    })
+  );
+  post.position.y=0.825;
+  group.add(post);
+
+  const trail=buildPortalTrail(scene,cfg);
+  const hint=buildPortalHint(cfg);
+  return { group, ring, ringMat, inner, post, trail, hint, near:false, targetIntensity:0.4 };
+}
+
+function buildChapterRoom(scene, config={}) {
+  const { w=14, h=6.5, d=24, wallColor=0xE8DEC8, skirtColor=0x6B4A20, ceilLightIntensity=2.4 } = config;
+  const wallMat = config.materialStyle === 'plaster' ? createProceduralPlasterMaterial(wallColor) : new THREE.ShaderMaterial({
+    uniforms:{ uC:{value:new THREE.Color(wallColor)}, uN:{value:1.0} },
+    vertexShader:VERT,
+    fragmentShader:`
+      uniform vec3 uC;uniform float uN;varying vec2 vUv;
+      float r(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+      void main(){
+        float n=(r(floor(vUv*80.))*.5+r(floor(vUv*320.))*.25+r(floor(vUv*1280.))*.12)*uN*.04-.02;
+        vec3 col=uC+n;
+        float edge=min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y));
+        col*=.92+smoothstep(0.,.12,edge)*.08;
+        gl_FragColor=vec4(col,1.);
+      }
+    `,
+    side:THREE.DoubleSide,
+  });
+  const skirtMat=new THREE.MeshStandardMaterial({color:skirtColor,roughness:0.70});
+  const goldMat=new THREE.MeshStandardMaterial({color:0xC8A050,roughness:0.28,metalness:0.62});
+
+  function addWall(pw,ph,pos,ry){
+    const wall=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),wallMat);
+    wall.position.copy(pos); wall.rotation.y=ry; wall.receiveShadow=true; scene.add(wall);
+    const skirt=new THREE.Mesh(new THREE.PlaneGeometry(pw,0.26),skirtMat);
+    skirt.position.set(pos.x+Math.sin(ry)*0.01,0.13,pos.z+Math.cos(ry)*(-0.01)); skirt.rotation.y=ry; scene.add(skirt);
+    const rail=new THREE.Mesh(new THREE.BoxGeometry(pw,0.024,0.03),goldMat);
+    rail.position.set(pos.x,ph*.80,pos.z); rail.rotation.y=ry; scene.add(rail);
+  }
+
+  addWall(w,h,new THREE.Vector3(0,h/2,-d/2),0);
+  addWall(d,h,new THREE.Vector3(-w/2,h/2,0),Math.PI/2);
+  addWall(d,h,new THREE.Vector3( w/2,h/2,0),-Math.PI/2);
+  // Ceiling
+  const ceil=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshStandardMaterial({color:config.ceilingColor || 0xF5F0E8,roughness:0.92}));
+  ceil.rotation.x=Math.PI/2; ceil.position.set(0,h,0); scene.add(ceil);
+  // Ceiling spotlights
+  for(let z=d/2-3;z>-d/2+3;z-=5){
+    const s=new THREE.SpotLight(0xFFF8F0,ceilLightIntensity);
+    s.position.set(0,h-0.1,z); s.angle=0.44; s.penumbra=0.58; s.decay=1.9; s.distance=9.5; s.castShadow=true; s.shadow.mapSize.set(512,512);
+    scene.add(s,s.target); s.target.position.set(0,0,z);
+  }
+  // Kickboard strips on sides
+  [-w/2+0.04, w/2-0.04].forEach(x=>{
+    const kick=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.26,d),skirtMat);
+    kick.position.set(x,0.13,0); scene.add(kick);
+    const rail2=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.024,d),goldMat);
+    rail2.position.set(x,h*0.80,0); scene.add(rail2);
+  });
+
+  // Entrance front wall at z=+d/2 with a centered doorway.
+  const eDW = 1.0, eDH = 2.8;
+  const eSW = w/2 - eDW;
+  const eTH = h - eDH;
+
+  [[-(eDW+eSW/2), h/2], [(eDW+eSW/2), h/2]].forEach(([x,y]) => {
+    const seg = new THREE.Mesh(new THREE.PlaneGeometry(eSW, h), wallMat);
+    seg.position.set(x, y, d/2);
+    seg.rotation.y = 0;
+    seg.receiveShadow = true;
+    scene.add(seg);
+  });
+  const topSeg = new THREE.Mesh(new THREE.PlaneGeometry(eDW*2, eTH), wallMat);
+  topSeg.position.set(0, eDH+eTH/2, d/2);
+  topSeg.rotation.y = 0;
+  topSeg.receiveShadow = true;
+  scene.add(topSeg);
+
+  const fm = new THREE.MeshStandardMaterial({color:0xC8A050,roughness:0.28,metalness:0.62});
+  const dg = new THREE.Group();
+  [[-eDW,0],[eDW,0]].forEach(([ox]) => {
+    const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.06,eDH,0.08),fm);
+    pillar.position.set(ox,eDH/2,0);
+    dg.add(pillar);
+  });
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(eDW*2+0.12,0.06,0.08),fm);
+  lintel.position.set(0,eDH,0);
+  dg.add(lintel);
+  dg.position.set(0, 0, d/2-0.04);
+  scene.add(dg);
+
+  const DW = 1.1;
+  const halfW = w/2, halfD = d/2;
+  scene.userData.wallBoxes = [
+    new THREE.Box3(new THREE.Vector3(-halfW,0,-halfD-0.3), new THREE.Vector3(halfW,h,-halfD+0.3)),
+    new THREE.Box3(new THREE.Vector3(-halfW,0, halfD-0.3), new THREE.Vector3(-DW,h,halfD+0.3)),
+    new THREE.Box3(new THREE.Vector3( DW,0, halfD-0.3), new THREE.Vector3(halfW,h,halfD+0.3)),
+    new THREE.Box3(new THREE.Vector3(-DW,0, halfD-0.32), new THREE.Vector3(DW,3.0,halfD+0.32)),
+    new THREE.Box3(new THREE.Vector3(-halfW-0.3,0,-halfD), new THREE.Vector3(-halfW+0.3,h,halfD)),
+    new THREE.Box3(new THREE.Vector3( halfW-0.3,0,-halfD), new THREE.Vector3( halfW+0.3,h,halfD)),
+  ];
+  scene.userData.solidColliders = [...scene.userData.wallBoxes];
+}
+
+// ══════════════════════════════════════════════
+// 4. FULL SCENE ASSEMBLY
+// ══════════════════════════════════════════════
+function createWallPainting(scene, position, type) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 384;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#F5F0E8';
+  ctx.fillRect(0,0,512,384);
+  ctx.strokeStyle = 'rgba(42,31,14,0.55)';
+  ctx.lineWidth = 1.8;
+  ctx.fillStyle = 'rgba(42,31,14,0.55)';
+
+  if(type === 'bamboo'){
+    for(let i=0;i<5;i++){
+      const x = 70 + i * 90;
+      ctx.beginPath();
+      ctx.moveTo(x,370);
+      for(let j=0;j<9;j++){
+        ctx.lineTo(x + Math.sin(j * 0.9) * 7, 370 - j * 35);
+        if(j>0){
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x,370 - j * 35 + 2,3.5,0,Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      ctx.stroke();
+    }
+  }else if(type === 'waves'){
+    for(let w=0;w<3;w++){
+      ctx.beginPath();
+      for(let i=0;i<=100;i++){
+        const x=(i/100)*512;
+        const y=140+w*55+Math.sin(i*0.22+w)*38+Math.sin(i*0.09)*22;
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.globalAlpha=0.5-w*0.12;
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }else{
+    ctx.beginPath();
+    for(let i=0;i<=80;i++){
+      const x=(i/80)*512;
+      const y=300-Math.abs(Math.sin(i*0.14))*130-Math.abs(Math.sin(i*0.06+1.2))*65;
+      i===0?ctx.moveTo(x,Math.max(y,40)):ctx.lineTo(x,Math.max(y,40));
+    }
+    ctx.lineTo(512,384);
+    ctx.lineTo(0,384);
+    ctx.closePath();
+    ctx.fillStyle='rgba(42,31,14,0.07)';
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const group = new THREE.Group();
+  const frameMat = new THREE.MeshStandardMaterial({color:0xC8A050,roughness:0.30,metalness:0.55});
+  [[0,0.595,1.54,0.04],[0,-0.595,1.54,0.04],[-0.775,0,0.04,1.24],[0.775,0,0.04,1.24]].forEach(([x,y,w,h])=>{
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(w,h,0.02),frameMat);
+    bar.position.set(x,y,0.01);
+    group.add(bar);
+  });
+
+  const artwork = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5,1.1),
+    new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})
+  );
+  artwork.position.z = 0.005;
+  group.add(artwork);
+
+  const spot = new THREE.SpotLight(0xFFF4DC,0,3,0.35,0.55,2);
+  spot.position.set(0,1.2,0.7);
+  spot.target.position.set(0,0,0);
+  group.add(spot,spot.target);
+  group.userData.spot = spot;
+
+  group.userData.restY = position.y;
+  group.userData.ready = false;
+  group.position.copy(position);
+  group.position.y += 3.5;
+  group.rotation.y = position.ry || 0;
+  scene.add(group);
+  return group;
+}
+
+function createArtifactPlaque(scene, artifact, position) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 400;
+  canvas.height = 220;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#F1EAD8';
+  ctx.fillRect(0,0,400,220);
+  ctx.strokeStyle = '#C8A050';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(5,5,390,210);
+  ctx.strokeStyle = 'rgba(200,160,80,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(9,9,382,202);
+
+  ctx.fillStyle = '#1A160C';
+  ctx.font = 'bold 26px serif';
+  ctx.fillText(artifact.nameCn || '',18,50);
+  ctx.font = 'italic 15px serif';
+  ctx.fillStyle = '#5A4A32';
+  ctx.fillText(artifact.nameEn || '',18,76);
+  ctx.font = '11px sans-serif';
+  ctx.fillStyle = '#8B6914';
+  (artifact.tags || []).slice(0,3).forEach((tag,i)=>ctx.fillText(tag,18+i*125,104));
+  ctx.font = '11.5px sans-serif';
+  ctx.fillStyle = '#3A2E1E';
+  const desc = (artifact.desc || '').slice(0,72);
+  ctx.fillText(desc.slice(0,36),18,132);
+  if(desc.length > 36) ctx.fillText(desc.slice(36),18,152);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const plaque = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.55,0.3),
+    new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})
+  );
+  const group = new THREE.Group();
+  group.add(plaque);
+  group.userData.restY = position.y;
+  group.userData.ready = false;
+  group.position.copy(position);
+  group.position.y += 3.5;
+  group.rotation.y = position.ry || 0;
+  scene.add(group);
+  return group;
+}
+
+function assembleScene(sceneId) {
+  sceneId = normalizeSceneId(sceneId);
+  const cfg=SCENES_CFG[sceneId];
+  const scene=new THREE.Scene();
+  scene.environment = (sceneId==='ceramics') ? null : GALLERY_ENV_MAP;
+  scene.fog=new THREE.FogExp2(cfg.fogColor, cfg.fogDensity);
+  scene.add(new THREE.HemisphereLight(cfg.hemiSky, cfg.hemiGround, cfg.hemiInt));
+
+  const objects={ portals:[], pedestals:[], artifacts:[], path:null, floaters:[], pillar:null, wallBoxes:[] };
+
+  if(sceneId==='grand'){
+    const W = 14, H = 5, D = 14;
+    const wallMat = new THREE.MeshStandardMaterial({ color:0xF0EAE0, roughness:0.88 });
+    const ceilMat = new THREE.MeshStandardMaterial({ color:0xE0DAD0, roughness:0.90 });
+    const skirtM  = new THREE.MeshStandardMaterial({ color:0x7A6048, roughness:0.75 });
+    const goldM   = new THREE.MeshStandardMaterial({ color:0xC8A050, roughness:0.28, metalness:0.62 });
+
+    buildGround(scene, { w:W, d:D, tileColor:0xE8DEC8, groutColor:0xC8B898, tilesX:7, tilesZ:7 });
+
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, D), ceilMat);
+    ceil.rotation.x = Math.PI / 2;
+    ceil.position.set(0, H, 0);
+    scene.add(ceil);
+
+    const dW = 1.0, dH = 2.8;
+    const sW = W / 2 - dW;
+    const tH = H - dH;
+
+    function wallSeg(w, h, px, py, pz, ry) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), wallMat);
+      m.position.set(px, py, pz);
+      m.rotation.y = ry;
+      m.receiveShadow = true;
+      scene.add(m);
+    }
+    function skirtRail(len, px, pz, ry) {
+      const sk = new THREE.Mesh(new THREE.BoxGeometry(len, 0.22, 0.04), skirtM);
+      sk.position.set(px, 0.11, pz);
+      sk.rotation.y = ry;
+      scene.add(sk);
+      const rl = new THREE.Mesh(new THREE.BoxGeometry(len, 0.025, 0.03), goldM);
+      rl.position.set(px, H * 0.76, pz);
+      rl.rotation.y = ry;
+      scene.add(rl);
+    }
+
+    wallSeg(sW, H, -(dW + sW / 2), H / 2, 7, Math.PI);
+    wallSeg(sW, H,  (dW + sW / 2), H / 2, 7, Math.PI);
+    wallSeg(dW * 2, tH, 0, dH + tH / 2, 7, Math.PI);
+    skirtRail(W, 0, 7, Math.PI);
+
+    wallSeg(sW, H, -(dW + sW / 2), H / 2, -7, 0);
+    wallSeg(sW, H,  (dW + sW / 2), H / 2, -7, 0);
+    wallSeg(dW * 2, tH, 0, dH + tH / 2, -7, 0);
+    skirtRail(W, 0, -7, 0);
+
+    wallSeg(sW, H, -7, H / 2,  (dW + sW / 2), Math.PI / 2);
+    wallSeg(sW, H, -7, H / 2, -(dW + sW / 2), Math.PI / 2);
+    wallSeg(dW * 2, tH, -7, dH + tH / 2, 0, Math.PI / 2);
+    skirtRail(D, -7, 0, Math.PI / 2);
+
+    wallSeg(sW, H, 7, H / 2,  (dW + sW / 2), -Math.PI / 2);
+    wallSeg(sW, H, 7, H / 2, -(dW + sW / 2), -Math.PI / 2);
+    wallSeg(dW * 2, tH, 7, dH + tH / 2, 0, -Math.PI / 2);
+    skirtRail(D, 7, 0, -Math.PI / 2);
+
+    function makeDoorPreviewTexture(title, subtitle, tint) {
+      const cv = document.createElement('canvas');
+      cv.width = 640;
+      cv.height = 900;
+      const cx = cv.getContext('2d');
+      const grad = cx.createLinearGradient(0, 0, 640, 900);
+      grad.addColorStop(0, '#17130C');
+      grad.addColorStop(0.55, tint);
+      grad.addColorStop(1, '#080604');
+      cx.fillStyle = grad;
+      cx.fillRect(0, 0, 640, 900);
+      cx.strokeStyle = 'rgba(200,160,80,0.38)';
+      cx.lineWidth = 3;
+      for (let i = 0; i < 18; i++) {
+        cx.beginPath();
+        const y = 140 + i * 34;
+        cx.moveTo(84, y);
+        cx.bezierCurveTo(210, y - 48, 430, y + 58, 558, y - 6);
+        cx.stroke();
+      }
+      cx.fillStyle = 'rgba(245,240,232,0.82)';
+      cx.font = '42px Georgia';
+      cx.fillText(title, 58, 690);
+      cx.fillStyle = 'rgba(200,160,80,0.88)';
+      cx.font = '18px sans-serif';
+      cx.letterSpacing = '2px';
+      cx.fillText(subtitle, 58, 736);
+      cx.strokeStyle = 'rgba(245,240,232,0.22)';
+      cx.strokeRect(28, 28, 584, 844);
+      const tex = new THREE.CanvasTexture(cv);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function addDoorFrame(px, pz, ry, title, subtitle, tint) {
+      const g = new THREE.Group();
+      [[-dW, 0], [dW, 0]].forEach(([ox]) => {
+        const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.06, dH, 0.08), goldM);
+        pillar.position.set(ox, dH / 2, 0);
+        g.add(pillar);
+      });
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(dW * 2 + 0.12, 0.06, 0.08), goldM);
+      beam.position.set(0, dH, 0);
+      g.add(beam);
+      const preview = new THREE.Mesh(
+        new THREE.PlaneGeometry(dW * 1.86, dH * 0.94),
+        new THREE.MeshBasicMaterial({
+          map: makeDoorPreviewTexture(title, subtitle, tint),
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.92,
+        })
+      );
+      preview.position.set(0, dH * 0.52, -0.035);
+      g.add(preview);
+      g.position.set(px, 0, pz);
+      g.rotation.y = ry;
+      scene.add(g);
+    }
+    addDoorFrame(0, 7, Math.PI, '丝·路', 'CHAPTER I · SILK ROAD', '#3C2D3A');
+    addDoorFrame(0, -7, 0, '光·影', 'CHAPTER IV · LIGHT & SHADOW', '#16100E');
+    addDoorFrame(-7, 0, Math.PI / 2, '陶瓷', 'CHAPTER I · CERAMICS', '#263933');
+    addDoorFrame(7, 0, -Math.PI / 2, '木·心', 'CHAPTER III · HEART OF WOOD', '#343821');
+    buildMoonGate(scene, {
+      position:new THREE.Vector3(-6.92,1.48,0),
+      rotationY:Math.PI/2,
+      targetRoom:'ceramics',
+    });
+    buildModelLabSign(scene);
+
+    [[5,5],[5,-5],[-5,5],[-5,-5]].forEach(([x,z]) => {
+      const sl = new THREE.SpotLight(0xFFF4DC, 2.2);
+      sl.position.set(x, H - 0.15, z);
+      sl.angle = 0.52;
+      sl.penumbra = 0.65;
+      sl.decay = 1.8;
+      sl.distance = 9;
+      sl.target.position.set(x, 0, z);
+      scene.add(sl, sl.target);
+    });
+    const cl = new THREE.PointLight(0xFFF8F0, 2.0, 14, 1.8);
+    cl.position.set(0, H - 0.3, 0);
+    scene.add(cl);
+
+    const base = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.8, 0.95, 0.14, 32),
+      new THREE.MeshStandardMaterial({color:0xC8A050, roughness:0.3, metalness:0.62})
+    );
+    base.position.set(0, 0.07, 0);
+    scene.add(base);
+
+    const DW = 1.1;
+    objects.wallBoxes = [
+      new THREE.Box3(new THREE.Vector3(-7, 0, 6.7), new THREE.Vector3(-DW, 5, 7.3)),
+      new THREE.Box3(new THREE.Vector3(DW, 0, 6.7), new THREE.Vector3(7, 5, 7.3)),
+      new THREE.Box3(new THREE.Vector3(-DW, 0, 6.7), new THREE.Vector3(DW, 3.0, 7.3)),
+      new THREE.Box3(new THREE.Vector3(-7, 0, -7.3), new THREE.Vector3(-DW, 5, -6.7)),
+      new THREE.Box3(new THREE.Vector3(DW, 0, -7.3), new THREE.Vector3(7, 5, -6.7)),
+      new THREE.Box3(new THREE.Vector3(-DW, 0, -7.3), new THREE.Vector3(DW, 3.0, -6.7)),
+      new THREE.Box3(new THREE.Vector3(-7.3, 0, -7), new THREE.Vector3(-6.7, 5, -DW)),
+      new THREE.Box3(new THREE.Vector3(-7.3, 0, DW), new THREE.Vector3(-6.7, 5, 7)),
+      new THREE.Box3(new THREE.Vector3(-7.3, 0, -DW), new THREE.Vector3(-6.7, 3.0, DW)),
+      new THREE.Box3(new THREE.Vector3(6.7, 0, -7), new THREE.Vector3(7.3, 5, -DW)),
+      new THREE.Box3(new THREE.Vector3(6.7, 0, DW), new THREE.Vector3(7.3, 5, 7)),
+      new THREE.Box3(new THREE.Vector3(6.7, 0, -DW), new THREE.Vector3(7.3, 3.0, DW)),
+      new THREE.Box3(new THREE.Vector3(-1.05, 0, -1.05), new THREE.Vector3(1.05, 1.15, 1.05)),
+    ];
+    scene.userData.wallBoxes = objects.wallBoxes;
+    scene.userData.solidColliders = [...objects.wallBoxes];
+
+  } else {
+    const _labCfg={wallColor:0x2D281F,skirtColor:0x9A7A3A,ceilingColor:0x211C16,materialStyle:'plaster',w:14,h:6.5,d:24,ceilLightIntensity:0.14};
+    const roomCfg=({
+      silk:  {wallColor:0xEAE4D8,skirtColor:0x7A6048,w:14,h:6.5,d:24},
+      ceramics:{wallColor:0xE7DCC8,skirtColor:0x6B4A28,ceilingColor:0xDDD2BE,materialStyle:'plaster',w:14,h:6.5,d:24,ceilLightIntensity:0.4},
+      'model-lab':_labCfg,
+      earth: {wallColor:0xE8D8C0,skirtColor:0x6B4020,w:14,h:6.5,d:24},
+      wood:  {wallColor:0xE2DCD0,skirtColor:0x5A4020,w:14,h:6.5,d:24},
+      shadow:{wallColor:0x1E1810,skirtColor:0x0A0806,w:14,h:6.5,d:24},
+    })[sceneId] || (sceneId.startsWith('lab-') ? _labCfg : null);
+    buildChapterRoom(scene,roomCfg);
+    if(sceneId==='ceramics'){
+      buildMicrocementFloor(scene,{ w:roomCfg.w, d:roomCfg.d, color:0xD8D0C2 });
+      buildCeramicsBackdrop(scene);
+    }else if(sceneId==='model-lab'){
+      buildMicrocementFloor(scene,{ w:roomCfg.w, d:roomCfg.d, color:0xD6D0C5 });
+      buildModelLabBackdrop(scene);
+      // Wall plaques for model room doors
+      [['Doggy',-2],['Dragon Baby',-6],['Iron Horse',-10]].forEach(([name,z])=>{
+        const cv=document.createElement('canvas'); cv.width=320; cv.height=128;
+        const cx=cv.getContext('2d');
+        cx.fillStyle='rgba(22,18,10,0.82)'; cx.fillRect(0,0,320,128);
+        cx.strokeStyle='rgba(200,160,80,0.6)'; cx.strokeRect(6,6,308,116);
+        cx.fillStyle='#C8A050'; cx.font='bold 22px Georgia'; cx.fillText(name,18,48);
+        cx.fillStyle='rgba(245,240,232,0.55)'; cx.font='14px sans-serif'; cx.fillText('按 E 进入 · PLY / Spark',18,80);
+        const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace;
+        const pl=new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.36),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
+        pl.position.set(-6.88,2.2,z); pl.rotation.y=Math.PI/2; scene.add(pl);
+        const gl=new THREE.PointLight(0xFFE0A6,0.5,2.2,2); gl.position.set(-6.2,2.2,z); scene.add(gl);
+      });
+      [['人物 Oldpeople',-2],['Venus 维纳斯',-6],['雍正 Yongzheng',-10]].forEach(([name,z])=>{
+        const cv=document.createElement('canvas'); cv.width=320; cv.height=128;
+        const cx=cv.getContext('2d');
+        cx.fillStyle='rgba(22,18,10,0.82)'; cx.fillRect(0,0,320,128);
+        cx.strokeStyle='rgba(200,160,80,0.6)'; cx.strokeRect(6,6,308,116);
+        cx.fillStyle='#C8A050'; cx.font='bold 22px Georgia'; cx.fillText(name,18,48);
+        cx.fillStyle='rgba(245,240,232,0.55)'; cx.font='14px sans-serif'; cx.fillText('按 E 进入 · PLY / Spark',18,80);
+        const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace;
+        const pl=new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.36),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
+        pl.position.set(6.88,2.2,z); pl.rotation.y=-Math.PI/2; scene.add(pl);
+        const gl=new THREE.PointLight(0xFFE0A6,0.5,2.2,2); gl.position.set(6.2,2.2,z); scene.add(gl);
+      });
+      [['Hi3D OBJ',-1.15,'OBJ + MTL + PNG'],['World Stream',1.15,'RAD streaming slot']].forEach(([name,x,sub])=>{
+        const cv=document.createElement('canvas'); cv.width=360; cv.height=128;
+        const cx=cv.getContext('2d');
+        cx.fillStyle='rgba(22,18,10,0.84)'; cx.fillRect(0,0,360,128);
+        cx.strokeStyle='rgba(200,160,80,0.62)'; cx.strokeRect(6,6,348,116);
+        cx.fillStyle='#C8A050'; cx.font='bold 24px Georgia'; cx.fillText(name,18,48);
+        cx.fillStyle='rgba(245,240,232,0.58)'; cx.font='14px sans-serif'; cx.fillText('按 E 进入 · '+sub,18,80);
+        const tex=new THREE.CanvasTexture(cv); tex.colorSpace=THREE.SRGBColorSpace;
+        const pl=new THREE.Mesh(new THREE.PlaneGeometry(1.28,0.46),new THREE.MeshBasicMaterial({map:tex,transparent:true,side:THREE.DoubleSide}));
+        pl.position.set(x,1.38,-11.72); scene.add(pl);
+        const gl=new THREE.PointLight(0xFFE0A6,0.42,2.0,2); gl.position.set(x,1.6,-10.9); scene.add(gl);
+      });
+    }else if(sceneId.startsWith('lab-')){
+      buildMicrocementFloor(scene,{ w:roomCfg.w, d:roomCfg.d, color:0x18140F });
+      scene.background = new THREE.Color(0x070604);
+      scene.fog = new THREE.FogExp2(0x070604, 0.0025);
+    }else{
+      buildGround(scene,{
+        w:roomCfg.w, d:roomCfg.d,
+        tileColor: sceneId==='shadow'?0x1A140C:0xE8DEC8,
+        groutColor:sceneId==='shadow'?0x0C0A06:0xC8B890,
+        tilesX:6, tilesZ:10,
+      });
+    }
+    const arts=ARTIFACTS[sceneId]||[];
+    const paintingTypes={silk:'bamboo',ceramics:'mountain','model-lab':'waves',earth:'mountain',wood:'mountain',shadow:'waves'};
+    const paintingType=paintingTypes[sceneId]||'mountain';
+    scene.userData.wallItems=[];
+
+    [-4,-9,-14].forEach(z=>{
+      const p=new THREE.Vector3(-4.85,2.8,z);
+      p.ry=Math.PI/2;
+      scene.userData.wallItems.push(createWallPainting(scene,p,paintingType));
+    });
+
+    [-6,-11,-16].forEach(z=>{
+      const p=new THREE.Vector3(4.85,2.8,z);
+      p.ry=-Math.PI/2;
+      scene.userData.wallItems.push(createWallPainting(scene,p,paintingType));
+    });
+
+    arts.forEach(artifact=>{
+      const isLeft=artifact.pos.x<0;
+      const p=new THREE.Vector3(
+        isLeft?-4.8:4.8,
+        1.35,
+        artifact.pos.z-0.9
+      );
+      p.ry=isLeft?Math.PI/2:-Math.PI/2;
+      scene.userData.wallItems.push(createArtifactPlaque(scene,artifact,p));
+    });
+
+    if(sceneId==='ceramics'||sceneId==='model-lab'){
+      const coveMat = new THREE.MeshBasicMaterial({ color:0xFFE9B8, transparent:true, opacity:0.34 });
+      [-6.65,6.65].forEach(x=>{
+        const strip = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.035,20), coveMat);
+        strip.position.set(x,6.22,-1.0);
+        scene.add(strip);
+      });
+      const fill = new THREE.DirectionalLight(0xFFF4DC,0.65);
+      fill.position.set(0,5.5,8);
+      scene.add(fill);
+    }else{
+      const sun2=new THREE.DirectionalLight(0xFFF4DC,2.0); sun2.position.set(-4,8,4); scene.add(sun2);
+      const fill2=new THREE.DirectionalLight(0xFFE0B0,0.7); fill2.position.set(5,3,3); scene.add(fill2);
+    }
+
+    arts.forEach(a=>{
+      const ped=buildPedestal(a.pos,a.id);
+      const mesh=buildArtifactMesh(a.shape);
+      if(a.scale) mesh.scale.setScalar(a.scale);
+      mesh.position.y=0.76;   // pedestal top at ~0.75 → mesh sits right on top
+      ped.add(mesh);
+      scene.add(ped);
+      addSolidCollider(scene,[a.pos.x-0.92,0,a.pos.z-0.92],[a.pos.x+0.92,1.25,a.pos.z+0.92]);
+      if(sceneId==='ceramics'||sceneId==='model-lab'||sceneId.startsWith('lab-')){
+        const spot = new THREE.SpotLight(a.primary?0xFFF4DC:0xFFE8C0, sceneId.startsWith('lab-') ? 0.75 : (a.primary?1.8:0.9), 8.2, 0.42, 0.62, 1.9);
+        spot.position.set(a.pos.x,5.6,a.pos.z+2.0);
+        spot.target.position.set(a.pos.x,0.9,a.pos.z);
+        spot.castShadow = true;
+        spot.shadow.mapSize.set(512,512);
+        scene.add(spot,spot.target);
+        if(a.primary && sceneId==='ceramics'){
+          buildGlassVitrine(scene,a.pos);
+          buildVolumetricBeam(scene,a.pos);
+        }
+        if(a.primary && sceneId.startsWith('lab-')){
+          buildSparkModelStage(scene,a.pos);
+        }
+      }
+      const labelEl = createFloatingLabelElement(a);
+      objects.pedestals.push(ped);
+      objects.artifacts.push({mesh,data:a,ped,baseY:0.76,labelEl});
+    });
+  }
+  return {scene,objects,cfg};
+}
+
+// Lazy scene cache — only build a scene when first needed
+const SCENES_BUILT={};
+function getScene(id){
+  id = normalizeSceneId(id);
+  if(!SCENES_BUILT[id]){
+    try { SCENES_BUILT[id]=assembleScene(id); }
+    catch(e){ console.error('assembleScene error',id,e); throw e; }
+  }
+  return SCENES_BUILT[id];
+}
+
+let currentSceneId='grand';
+let activeSceneObj=null;
+
+// ══════════════════════════════════════════════
+// 5. STATE
+// ══════════════════════════════════════════════
+const state={
+  keys:{}, mouse:new THREE.Vector2(), raycaster:new THREE.Raycaster(),
+  moveVelocity:new THREE.Vector3(), focusedArtifact:null,
+  explored:new Set(), hoveredPortalId:null, hoveredArtifactId:null, isTransitioning:false,
+};
+const CENTER_MOUSE=new THREE.Vector2(0,0);
+let yaw=0, pitch=0, isDragging=false, lastMouse={x:0,y:0};
+
+// ══════════════════════════════════════════════
+// 6. UI
+// ══════════════════════════════════════════════
+const $=id=>document.getElementById(id);
+const hud=$('hud'),btnBack=$('btn-back'),sceneLabel=$('scene-label'),sceneTitle=$('scene-title'),
+  exploredCount=$('explored-count'),totalCount=$('total-count'),infoPanel=$('info-panel'),
+  panelClose=$('panel-close'),portalTooltip=$('portal-tooltip'),portalBtn=$('portal-tooltip-btn'),
+  overlay=$('transition-overlay');
+const artifactLayer=$('artifact-ui-layer');
+const sparkLabPanel=$('spark-lab-panel');
+const sparkLabEls={
+  title:$('spark-lab-title'),
+  mode:$('spark-lab-mode'),
+  file:$('spark-lab-file'),
+  spark:$('spark-lab-spark'),
+  preview:$('spark-lab-preview'),
+  renderer:$('spark-lab-renderer'),
+  fps:$('spark-lab-fps'),
+  note:$('spark-lab-note'),
+};
+const artifactHoverCard=document.createElement('div');
+artifactHoverCard.className='artifact-hover-card';
+artifactLayer.appendChild(artifactHoverCard);
+const artifactDetailCard=document.createElement('div');
+artifactDetailCard.className='artifact-detail-card';
+artifactLayer.appendChild(artifactDetailCard);
+
+function updateSceneUI(sceneId){
+  sceneId=normalizeSceneId(sceneId);
+  const cfg=SCENES_CFG[sceneId];
+  sceneLabel.textContent=cfg.label;
+  sceneTitle.innerHTML=cfg.title+'<div id="scene-title-en">'+cfg.titleEn+'</div>';
+  sceneTitle.classList.remove('show'); setTimeout(()=>sceneTitle.classList.add('show'),100);
+  btnBack.classList.add('show');
+  btnBack.textContent = sceneId==='grand' ? '退出展览  EXIT' : '← 遗·境';
+  const arts=ARTIFACTS[sceneId]||[];
+  const allArts=[...new Map(Object.values(ARTIFACTS).flat().map(a=>[a.id,a])).values()];
+  totalCount.textContent=arts.length>0?arts.length:allArts.length;
+}
+
+function updateExploredUI(){ exploredCount.textContent=state.explored.size+' / '+totalCount.textContent; }
+
+function openInfoPanel(data){
+  $('panel-chapter').textContent=data.chapter;
+  $('panel-name-cn').textContent=data.nameCn;
+  $('panel-name-en').textContent=data.nameEn;
+  $('panel-desc').textContent=data.desc;
+  $('panel-ai').textContent=data.ai;
+  $('panel-tags').innerHTML=(data.tags||[]).map(t=>`<span class="panel-tag">${t}</span>`).join('');
+  const hsRow=$('hotspot-row'); hsRow.innerHTML=''; $('panel-hotspot-detail').textContent='';
+  (data.hotspots||[]).forEach(hs=>{
+    const btn=document.createElement('button'); btn.className='hotspot-btn'; btn.textContent=hs.label;
+    btn.onclick=()=>{
+      $('panel-hotspot-detail').textContent=hs.desc;
+      document.querySelectorAll('.hotspot-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+    hsRow.appendChild(btn);
+  });
+  infoPanel.classList.add('open');
+  state.explored.add(data.id); updateExploredUI();
+}
+function closeInfoPanel(){
+  infoPanel.classList.remove('open');
+  artifactDetailCard.classList.remove('visible');
+  artifactDetailCard.innerHTML='';
+  state.focusedArtifact=null;
+}
+
+function projectWorldToScreen(world, yOffset=0) {
+  const p = world.clone();
+  p.y += yOffset;
+  p.project(camera);
+  const x = (p.x * 0.5 + 0.5) * innerWidth;
+  const y = (-p.y * 0.5 + 0.5) * innerHeight;
+  return { x, y, visible:p.z > -1 && p.z < 1 && x > -180 && x < innerWidth + 180 && y > -120 && y < innerHeight + 120 };
+}
+
+function showArtifactDetailCard(data, root) {
+  const tags = (data.hotspots?.length ? data.hotspots.map(h=>h.label) : data.tags || []).slice(0,3);
+  artifactDetailCard.innerHTML = `
+    <button class="close" type="button">×</button>
+    <div class="kicker">${data.chapter || ''}</div>
+    <div class="title">${data.nameCn || ''}</div>
+    <div class="en">${data.nameEn || ''}</div>
+    <div class="desc">${data.desc || ''}</div>
+    <div class="actions">${tags.map(t=>`<span>${t}</span>`).join('')}</div>
+  `;
+  artifactDetailCard.querySelector('.close')?.addEventListener('click', closeInfoPanel);
+  const pos = root?.getWorldPosition(new THREE.Vector3()) || new THREE.Vector3(0,1.8,-4);
+  const screen = projectWorldToScreen(pos, 2.35);
+  artifactDetailCard.style.left = `${Math.min(innerWidth - 190, Math.max(190, screen.x + 118))}px`;
+  artifactDetailCard.style.top = `${Math.min(innerHeight - 80, Math.max(170, screen.y))}px`;
+  artifactDetailCard.classList.add('visible');
+}
+
+function hideArtifactCards() {
+  artifactHoverCard.classList.remove('visible');
+  artifactDetailCard.classList.remove('visible');
+}
+
+panelClose.addEventListener('click',closeInfoPanel);
+btnBack.addEventListener('click',()=>{
+  if(currentSceneId==='grand'){
+    window.parent?.postMessage({type:'vr-exit'},'*');
+    if(window.parent===window)window.history.back();
+  } else {
+    transitionTo('grand');
+  }
+});
+
+function showPortalTooltip(d){
+  $('portal-tooltip-title').textContent='进入 '+d.title;
+  $('portal-tooltip-desc').textContent=d.desc;
+  portalTooltip.classList.add('show');
+  state.hoveredPortalId=d.id;
+  portalBtn.onclick=()=>transitionTo(d.id);
+}
+function hidePortalTooltip(){ portalTooltip.classList.remove('show'); state.hoveredPortalId=null; }
+
+function setPortalNear(portal, near) {
+  if(portal.near===near)return;
+  portal.near=near;
+  portal.targetIntensity=near?0.8:0.4;
+  portal.hint.classList.toggle('near',near);
+  if(window.gsap){
+    window.gsap.to(portal.ringMat,{emissiveIntensity:portal.targetIntensity,duration:0.3,ease:'power2.out'});
+  }
+}
+
+function hidePortalHints() {
+  if(!activeSceneObj?.objects?.portals)return;
+  activeSceneObj.objects.portals.forEach(p=>setPortalNear(p,false));
+}
+
+// ══════════════════════════════════════════════
+// 7. TRANSITION
+// ══════════════════════════════════════════════
+async function transitionTo(sceneId){
+  sceneId=normalizeSceneId(sceneId);
+  const fromId=normalizeSceneId(currentSceneId);
+  if(state.isTransitioning||sceneId===fromId)return;
+  state.isTransitioning=true;
+  hidePortalTooltip(); hidePortalHints(); closeInfoPanel(); hideArtifactCards();
+  overlay.classList.add('active');
+  await new Promise(r=>setTimeout(r,500));
+
+  try {
+    activeSceneObj=getScene(sceneId);
+  } catch(e) {
+    state.isTransitioning=false;
+    overlay.classList.remove('active');
+    return;
+  }
+
+  currentSceneId=sceneId;
+  applyRendererPixelRatio(sceneId);
+  rebuildComposer(activeSceneObj.scene);
+  if(sceneId==='grand'){
+    const entryPos={
+      silk:[0,1.7,5.5],
+      shadow:[0,1.7,-5.5],
+      earth:[-5.5,1.7,0],
+      ceramics:[-5.5,1.7,0],
+      wood:[5.5,1.7,0],
+      'model-lab':[3.15,1.7,3.0],
+    }[fromId]||[0,1.7,3.2];
+    const yawMap={silk:0,shadow:Math.PI,earth:-Math.PI/2,ceramics:-Math.PI/2,wood:Math.PI/2,'model-lab':-2.35};
+    camera.position.set(...entryPos);
+    controls.yaw=yawMap[fromId]??0;
+  }else{
+    camera.position.set(0,1.7,10);
+    controls.yaw=0;
+  }
+  controls.pitch=0;
+  controls.keys={};
+  state.moveVelocity.set(0,0,0);
+  yaw=controls.yaw; pitch=0;
+  controls.setRoom(
+    activeSceneObj.scene.userData.solidColliders || activeSceneObj.scene.userData.wallBoxes || activeSceneObj.objects.wallBoxes || [],
+    buildDoorwaysResolved(sceneId)
+  );
+  resetHoverAfterSceneChange();
+  updateSceneUI(sceneId);
+  updateExploredUI();
+  setTimeout(autoLoadLabModelIfNeeded,120);
+
+  await new Promise(r=>setTimeout(r,80));
+  overlay.classList.remove('active');
+  state.isTransitioning=false;
+}
+
+// ══════════════════════════════════════════════
+// 8. INPUT
+// ══════════════════════════════════════════════
+document.addEventListener('keydown',e=>{state.keys[e.code]=true;});
+document.addEventListener('keyup',e=>{delete state.keys[e.code];});
+document.addEventListener('mousedown',e=>{ isDragging=true; lastMouse={x:e.clientX,y:e.clientY}; renderer.domElement.style.cursor='grabbing'; });
+document.addEventListener('mouseup',()=>{ isDragging=false; renderer.domElement.style.cursor='grab'; });
+document.addEventListener('mousemove',e=>{
+  if(isDragging){
+    yaw-=(e.clientX-lastMouse.x)*0.003; pitch-=(e.clientY-lastMouse.y)*0.0022;
+    pitch=Math.max(-0.6,Math.min(0.52,pitch)); lastMouse={x:e.clientX,y:e.clientY};
+  }
+  state.mouse.set((e.clientX/innerWidth)*2-1,-(e.clientY/innerHeight)*2+1);
+});
+function setRaycasterFromInteractionPoint(){
+  state.raycaster.setFromCamera(controls.locked ? CENTER_MOUSE : state.mouse, camera);
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('#info-panel,#portal-tooltip,#portal-hint-layer,#hud-topleft,#minimap'))return;
+  setRaycasterFromInteractionPoint();
+  // Portals
+  if(currentSceneId==='grand'){
+    const phit=getVisiblePortalHits(state.raycaster.intersectObjects(activePortalRings(),false))[0];
+    if(phit){transitionToPortalHit(phit);return;}
+  }
+  // Artifacts
+  const peds=activePedestals();
+  if(peds.length){
+    const hit=getVisibleArtifactHit(state.raycaster.intersectObjects(peds,true));
+    if(hit)openArtifactFromHit(hit);
+  }
+});
+renderer.domElement.style.cursor='grab';
+
+// ══════════════════════════════════════════════
+// 9. ANIMATE
+// ══════════════════════════════════════════════
+const SPEED=0.075, DAMPING=0.82;
+
+function updateMovement(){
+  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  const right=new THREE.Vector3(Math.cos(yaw),0,Math.sin(yaw));
+  if(state.keys['KeyW']||state.keys['ArrowUp'])   state.moveVelocity.addScaledVector(forward, SPEED);
+  if(state.keys['KeyS']||state.keys['ArrowDown'])  state.moveVelocity.addScaledVector(forward,-SPEED);
+  if(state.keys['KeyA']||state.keys['ArrowLeft'])  state.moveVelocity.addScaledVector(right,  -SPEED);
+  if(state.keys['KeyD']||state.keys['ArrowRight']) state.moveVelocity.addScaledVector(right,   SPEED);
+  state.moveVelocity.multiplyScalar(DAMPING);
+  camera.position.addScaledVector(state.moveVelocity,1);
+  camera.position.y=1.7;
+  camera.quaternion.slerp(new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch,yaw,0,'YXZ')),0.14);
+}
+
+function updatePortalHover(){
+  if(currentSceneId!=='grand')return false;
+  setRaycasterFromInteractionPoint();
+  const rings=activeSceneObj.objects.portals.map(p=>p.ring);
+  const hits=state.raycaster.intersectObjects(rings,false);
+  renderer.domElement.style.cursor=hits.length?'pointer':'grab';
+  return hits.length>0;
+}
+
+function updateArtifactHover(){
+  const peds=activePedestals();
+  if(!peds.length){
+    state.hoveredArtifactId=null;
+    artifactHoverCard.classList.remove('visible');
+    return false;
+  }
+  setRaycasterFromInteractionPoint();
+  const hit=getVisibleArtifactHit(state.raycaster.intersectObjects(peds,true));
+  const root=hit ? canFocusArtifact(hit.object) : null;
+  const id=root?.userData.artifactId || null;
+  state.hoveredArtifactId=id;
+  if(!id){
+    artifactHoverCard.classList.remove('visible');
+    return false;
+  }
+  const data=getActiveArtifactData(id);
+  if(!data)return false;
+  const world=root.getWorldPosition(new THREE.Vector3());
+  const screen=projectWorldToScreen(world,2.15);
+  artifactHoverCard.innerHTML=`
+    <div class="kicker">${data.categoryZh || ''} ${data.categoryEn || ''}</div>
+    <div class="title">${data.nameCn || ''}</div>
+    <div class="en">${data.nameEn || ''}</div>
+    <div class="meta">${(data.tags || []).slice(0,2).join(' · ')}</div>
+    <div class="tags">${(data.tags || []).slice(0,4).map(t=>`<span>${t}</span>`).join('')}</div>
+  `;
+  artifactHoverCard.style.left=`${Math.min(innerWidth-150,Math.max(150,screen.x))}px`;
+  artifactHoverCard.style.top=`${Math.min(innerHeight-80,Math.max(140,screen.y))}px`;
+  artifactHoverCard.classList.toggle('visible',screen.visible && !state.isTransitioning);
+  renderer.domElement.style.cursor='pointer';
+  return true;
+}
+
+function updateFloatingArtifactLabels(){
+  const artifacts=activeSceneObj?.objects?.artifacts || [];
+  artifacts.forEach(a=>{
+    if(!a.labelEl)return;
+    const world=a.ped.getWorldPosition(new THREE.Vector3());
+    const screen=projectWorldToScreen(world,1.9);
+    const dist=camera.position.distanceTo(world);
+    const visible=screen.visible && dist < 8.5 && state.hoveredArtifactId !== a.data.id && state.focusedArtifact?.id !== a.data.id;
+    a.labelEl.style.left=`${screen.x}px`;
+    a.labelEl.style.top=`${screen.y}px`;
+    a.labelEl.classList.toggle('visible',visible);
+  });
+}
+
+function checkPortalProximity(dt){
+  if(currentSceneId!=='grand'||!activeSceneObj?.objects?.portals?.length)return;
+  activeSceneObj.objects.portals.forEach(p=>{
+    const center=p.group.position.clone();
+    center.y=1.65;
+    const labelPos=p.group.position.clone();
+    labelPos.y=3.45;
+    const projected=labelPos.project(camera);
+    const x=(projected.x*0.5+0.5)*innerWidth;
+    const y=(-projected.y*0.5+0.5)*innerHeight;
+    p.hint.style.left=x+'px';
+    p.hint.style.top=y+'px';
+    const inView=projected.z>-1&&projected.z<1&&x>-120&&x<innerWidth+120&&y>-80&&y<innerHeight+80;
+    const near=camera.position.distanceTo(center)<4&&inView&&!state.isTransitioning;
+    setPortalNear(p,near);
+    if(!window.gsap){
+      p.ringMat.emissiveIntensity=THREE.MathUtils.damp(
+        p.ringMat.emissiveIntensity,
+        p.targetIntensity||0.4,
+        9,
+        dt
+      );
+    }
+    const pulse=near?1+Math.sin(time*3.2)*0.015:1;
+    p.ring.scale.setScalar(pulse);
+    p.inner.material.opacity=near?0.13:0.08;
+    if(p.trail.material?.uniforms?.uC)p.trail.material.uniforms.uC.value.setHex(near?0xE0B860:0xC8A050);
+  });
+}
+
+function getVisiblePortalHits(hits){
+  return hits.filter(hit=>{
+    let obj=hit.object;
+    while(obj){
+      if(obj.visible===false)return false;
+      obj=obj.parent;
+    }
+    return true;
+  });
+}
+
+function getVisibleArtifactHit(hits){
+  return hits.find(hit=>{
+    let obj=hit.object;
+    while(obj){
+      if(obj.visible===false)return false;
+      obj=obj.parent;
+    }
+    return true;
+  });
+}
+
+function getActivePortalById(id){
+  return activeSceneObj?.objects?.portals?.find(p=>p.id===id||p.ring.userData.portalId===id);
+}
+
+function getActiveArtifactData(id){
+  return Object.values(ARTIFACTS).flat().find(a=>a.id===id);
+}
+
+function parsePlyHeader(buffer) {
+  const bytes = new Uint8Array(buffer);
+  const headLimit = Math.min(bytes.length, 65536);
+  const headerText = new TextDecoder('ascii').decode(bytes.subarray(0, headLimit));
+  const endIdx = headerText.indexOf('end_header');
+  if(endIdx < 0) throw new Error('PLY header missing end_header');
+  const lineEnd = headerText.indexOf('\n', endIdx);
+  const headerBytes = lineEnd >= 0 ? lineEnd + 1 : endIdx + 'end_header'.length;
+  const vertexMatch = headerText.match(/element\s+vertex\s+(\d+)/);
+  if(!vertexMatch) throw new Error('PLY header missing vertex count');
+  const props = [];
+  let inVertex = false;
+  headerText.split(/\r?\n/).forEach(line=>{
+    const t = line.trim();
+    if(t.startsWith('element vertex')){ inVertex = true; return; }
+    if(inVertex && t.startsWith('element ') && !t.startsWith('element vertex')){ inVertex = false; return; }
+    if(inVertex && t.startsWith('property ')){
+      const parts = t.split(/\s+/);
+      props.push(parts[parts.length-1]);
+    }
+  });
+  if(!headerText.includes('format binary_little_endian')) throw new Error('Only binary_little_endian PLY preview is supported');
+  return { headerBytes, vertexCount: Number(vertexMatch[1]), props };
+}
+
+function colorFromPlyDc(v) {
+  return THREE.MathUtils.clamp(0.5 + 0.28209479177387814 * v, 0.03, 1);
+}
+
+async function loadSampledPlyPreview(url, root, data, refreshPanel) {
+  if(root.userData.modelLoaded || root.userData.sparkLoaded || root.userData.samplePreviewLoaded || root.userData.samplePreviewLoading)return;
+  root.userData.samplePreviewLoading = true;
+  data.ai = `Spark 正在解析 ${data.modelFile}。同时生成轻量采样预览，先显示模型轮廓。`;
+  refreshPanel();
+  try {
+    const response = await fetch(url, { cache:'force-cache' });
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    const buffer = await response.arrayBuffer();
+    const { headerBytes, vertexCount, props } = parsePlyHeader(buffer);
+    const ix = props.indexOf('x'), iy = props.indexOf('y'), iz = props.indexOf('z');
+    if(ix < 0 || iy < 0 || iz < 0) throw new Error('PLY missing x/y/z properties');
+    const ir = props.indexOf('f_dc_0'), ig = props.indexOf('f_dc_1'), ib = props.indexOf('f_dc_2');
+    const cr = props.indexOf('red'), cg = props.indexOf('green'), cb = props.indexOf('blue');
+    const io = props.indexOf('opacity');
+    const propStride = props.length * 4;
+    const availableVertices = Math.max(0, Math.floor((buffer.byteLength - headerBytes) / propStride));
+    const count = Math.min(vertexCount, availableVertices);
+    const targetPoints = String(data.id || '').startsWith('model-') ? 480000 : 180000;
+    const step = Math.max(1, Math.floor(count / targetPoints));
+    const sampleCount = Math.ceil(count / step);
+    const positions = new Float32Array(sampleCount * 3);
+    const colors = new Float32Array(sampleCount * 3);
+    const view = new DataView(buffer);
+    const min = new THREE.Vector3(Infinity,Infinity,Infinity);
+    const max = new THREE.Vector3(-Infinity,-Infinity,-Infinity);
+    let j = 0;
+    for(let i=0;i<count && j<sampleCount;i+=step){
+      const base = headerBytes + i * propStride;
+      const x = view.getFloat32(base + ix*4, true);
+      const y = view.getFloat32(base + iy*4, true);
+      const z = view.getFloat32(base + iz*4, true);
+      if(!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z))continue;
+      if(io >= 0){
+        const opacity = 1 / (1 + Math.exp(-view.getFloat32(base + io*4, true)));
+        if(opacity < 0.035)continue;
+      }
+      positions[j*3] = x; positions[j*3+1] = y; positions[j*3+2] = z;
+      min.min(new THREE.Vector3(x,y,z)); max.max(new THREE.Vector3(x,y,z));
+      if(ir >= 0 && ig >= 0 && ib >= 0){
+        colors[j*3] = Math.pow(colorFromPlyDc(view.getFloat32(base + ir*4, true)), 1.08) * 0.96;
+        colors[j*3+1] = Math.pow(colorFromPlyDc(view.getFloat32(base + ig*4, true)), 1.08) * 0.96;
+        colors[j*3+2] = Math.pow(colorFromPlyDc(view.getFloat32(base + ib*4, true)), 1.08) * 0.96;
+      } else if(cr >= 0 && cg >= 0 && cb >= 0) {
+        colors[j*3] = view.getFloat32(base + cr*4, true) / 255;
+        colors[j*3+1] = view.getFloat32(base + cg*4, true) / 255;
+        colors[j*3+2] = view.getFloat32(base + cb*4, true) / 255;
+      } else {
+        colors[j*3] = 0.78; colors[j*3+1] = 0.63; colors[j*3+2] = 0.36;
+      }
+      j++;
+    }
+    if(j < 10) throw new Error('PLY preview produced too few points');
+    const usedPositions = positions.subarray(0, j*3);
+    const usedColors = colors.subarray(0, j*3);
+    const center = min.clone().add(max).multiplyScalar(0.5);
+    const size = max.clone().sub(min);
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const transform = getModelLabTransform(data, { fallback:true });
+    const fitScale = (transform.fitMax / maxDim) * transform.scale;
+    for(let i=0;i<j;i++){
+      usedPositions[i*3] = (usedPositions[i*3] - center.x) * fitScale + transform.offset[0];
+      usedPositions[i*3+1] = (usedPositions[i*3+1] - min.y) * fitScale + transform.baseY + transform.offset[1];
+      usedPositions[i*3+2] = (usedPositions[i*3+2] - center.z) * fitScale + transform.offset[2];
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(usedPositions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(usedColors, 3));
+    geo.computeBoundingSphere();
+    const pts = new THREE.Points(geo, new THREE.PointsMaterial({
+      map:CIRCLE_TEX,
+      size:String(data.id || '').startsWith('model-') ? 0.0075 : 0.014,
+      vertexColors:true,
+      transparent:false,
+      opacity:1.0,
+      alphaTest:0.01,
+      depthWrite:true,
+      depthTest:true,
+    }));
+    pts.name = data.id + '-sampled-ply-preview';
+    pts.userData.loadedModelPreview = true;
+    pts.visible = !root.userData.modelLoaded && !root.userData.sparkLoaded;
+    root.add(pts);
+    root.userData.samplePreviewPoints = j;
+    root.userData.samplePreviewVisible = pts.visible;
+    if(pts.visible){
+      root.children.forEach(child=>{
+        if(child.userData?.placeholder){
+          child.visible=false;
+          child.traverse(o=>{ if(o.material)o.material.opacity=0.0; });
+        }
+      });
+    }
+    root.userData.samplePreviewLoaded = true;
+    data.modelStats = {
+      ...(data.modelStats || {}),
+      previewPoints:j,
+      previewFile:data.modelFile,
+      previewStatus:pts.visible ? 'visible' : 'hidden-fallback',
+    };
+    data.ai = pts.visible
+      ? `已显示 ${data.modelFile} 的 ${j.toLocaleString()} 点采样预览。Spark 全量 Splat 仍会继续尝试初始化；正式发布建议转换为 .spz/.splat/.ksplat。`
+      : `Spark 已加载 ${data.modelFile}；采样预览已缓存为隐藏兜底。正式发布建议转换为 .spz/.splat/.ksplat。`;
+    refreshPanel();
+  } catch(err) {
+    console.warn('Sampled PLY preview failed', data.modelFile, err);
+    data.ai = `采样预览也未能读取 ${data.modelFile}：${err.message || err}`;
+    refreshPanel();
+  } finally {
+    root.userData.samplePreviewLoading = false;
+  }
+}
+
+function setSamplePreviewVisible(root, visible) {
+  if(!root)return;
+  let found = false;
+  root.children.forEach(child=>{
+    if(child.userData?.loadedModelPreview){
+      child.visible = visible;
+      found = true;
+    }
+  });
+  if(found)root.userData.samplePreviewVisible = visible;
+}
+
+function disposeSamplePreview(root) {
+  if(!root)return;
+  const previews = root.children.filter(child => child.userData?.loadedModelPreview);
+  previews.forEach(child=>{
+    root.remove(child);
+    child.traverse(object=>{
+      object.geometry?.dispose?.();
+      const material = object.material;
+      if(Array.isArray(material)){
+        material.forEach(m=>m.dispose?.());
+      }else{
+        material?.dispose?.();
+      }
+    });
+  });
+  if(previews.length){
+    root.userData.samplePreviewLoaded = false;
+    root.userData.samplePreviewLoading = false;
+    root.userData.samplePreviewVisible = false;
+    root.userData.samplePreviewPoints = 0;
+  }
+}
+
+function getModelFileExtension(file='') {
+  const clean = String(file || '').split(/[?#]/)[0];
+  const name = clean.slice(Math.max(clean.lastIndexOf('/'), clean.lastIndexOf('\\')) + 1);
+  const dot = name.lastIndexOf('.');
+  return dot >= 0 ? name.slice(dot + 1).toUpperCase() : '';
+}
+
+function getModelFormat(data) {
+  return String(data?.modelFormat || getModelFileExtension(data?.modelFile || data?.streamFile) || '').toUpperCase();
+}
+
+function isSparkSplatFormat(format) {
+  return ['PLY','SPZ','SPLAT','KSPLAT'].includes(String(format || '').toUpperCase());
+}
+
+function joinAssetPath(base, file) {
+  if(!base)return encodeURI(file);
+  return encodeURI(`${String(base).replace(/\/$/,'')}/${file}`);
+}
+
+function getModelAssetCandidates(data) {
+  if(!data?.modelFile)return [];
+  if(/[\\/]/.test(data.modelFile) || /^https?:/i.test(data.modelFile)){
+    return [encodeURI(data.modelFile)];
+  }
+  const bases = data.modelAssetBases || MODEL_ASSET_BASES;
+  return bases.map(base => joinAssetPath(base, data.modelFile));
+}
+
+function getUrlBase(url) {
+  const idx = String(url).lastIndexOf('/');
+  return idx >= 0 ? String(url).slice(0, idx + 1) : '';
+}
+
+function hideModelPlaceholders(root) {
+  root.children.forEach(child=>{
+    if(child.userData?.placeholder){
+      child.visible=false;
+      child.traverse(o=>{ if(o.material)o.material.opacity=0.0; });
+    }
+  });
+}
+
+function prepareLoadedMeshForGallery(model) {
+  model.traverse(object=>{
+    if(!object.isMesh)return;
+    object.castShadow = true;
+    object.receiveShadow = true;
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    materials.filter(Boolean).forEach(mat=>{
+      mat.side = THREE.DoubleSide;
+      if(mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
+      if('envMap' in mat && !mat.envMap){
+        mat.envMap = GALLERY_ENV_MAP;
+        mat.envMapIntensity = 0.28;
+      }
+      mat.needsUpdate = true;
+    });
+  });
+}
+
+async function loadObjMesh(url, data, onProgress) {
+  const base = getUrlBase(url);
+  const objFile = String(url).slice(base.length);
+  const objLoader = new OBJLoader();
+  objLoader.setPath(base);
+  if(data.materialFile){
+    const mtlLoader = new MTLLoader();
+    mtlLoader.setPath(base);
+    mtlLoader.setResourcePath(base);
+    const materials = await mtlLoader.loadAsync(data.materialFile);
+    materials.preload();
+    objLoader.setMaterials(materials);
+  }
+  return objLoader.loadAsync(objFile, onProgress);
+}
+
+async function loadMeshByFormat(format, url, data, onProgress) {
+  if(format === 'OBJ')return loadObjMesh(url, data, onProgress);
+  if(format === 'GLB' || format === 'GLTF'){
+    const gltf = await new GLTFLoader().loadAsync(url, onProgress);
+    return gltf.scene || gltf.scenes?.[0];
+  }
+  throw new Error(`${format || 'Unknown'} mesh format is not wired to a browser loader yet`);
+}
+
+async function loadMeshModelAsset(candidates, root, data, refreshPanel) {
+  const format = getModelFormat(data);
+  const loaderLabel = data.loaderLabel || (format === 'OBJ' ? 'OBJLoader' : `${format}Loader`);
+  let lastError = null;
+  for(const url of candidates){
+    try {
+      let lastProgressAt=0;
+      data.ai = `准备加载 ${data.modelFile}：${decodeURI(url)}。当前格式为 ${format}，不是 3DGS。`;
+      refreshPanel();
+      const model = await loadMeshByFormat(format, url, data, event=>{
+        if(!event.total)return;
+        const now=performance.now();
+        if(now-lastProgressAt<360)return;
+        lastProgressAt=now;
+        const pct=Math.max(1,Math.min(99,Math.round(event.loaded/event.total*100)));
+        data.ai = `${format} 网格正在加载 ${data.modelFile}：${pct}%（${loaderLabel}，保留 MTL/贴图链路）。`;
+        refreshPanel();
+      });
+      if(!model)throw new Error('loader returned no scene object');
+      model.name = `${data.id}-${format.toLowerCase()}-mesh`;
+      prepareLoadedMeshForGallery(model);
+      const box = new THREE.Box3().setFromObject(model);
+      if(box.isEmpty())throw new Error('mesh bounding box is empty');
+      model.userData.loadedModel = true;
+      model.userData.loadedMesh = true;
+      model.userData.sourceModelBox = box.clone();
+      root.add(model);
+      const appliedTransform = applyModelLabObjectTransform(model, box, data);
+      hideModelPlaceholders(root);
+      root.userData.modelLoaded = true;
+      root.userData.modelLoading = false;
+      root.userData.meshLoaded = true;
+      data.modelStats = {
+        ...(data.modelStats || {}),
+        meshStatus:'loaded',
+        meshFile:data.modelFile,
+        meshFormat:format,
+        materialFile:data.materialFile || null,
+        textureFile:data.textureFile || null,
+        renderer:loaderLabel,
+        sourceUrl:decodeURI(url),
+        transform:appliedTransform,
+      };
+      data.ai = `${format} 网格已加载：${data.modelFile}。本展室按图 2 的网格格式测试，当前不走 3DGS / Spark SplatMesh。`;
+      refreshPanel();
+      return true;
+    } catch(err) {
+      lastError = err;
+      console.warn('Mesh model load failed', data.modelFile, url, err);
+    }
+  }
+  root.userData.modelLoading = false;
+  data.modelStats = {
+    ...(data.modelStats || {}),
+    meshStatus:'failed',
+    meshFile:data.modelFile,
+    meshFormat:format,
+  };
+  data.ai = `${format} 网格暂未加载：${lastError?.message || lastError || 'unknown error'}。请确认 ${data.modelFile}、${data.materialFile || '材质文件'} 和贴图在静态服务器可访问。`;
+  refreshPanel();
+  return false;
+}
+
+function applyModelLabObjectTransform(object, box, data) {
+  if(!object || !box)return null;
+  const transform = getModelLabTransform(data);
+  const center=box.getCenter(new THREE.Vector3());
+  const size=box.getSize(new THREE.Vector3());
+  const maxDim=Math.max(size.x,size.y,size.z)||1;
+  const fitScale=(transform.fitMax/maxDim)*transform.scale;
+  const [rx,ry,rz]=transform.rotation.map(v=>THREE.MathUtils.degToRad(v));
+  object.quaternion.setFromEuler(new THREE.Euler(rx,ry,rz,'XYZ'));
+  object.scale.setScalar(fitScale);
+  object.position.set(
+    -center.x*fitScale + transform.offset[0],
+    transform.baseY - box.min.y*fitScale + transform.offset[1],
+    -center.z*fitScale + transform.offset[2],
+  );
+  const applied={
+    ...transform,
+    fitScale,
+    sourceSize:[size.x,size.y,size.z],
+  };
+  object.userData.appliedModelTransform = applied;
+  return applied;
+}
+
+async function ensureModelAssetLoaded(data, root) {
+  if(!data?.modelFile || !root || root.userData.modelLoaded || root.userData.modelLoading)return;
+  root.userData.modelLoading = true;
+  const candidates = MODEL_ASSET_BASES.map(base => encodeURI(`${base}/${data.modelFile}`));
+  const isLabModelAsset = String(data.id || '').startsWith('model-');
+  let lastError = null;
+  const refreshPanel = () => {
+    if(state.focusedArtifact?.id===data.id && infoPanel.classList.contains('open')) openInfoPanel(data);
+  };
+
+  root.children.forEach(c=>{
+    if(c.userData?.placeholder){
+      c.traverse(o=>{ if(o.material){ o.material.transparent=true; o.material.opacity=0.45; } });
+    }
+  });
+
+  data.ai = `准备加载 ${data.modelFile}：${decodeURI(candidates[0])}`;
+  refreshPanel();
+
+  const spark = await ensureSparkRenderer();
+  if(!spark || !SparkSplatMeshClass){
+    await loadSampledPlyPreview(candidates[0], root, data, refreshPanel);
+    root.userData.modelLoading = false;
+    if(!root.userData.samplePreviewLoaded){
+      data.ai = 'Spark 渲染器未能加载，采样预览也未成功。请检查本地 spark-dist 映射与 PLY 文件格式。';
+      refreshPanel();
+    }
+    return;
+  }
+
+  for(const url of candidates){
+    let splat=null;
+    try {
+      let lastProgressAt=0;
+      const splatOptions = {
+        url,
+        raycastable:false,
+        onProgress:event=>{
+          if(!event.total)return;
+          const now=performance.now();
+          if(now-lastProgressAt<360)return;
+          lastProgressAt=now;
+          const pct=Math.max(1,Math.min(99,Math.round(event.loaded/event.total*100)));
+          data.ai = isLabModelAsset
+            ? `Spark 正在加载 ${data.modelFile}：${pct}%（单体模型启用 LoD 预算，避免近距离全量点云掉帧）。`
+            : `Spark 正在加载 ${data.modelFile}：${pct}%（LoD 渲染开启，避免普通点云全量绘制）。`;
+          refreshPanel();
+        }
+      };
+      if(isLabModelAsset){
+        Object.assign(splatOptions,{
+          lod:true,
+          nonLod:true,
+          lodAbove:350000,
+          lodScale:0.82,
+        });
+      }else{
+        Object.assign(splatOptions,{
+          lod:true,
+          enableLod:true,
+          lodScale:1.25,
+        });
+      }
+      splat = new SparkSplatMeshClass(splatOptions);
+      splat.userData.loadedModel = true;
+      splat.name = data.id + '-spark-splat';
+      root.add(splat);
+      await splat.initialized;
+
+      const box=splat.getBoundingBox(true);
+      splat.userData.sourceModelBox = box.clone();
+      const appliedTransform = applyModelLabObjectTransform(splat, box, data);
+      splat.recolor?.setRGB?.(1,1,1);
+      splat.opacity=1;
+      if(isLabModelAsset){
+        splat.maxSh = 0;
+        splat.updateGenerator?.();
+      }
+
+      root.children.forEach(child=>{
+        if(child.userData?.placeholder){
+          child.visible=false;
+          child.traverse(o=>{ if(o.material)o.material.opacity=0.0; });
+        }
+      });
+      root.userData.modelLoaded = true;
+      root.userData.modelLoading = false;
+      root.userData.sparkLoaded = true;
+      disposeSamplePreview(root);
+      data.modelStats = {
+        ...(data.modelStats || {}),
+        sparkStatus:'loaded',
+        sparkFile:data.modelFile,
+        previewStatus:'off',
+        previewPoints:0,
+        transform:appliedTransform,
+      };
+      data.ai = isLabModelAsset
+        ? `Spark 已加载：${data.modelFile}。当前使用 Spark 2.0 SplatMesh + LoD/foveation 渲染，采样预览只在失败时兜底。`
+        : `Spark 已加载：${data.modelFile}。当前使用 SplatMesh + LoD/foveation 渲染，不再走 THREE.Points 全量点云路径。`;
+      refreshPanel();
+      return;
+    } catch(err) {
+      lastError = err;
+      if(splat){
+        splat.parent?.remove(splat);
+        splat.dispose?.();
+      }
+    }
+  }
+  root.userData.modelLoading = false;
+  console.warn('Model load failed', data.modelFile, lastError);
+  data.modelStats = {
+    ...(data.modelStats || {}),
+    sparkStatus:'failed',
+    sparkFile:data.modelFile,
+  };
+  if(!root.userData.samplePreviewLoaded){
+    await loadSampledPlyPreview(candidates[0], root, data, refreshPanel);
+  }
+  data.ai = root.userData.samplePreviewLoaded
+    ? `Spark 全量模式暂未完成，当前显示 ${data.modelFile} 的采样预览。请确认后续是否将 PLY 转换为 Spark 原生压缩格式。`
+    : `Spark 模型暂未加载：请确认 localhost:8080 能访问 /3dgs单体模型/${data.modelFile}，或把模型目录挂到当前静态服务器根目录。`;
+  refreshPanel();
+}
+
+function resolveArtifactRoot(object){
+  let obj=object;
+  while(obj&&!obj.userData.artifactId)obj=obj.parent;
+  return obj;
+}
+
+function canFocusArtifact(object){
+  const root=resolveArtifactRoot(object);
+  return root?.userData.artifactId?root:null;
+}
+
+function activePortalRings(){
+  return activeSceneObj.objects.portals.map(p=>p.ring);
+}
+
+function activePedestals(){
+  return activeSceneObj.objects.pedestals;
+}
+
+function transitionToPortalHit(hit){
+  const pid=hit.object.userData.portalId;
+  const portal=getActivePortalById(pid);
+  if(pid&&portal)transitionTo(pid);
+}
+
+function openArtifactFromHit(hit){
+  const root=canFocusArtifact(hit.object);
+  if(!root)return;
+  const data=getActiveArtifactData(root.userData.artifactId);
+  if(data){
+    state.focusedArtifact=data;
+    ensureModelAssetLoaded(data,root);
+    if(!String(data.id || '').startsWith('model-')){
+      showArtifactDetailCard(data,root);
+    }else{
+      artifactDetailCard.classList.remove('visible');
+    }
+    openInfoPanel(data);
+  }
+}
+
+function resetHoverAfterSceneChange(){
+  state.hoveredPortalId=null;
+  state.hoveredArtifactId=null;
+  document.querySelectorAll('.artifact-label.visible').forEach(el=>el.classList.remove('visible'));
+  hideArtifactCards();
+  renderer.domElement.style.cursor='grab';
+  hidePortalTooltip();
+}
+
+const fpsStats={acc:0,frames:0,value:0};
+function getPrimaryLabArtifact() {
+  if(!String(currentSceneId || '').startsWith('lab-'))return null;
+  return (activeSceneObj?.objects?.artifacts || [])[0] || null;
+}
+
+function updateSparkLabPanel(dt) {
+  fpsStats.acc += dt;
+  fpsStats.frames++;
+  if(fpsStats.acc >= 0.45){
+    fpsStats.value = Math.round(fpsStats.frames / fpsStats.acc);
+    fpsStats.acc = 0;
+    fpsStats.frames = 0;
+  }
+  const isLab=isModelLabScene(currentSceneId);
+  sparkLabPanel.classList.toggle('visible',isLab);
+  if(!isLab)return;
+  const entry=getPrimaryLabArtifact();
+  const data=entry?.data || state.focusedArtifact;
+  const root=entry?.ped || null;
+  const isWorld=currentSceneId==='model-lab';
+  const isWorldSlot=currentSceneId==='lab-world';
+  sparkLabEls.title.textContent = data?.nameCn || (isWorld ? '3DGS Model Lab' : 'Spark 2.0 Viewer');
+  sparkLabEls.mode.textContent = isWorld ? 'INDEX / 单体入口' : (isWorldSlot ? 'WORLD STREAM / RAD' : 'SINGLE SPLAT / PLY');
+  sparkLabEls.file.textContent = data?.modelFile || data?.streamFile || '等待选择单体模型';
+  sparkLabEls.spark.textContent = root?.userData?.sparkLoaded || data?.modelStats?.sparkStatus==='loaded'
+    ? 'SplatMesh loaded'
+    : (root?.userData?.modelLoading ? 'loading / parsing' : 'standby');
+  const previewPoints = root?.userData?.samplePreviewPoints || data?.modelStats?.previewPoints || 0;
+  const previewVisible = !!root?.userData?.samplePreviewVisible;
+  sparkLabEls.preview.textContent = previewPoints
+    ? `${previewVisible ? 'visible' : 'fallback hidden'} · ${previewPoints.toLocaleString()} pts`
+    : 'off';
+  sparkLabEls.renderer.textContent = isWorld ? 'Three.js scene index' : (isWorldSlot ? 'SparkRenderer RAD slot' : 'SparkRenderer 2.0 native');
+  sparkLabEls.fps.textContent = fpsStats.value ? `${fpsStats.value} fps` : '-';
+  sparkLabEls.note.textContent = isWorld
+    ? '后续世界模型建议转为 .rad；这里保留单体入口和流式大场景测试入口。'
+    : (isWorldSlot ? '将自有世界模型转为 RAD 后，替换 streamFile 即可进入流式大场景测试。' : '当前使用 Spark 2.0 SplatMesh；采样预览只在加载失败时兜底。正式版本建议转 .spz/.rad。');
+}
+
+function autoLoadLabModelIfNeeded() {
+  const entry=getPrimaryLabArtifact();
+  if(!entry || entry.ped.userData.modelLoaded || entry.ped.userData.modelLoading || entry.ped.userData.autoLoadRequested)return;
+  entry.ped.userData.autoLoadRequested = true;
+  state.focusedArtifact = entry.data;
+  if(entry.data.modelFile)ensureModelAssetLoaded(entry.data,entry.ped);
+  openInfoPanel(entry.data);
+}
+
+if(['localhost','127.0.0.1',''].includes(location.hostname)){
+  window.__xemtaVRPreview = {
+    go: sceneId => transitionTo(sceneId),
+    scene: () => currentSceneId,
+    focusedArtifact: () => state.focusedArtifact?.id || null,
+    setCamera: ({position, yaw:nextYaw, pitch:nextPitch}={}) => {
+      if(position) camera.position.set(position[0],position[1],position[2]);
+      if(Number.isFinite(nextYaw)) controls.yaw = nextYaw;
+      if(Number.isFinite(nextPitch)) controls.pitch = nextPitch;
+      controls.keys = {};
+      state.moveVelocity.set(0,0,0);
+      return {
+        position:[camera.position.x,camera.position.y,camera.position.z],
+        yaw:controls.yaw,
+        pitch:controls.pitch,
+      };
+    },
+    setSamplePreviewVisible: visible => {
+      const entry = getPrimaryLabArtifact();
+      setSamplePreviewVisible(entry?.ped, !!visible);
+      return window.__xemtaVRPreview.labStats();
+    },
+    setModelTransform: patch => {
+      const entry = getPrimaryLabArtifact();
+      if(!entry?.data || !patch)return null;
+      entry.data.modelTransform = {
+        ...(entry.data.modelTransform || {}),
+        ...patch,
+      };
+      let applied = null;
+      entry.ped?.traverse?.(object=>{
+        if(applied || !object.userData?.loadedModel || !object.userData?.sourceModelBox)return;
+        applied = applyModelLabObjectTransform(object, object.userData.sourceModelBox, entry.data);
+      });
+      if(applied){
+        entry.data.modelStats = {
+          ...(entry.data.modelStats || {}),
+          transform:applied,
+        };
+      }
+      return window.__xemtaVRPreview.labStats();
+    },
+    labStats: () => {
+      const entry = getPrimaryLabArtifact();
+      const data = entry?.data || state.focusedArtifact;
+      const root = entry?.ped || null;
+      const splats = [];
+      activeSceneObj?.scene?.traverse?.(object => {
+        if(!object.userData?.loadedModel)return;
+        const worldPosition = object.getWorldPosition(new THREE.Vector3());
+        let box = null;
+        try {
+          const b = object.getBoundingBox?.(true);
+          if(b) box = {
+            min:[b.min.x,b.min.y,b.min.z],
+            max:[b.max.x,b.max.y,b.max.z],
+            size:[b.max.x-b.min.x,b.max.y-b.min.y,b.max.z-b.min.z],
+          };
+        } catch {}
+        splats.push({
+          name:object.name,
+          visible:object.visible,
+          initialized:!!object.isInitialized,
+          numSplats:object.numSplats ?? null,
+          position:[object.position.x,object.position.y,object.position.z],
+          worldPosition:[worldPosition.x,worldPosition.y,worldPosition.z],
+          scale:[object.scale.x,object.scale.y,object.scale.z],
+          quaternion:[object.quaternion.x,object.quaternion.y,object.quaternion.z,object.quaternion.w],
+          opacity:object.opacity ?? null,
+          box,
+        });
+      });
+      return {
+        scene: currentSceneId,
+        artifact: data?.id || null,
+        file: data?.modelFile || data?.streamFile || null,
+        sparkLoaded: !!root?.userData?.sparkLoaded,
+        modelLoading: !!root?.userData?.modelLoading,
+        samplePreviewLoaded: !!root?.userData?.samplePreviewLoaded,
+        samplePreviewVisible: !!root?.userData?.samplePreviewVisible,
+        samplePreviewPoints: root?.userData?.samplePreviewPoints || 0,
+        transform: data?.modelTransform || null,
+        stats: data?.modelStats || null,
+        splats,
+      };
+    },
+  };
+}
+
+function updateMinimap(){
+  const ctx=$('minimap-canvas').getContext('2d');
+  ctx.clearRect(0,0,90,90);
+  ctx.fillStyle='rgba(230,220,200,0.85)'; ctx.fillRect(0,0,90,90);
+  const toM=(x,z)=>({mx:45+x*1.6,my:45+(z+8)*1.5});
+  if(currentSceneId==='grand'&&activeSceneObj.objects.path){
+    const pts=activeSceneObj.objects.path.curve.getPoints(28);
+    ctx.strokeStyle='rgba(139,105,20,0.28)'; ctx.lineWidth=1.5; ctx.beginPath();
+    pts.forEach((p,i)=>{const{mx,my}=toM(p.x,p.z);i===0?ctx.moveTo(mx,my):ctx.lineTo(mx,my);});
+    ctx.stroke();
+    PORTALS.forEach(p=>{
+      const{mx,my}=toM(p.pos[0],p.pos[2]);
+      ctx.fillStyle='rgba(139,105,20,0.55)'; ctx.beginPath(); ctx.arc(mx,my,2.5,0,Math.PI*2); ctx.fill();
+    });
+  }
+  const{mx,my}=toM(camera.position.x,camera.position.z);
+  ctx.fillStyle='#8B6914'; ctx.beginPath(); ctx.arc(mx,my,3.5,0,Math.PI*2); ctx.fill();
+}
+
+let time=0;
+let minimapAcc=0;
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(clock.getDelta(),0.05); time+=dt;
+  controls.update(dt);
+  checkPortalProximity(dt);
+  const portalHover=updatePortalHover();
+  const artifactHover=updateArtifactHover();
+  if(!portalHover && !artifactHover)renderer.domElement.style.cursor='grab';
+  updateFloatingArtifactLabels();
+  // Animated uniforms
+  const sc=activeSceneObj;
+  if(sc.objects.path)sc.objects.path.mat.uniforms.uTime.value=time;
+  if(sc.objects.pillar)sc.objects.pillar.mat.uniforms.uTime.value=time;
+  // Floating mountains
+  sc.objects.floaters.forEach(f=>{f.group.position.y=f.baseY+Math.sin(time*.12+f.phase)*.32;});
+  // Artifact breathing
+  sc.objects.artifacts.forEach(a=>{
+    if(!a.mesh||state.focusedArtifact?.id===a.data.id)return;
+    a.mesh.position.y=a.baseY+Math.sin(time*.48+(a.data.id.charCodeAt(0)%10)*.7)*.014;
+    // Update bowl shader time
+    if(a.mesh.material?.uniforms?.time)a.mesh.material.uniforms.time.value=time;
+  });
+  const wallItems=sc.scene?.userData?.wallItems||[];
+  wallItems.forEach(item=>{
+    if(item.userData.ready)return;
+    const dx=camera.position.x-item.position.x;
+    const dz=camera.position.z-item.position.z;
+    const dist=Math.sqrt(dx*dx+dz*dz);
+    if(dist<5.5){
+      item.userData.ready=true;
+      const startY=item.position.y;
+      const restY=item.userData.restY;
+      const start=performance.now();
+      const duration=650;
+      const tick=now=>{
+        const t=Math.min(1,(now-start)/duration);
+        const eased=1-Math.pow(1-t,3);
+        item.position.y=startY+(restY-startY)*eased;
+        if(item.userData.spot)item.userData.spot.intensity=eased*2.2;
+        if(t<1)requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+  });
+  minimapAcc += dt;
+  if(minimapAcc >= 0.12){
+    minimapAcc = 0;
+    updateMinimap();
+  }
+  updateSparkLabPanel(dt);
+  if(isModelLabScene(currentSceneId)){
+    renderer.toneMappingExposure = 0.78;
+    renderer.render(activeSceneObj.scene,camera);
+  }else{
+    renderer.toneMappingExposure = 1.05;
+    composer.render();
+  }
+}
+
+// ══════════════════════════════════════════════
+// 10. INIT
+// ══════════════════════════════════════════════
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  applyRendererPixelRatio(currentSceneId);
+  renderer.setSize(innerWidth,innerHeight); composer?.setSize(innerWidth,innerHeight);
+});
+
+// Boot: build grand hall, then reveal
+let controlsReady=false;
+function boot(){
+  try {
+    activeSceneObj=getScene('grand');
+    rebuildComposer(activeSceneObj.scene);
+    camera.position.set(0,1.7,3);
+    controls.yaw=Math.PI;
+    controls.pitch=0;
+    controls.setRoom(
+      activeSceneObj.scene.userData.solidColliders || activeSceneObj.scene.userData.wallBoxes || activeSceneObj.objects.wallBoxes || [],
+      buildDoorwaysResolved('grand')
+    );
+    const loading=$('loading');
+    loading.style.opacity='0';
+    setTimeout(()=>{
+      loading.remove(); hud.classList.add('visible');
+      if(!controlsReady){
+        controls.init(renderer.domElement);
+        controlsReady=true;
+      }
+      updateSceneUI('grand'); updateExploredUI();
+      updateSparkLabPanel(0);
+      animate();
+    },800);
+  } catch(e){
+    console.error('VR boot failed:',e);
+    const loading=$('loading');
+    loading.innerHTML=`<div style="text-align:center;padding:40px">
+      <h1 style="font-size:28px;color:#1A160C;letter-spacing:.1em;margin-bottom:12px">加载失败</h1>
+      <p style="color:#8B6914;font-size:12px;letter-spacing:.08em;margin-bottom:8px">SCENE BUILD ERROR</p>
+      <p style="color:#5a4830;font-size:11px;max-width:360px;margin:0 auto 24px;line-height:1.7">${e.message||String(e)}</p>
+      <button onclick="location.reload()" style="padding:10px 28px;background:#8B6914;color:#fff;border:none;cursor:pointer;font-size:11px;letter-spacing:.1em;margin-right:10px">RETRY</button>
+      <button onclick="window.parent?.postMessage({type:'vr-exit'},'*');if(window.parent===window)history.back();" style="padding:10px 28px;background:transparent;color:#8B6914;border:1px solid #8B6914;cursor:pointer;font-size:11px;letter-spacing:.1em">← 返回主站</button>
+    </div>`;
+  }
+}
+setTimeout(boot, 400);
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

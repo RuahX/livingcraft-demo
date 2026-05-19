@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · 私享拍卖预展 Auction Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --white: #FFFFFF;
+  --offwhite: #F7F3EA;
+  --paper: #FBF8F1;
+  --parchment: #F0E9DD;
+  --ink: #181713;
+  --ink-mid: #3A3228;
+  --ink-light: #81766A;
+  --gold: #B88718;
+  --gold-light: #D6B15F;
+  --dark: #14100C;
+  --blue: #07172F;
+  --border: rgba(120, 92, 45, 0.18);
+  --card-border: rgba(120, 92, 45, 0.16);
+  --max: 1360px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 66px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(247, 243, 234, 0.94);
+  backdrop-filter: blur(14px);
+}
+.nav-inner {
+  max-width: var(--max);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.brand { display: flex; align-items: baseline; gap: 14px; font-family: "Noto Serif SC", serif; letter-spacing: 0.16em; }
+.brand-cn { font-size: 17px; font-weight: 300; }
+.brand-en { color: var(--ink-light); font-size: 13px; font-style: italic; letter-spacing: 0.02em; }
+.nav-links { display: flex; align-items: center; gap: clamp(14px, 2.2vw, 34px); color: var(--ink-mid); font-family: Arial, "Noto Serif SC", sans-serif; font-size: 12px; letter-spacing: 0.12em; }
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.nav-side { display: flex; align-items: center; gap: 16px; }
+.lang-switch { display: inline-flex; gap: 6px; color: var(--ink-light); font-family: Arial, sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+.lang-switch button { border: 0; background: transparent; color: inherit; padding: 0; }
+.lang-switch button.active { color: var(--gold); }
+.nav-cta {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--white);
+  padding: 0 18px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.btn {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--white);
+  padding: 0 24px;
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+.btn.gold { background: var(--gold); border-color: var(--gold); }
+.btn.secondary { background: transparent; color: var(--ink); border-color: var(--border); }
+.btn.ghost { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.28); }
+.btn.text { min-height: auto; padding: 0; border: 0; background: transparent; color: var(--gold); }
+.btn:hover { transform: translateY(-1px); border-color: var(--gold-light); background: var(--gold-light); color: var(--ink); }
+.page { padding-bottom: 84px; }
+.hero {
+  max-width: var(--max);
+  margin: 0 auto;
+  min-height: 640px;
+  padding: clamp(72px, 9vw, 128px) 30px 68px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: clamp(44px, 6vw, 86px);
+  align-items: end;
+}
+.eyebrow {
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  margin: 28px 0 12px;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(64px, 8vw, 120px);
+  font-weight: 200;
+  line-height: 0.98;
+  letter-spacing: 0.08em;
+}
+.hero-en {
+  margin: 0;
+  color: var(--ink-light);
+  font-size: clamp(24px, 3vw, 44px);
+  font-style: italic;
+  line-height: 1.1;
+}
+.hero-copy {
+  max-width: 690px;
+  margin: 36px 0 0;
+  color: var(--ink-mid);
+  font-size: 17px;
+  line-height: 1.86;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.featured-lot {
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.34);
+  padding: 20px;
+}
+.featured-lot img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+  background: var(--parchment);
+}
+.featured-lot-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 18px 0 8px;
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.featured-lot h2 {
+  margin: 0;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1.25;
+}
+.featured-lot p { margin: 4px 0 0; color: var(--ink-mid); font-size: 17px; font-style: italic; line-height: 1.25; }
+.info-bar {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.22);
+}
+.info-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.info-item {
+  min-height: 104px;
+  padding: 26px 30px;
+  border-right: 1px solid var(--border);
+}
+.info-item:first-child { border-left: 1px solid var(--border); }
+.info-label {
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.info-value { margin-top: 14px; font-size: 22px; color: var(--ink); }
+.mode-row {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 22px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.mode-toggle { display: inline-flex; border: 1px solid var(--border); }
+.mode-btn {
+  border: 0;
+  background: transparent;
+  min-height: 42px;
+  padding: 0 22px;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.mode-btn.active { background: var(--ink); color: var(--white); }
+.section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 76px 30px 0;
+}
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(260px, 420px);
+  gap: 42px;
+  align-items: end;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 28px;
+  margin-bottom: 34px;
+}
+.section h2 {
+  margin: 8px 0 0;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(34px, 4.6vw, 66px);
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  line-height: 1.04;
+}
+.section-desc { color: var(--ink-light); font-size: 16px; line-height: 1.74; }
+.lot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.lot-card {
+  min-height: 248px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 26px;
+  background: rgba(255,255,255,0.14);
+}
+.lot-card.selected-lot {
+  background: color-mix(in srgb, var(--gold) 10%, rgba(255,255,255,0.2));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--gold) 58%, transparent);
+}
+.lot-card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--parchment);
+}
+.lot-kicker {
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.lot-title {
+  margin-top: 12px;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1.2;
+}
+.lot-en {
+  margin-top: 4px;
+  color: var(--ink-mid);
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.25;
+}
+.lot-meta {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 20px;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.lot-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; font-family: Arial, "Noto Serif SC", sans-serif; font-size: 12px; }
+.lot-actions a { color: var(--gold); border-bottom: 1px solid transparent; }
+.lot-actions a:hover { border-bottom-color: currentColor; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--border);
+}
+.step {
+  min-height: 156px;
+  padding: 26px;
+  border-right: 1px solid var(--border);
+}
+.step:last-child { border-right: 0; }
+.step-no { color: var(--gold); font-family: Arial, "Noto Serif SC", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; }
+.step-title { margin-top: 16px; font-family: "Noto Serif SC", serif; font-size: 24px; font-weight: 300; }
+.step-en { color: var(--ink-light); font-size: 15px; font-style: italic; }
+.step p { color: var(--ink-mid); font-family: Arial, "Noto Serif SC", sans-serif; font-size: 13px; line-height: 1.6; }
+[hidden] { display: none !important; }
+.room-wrap {
+  margin-top: 0;
+  padding-top: 0;
+  max-width: none;
+}
+.preview-room {
+  position: relative;
+  min-height: calc(100svh - 66px);
+  background: #1a1310;
+  color: var(--white);
+  overflow: hidden;
+}
+.room-wall {
+  position: absolute;
+  inset: 0 0 38%;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(214,177,95,0.18), transparent 24%),
+    radial-gradient(circle at 22% 14%, rgba(255,245,220,0.12), transparent 18%),
+    radial-gradient(circle at 78% 14%, rgba(255,245,220,0.12), transparent 18%),
+    linear-gradient(180deg, #1a1310 0%, #241915 100%);
+}
+.room-floor {
+  position: absolute;
+  inset: 62% 0 0;
+  background:
+    linear-gradient(rgba(184,135,24,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,135,24,0.12) 1px, transparent 1px),
+    linear-gradient(180deg, #d9cfbf 0%, #f4ede0 100%);
+  background-size: 180px 74px, 180px 74px, auto;
+  transform-origin: top center;
+}
+.horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 62%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.room-shell {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100svh - 66px);
+  padding: 32px clamp(24px, 4vw, 62px);
+}
+.room-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  color: rgba(255,255,255,0.72);
+}
+.room-exit {
+  color: rgba(255,255,255,0.72);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.room-title {
+  margin-top: 18px;
+  font-family: "Noto Serif SC", serif;
+  font-size: 32px;
+  font-weight: 200;
+  letter-spacing: 0.08em;
+}
+.room-title span { display: block; color: rgba(255,255,255,0.58); font-size: 18px; font-style: italic; letter-spacing: 0; }
+.room-count { text-align: right; font-family: Arial, "Noto Serif SC", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; }
+.room-count strong { display: block; margin-top: 6px; font-family: "Cormorant Garamond", serif; font-size: 34px; font-weight: 300; letter-spacing: 0; text-transform: none; }
+.lot-strip {
+  position: relative;
+  z-index: 3;
+  max-width: 980px;
+  margin: 36px auto 0;
+  border-top: 1px solid rgba(255,255,255,0.16);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.lot-strip button {
+  border: 0;
+  border-top: 2px solid transparent;
+  background: transparent;
+  color: rgba(255,255,255,0.46);
+  padding: 14px 6px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+.lot-strip button.active {
+  border-top-color: var(--gold);
+  color: var(--gold-light);
+}
+.room-stage {
+  position: relative;
+  z-index: 2;
+  height: min(58svh, 560px);
+  min-height: 430px;
+}
+.room-stage-title {
+  position: absolute;
+  left: 50%;
+  top: 16%;
+  transform: translateX(-50%);
+  color: var(--gold-light);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 30px;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+.room-stage-title span {
+  display: block;
+  margin-top: 12px;
+  color: rgba(255,255,255,0.52);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+.plinth {
+  position: absolute;
+  bottom: 11%;
+  width: 154px;
+  height: 120px;
+  background: linear-gradient(180deg, #473c34, #201915);
+  border-top: 10px solid var(--gold);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.42);
+}
+.plinth::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  top: -34px;
+  height: 32px;
+  background: linear-gradient(180deg, rgba(214,177,95,0.94), rgba(184,135,24,0.78));
+  transform: skewX(-16deg);
+}
+.plinth.center { left: 50%; transform: translateX(-50%); width: 178px; height: 134px; bottom: 17%; }
+.plinth.left { left: 10%; }
+.plinth.right { right: 8%; }
+.object {
+  position: absolute;
+  left: 50%;
+  top: -112px;
+  width: 86px;
+  height: 100px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 38% 28%, #fff6ce 0%, #d2a536 28%, #80561a 100%);
+  border-radius: 48% 48% 34% 34%;
+  box-shadow: 0 0 42px rgba(214,177,95,0.32);
+}
+.object.flat {
+  width: 120px;
+  height: 92px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(245,236,218,0.88), rgba(120,92,45,0.5));
+}
+.object.sphere {
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #fffaf0, #dfd3b9 62%, #a88a52);
+}
+.room-ring {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: min(720px, 72vw);
+  height: 180px;
+  border: 2px solid rgba(184,135,24,0.62);
+  border-top-color: transparent;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.hotspot {
+  position: absolute;
+  z-index: 7;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(255,255,255,0.72);
+  border-radius: 50%;
+  background: rgba(184,135,24,0.88);
+  box-shadow: 0 0 0 0 rgba(184,135,24,0.42);
+  animation: pulse 2.4s ease-out infinite;
+}
+.hotspot[aria-pressed="true"] {
+  background: var(--gold-light);
+  box-shadow: 0 0 0 8px rgba(184,135,24,0.18);
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(184,135,24,0.42); }
+  70% { box-shadow: 0 0 0 14px rgba(184,135,24,0); }
+  100% { box-shadow: 0 0 0 0 rgba(184,135,24,0); }
+}
+.room-panel {
+  position: absolute;
+  z-index: 10;
+  right: clamp(20px, 3vw, 58px);
+  top: 126px;
+  width: min(380px, calc(100% - 40px));
+  border: 1px solid rgba(184,135,24,0.44);
+  background: rgba(10,10,9,0.86);
+  backdrop-filter: blur(16px);
+  padding: 26px;
+  color: var(--white);
+  box-shadow: 0 28px 80px rgba(0,0,0,0.42);
+}
+.panel-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--gold);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.panel-close { border: 0; background: transparent; color: rgba(255,255,255,0.7); font-family: Arial, sans-serif; letter-spacing: 0.16em; }
+.room-panel img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; margin: 18px 0 18px; opacity: 0.88; }
+.room-panel h3 { margin: 0; font-family: "Noto Serif SC", serif; font-size: 29px; font-weight: 300; line-height: 1.25; }
+.room-panel .panel-en { margin: 6px 0 20px; color: rgba(255,255,255,0.62); font-size: 17px; font-style: italic; line-height: 1.3; }
+.panel-grid {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+  color: rgba(255,255,255,0.82);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.panel-grid span { display: block; margin-bottom: 5px; color: rgba(255,255,255,0.38); font-size: 9px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; }
+.panel-estimate { margin: 18px 0; color: var(--gold); font-family: Arial, sans-serif; font-size: 12px; letter-spacing: 0.18em; }
+.panel-actions { display: grid; gap: 10px; }
+.panel-actions .btn { width: 100%; }
+.room-bottom {
+  position: absolute;
+  z-index: 8;
+  left: clamp(24px, 4vw, 62px);
+  right: clamp(24px, 4vw, 62px);
+  bottom: 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  color: rgba(255,255,255,0.58);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.switch-lot { display: inline-flex; align-items: center; gap: 12px; }
+.square-btn { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.18); color: var(--white); }
+.waiting {
+  margin-top: 80px;
+  background: var(--dark);
+  color: var(--white);
+}
+.waiting-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 70px 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1fr);
+  gap: 72px;
+  align-items: start;
+}
+.waiting h2 { margin: 10px 0 0; font-family: "Noto Serif SC", serif; font-size: clamp(34px, 5vw, 62px); font-weight: 200; }
+.waiting p { max-width: 470px; color: rgba(255,255,255,0.68); line-height: 1.8; }
+.interest-form { display: grid; gap: 14px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.interest-form input,
+.interest-form textarea {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: transparent;
+  color: var(--white);
+  padding: 14px 16px;
+  outline: none;
+}
+.interest-form textarea { min-height: 104px; resize: vertical; }
+.interest-form input:focus,
+.interest-form textarea:focus,
+.hotspot:focus-visible,
+.mode-btn:focus-visible,
+.square-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.legal-note {
+  max-width: var(--max);
+  margin: 42px auto 0;
+  padding: 0 30px;
+}
+.legal-note p {
+  border-left: 2px solid var(--gold);
+  padding-left: 18px;
+  color: var(--ink-mid);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+@media (max-width: 980px) {
+  .nav-links { display: none; }
+  .hero, .section-head, .waiting-inner { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lot-grid, .steps { grid-template-columns: 1fr; }
+  .lot-card { grid-template-columns: 110px minmax(0, 1fr); }
+  .room-panel { position: relative; right: auto; top: auto; margin: 20px auto 0; }
+  .room-bottom { position: relative; left: auto; right: auto; bottom: auto; padding-top: 20px; flex-wrap: wrap; }
+}
+@media (max-width: 640px) {
+  .nav { height: auto; }
+  .nav-inner { min-height: 66px; padding: 16px 18px; flex-wrap: wrap; }
+  .hero { padding: 58px 18px; min-height: auto; }
+  .hero h1 { font-size: clamp(48px, 16vw, 70px); }
+  .hero-actions .btn { width: 100%; }
+  .featured-lot { padding: 14px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .mode-row { padding: 18px; flex-direction: column; align-items: stretch; }
+  .mode-toggle { width: 100%; }
+  .mode-btn { flex: 1; }
+  .section { padding: 56px 18px 0; }
+  .lot-card { grid-template-columns: 1fr; }
+  .steps { border-bottom: 0; }
+  .step { border-right: 0; border-bottom: 1px solid var(--border); }
+  .preview-room { min-height: 760px; }
+  .lot-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 24px; }
+  .room-stage-title { display: none; }
+  .plinth.left { left: 6%; transform: scale(0.72); transform-origin: bottom left; }
+  .plinth.right { right: 2%; transform: scale(0.72); transform-origin: bottom right; }
+  .room-ring { width: 92vw; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<nav class="nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index-v2.html"><span class="brand-cn">新生万物</span><span class="brand-en">Living Craft</span></a>
+    <div class="nav-links">
+      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a class="active" href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
+    </div>
+    <div class="nav-side">
+      <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+      </span>
+      <a class="nav-cta" href="vr-preview/" data-zh="进入展览" data-en="Enter Exhibition">进入展览</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow" data-zh="拍卖预展 · 私享预约" data-en="Auction Preview · Private Viewing">拍卖预展 · 私享预约</div>
+      <h1 data-zh="私享拍卖预展" data-en="Private Auction Preview" data-i18n-sub>私享拍卖预展</h1>
+      <p class="hero-en">Private Viewing of Selected Heritage Works</p>
+      <p class="hero-copy" data-zh="六件入选拍品将在伦敦 2026 期间以私享形式预展，并同步呈现于数字孪生空间。仅作预展与意向登记，竞拍与成交将由认证合作方在线下处理。" data-en="Six selected lots are presented as a private preview during London 2026 and in the digital twin room. This page supports preview and interest registration only; auction and settlement are handled offline by certified partners." data-i18n-sub>六件入选拍品将在伦敦 2026 期间以私享形式预展，并同步呈现于数字孪生空间。仅作预展与意向登记，竞拍与成交将由认证合作方在线下处理。</p>
+      <div class="hero-actions">
+        <a class="btn" href="#room" id="enter-room" data-zh="进入 3D 预展厅 →" data-en="Enter 3D Room →">进入 3D 预展厅 →</a>
+        <a class="btn secondary" href="#waiting-list" data-zh="意向登记" data-en="Join Waiting List">意向登记</a>
+        <a class="btn text" href="mailto:info@livingcraft.com?subject=Request%20Bidder%20Access" data-zh="申请竞拍资格 →" data-en="Request Bidder Access →">申请竞拍资格 →</a>
+      </div>
+    </div>
+    <aside class="featured-lot" id="featured-lot" aria-label="Featured lot"></aside>
+  </section>
+
+  <section class="info-bar" aria-label="Preview information">
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label" data-zh="预展期" data-en="Preview Period">预展期</div><div class="info-value">16–27 Sep 2026</div></div>
+      <div class="info-item"><div class="info-label" data-zh="入选拍品" data-en="Selected Lots">入选拍品</div><div class="info-value" id="selected-lot-count">6 件</div></div>
+      <div class="info-item"><div class="info-label" data-zh="访问形式" data-en="Access Type">访问形式</div><div class="info-value" data-zh="邀请制 · 私享预约" data-en="By Appointment">邀请制 · 私享预约</div></div>
+      <div class="info-item"><div class="info-label" data-zh="数字孪生" data-en="Digital Twin">数字孪生</div><div class="info-value" data-zh="已开放" data-en="Open">已开放</div></div>
+    </div>
+  </section>
+
+  <div class="mode-row">
+    <span class="eyebrow" data-zh="浏览模式" data-en="Viewing Mode">浏览模式</span>
+    <div class="mode-toggle" role="group" aria-label="Auction preview mode">
+      <button class="mode-btn active" type="button" data-mode="catalogue" data-zh="目录视图" data-en="Catalogue">目录视图</button>
+      <button class="mode-btn" type="button" data-mode="room" data-zh="3D 预展厅" data-en="3D Room">3D 预展厅</button>
+    </div>
+  </div>
+
+  <section class="section" id="catalogue-view">
+    <div class="section-head" id="lots">
+      <div>
+        <div class="eyebrow" data-zh="拍品列表" data-en="Selected Lots">拍品列表</div>
+        <h2 data-zh="入选拍品" data-en="Selected Lots" data-i18n-sub>入选拍品</h2>
+      </div>
+      <p class="section-desc" data-zh="每件拍品仅作预展呈现，欢迎登记意向或申请询价、状况报告与私享观展。" data-en="Each lot is presented for preview only. Register interest or request inquiry, condition reports and private viewing." data-i18n-sub>每件拍品仅作预展呈现，欢迎登记意向或申请询价、状况报告与私享观展。</p>
+    </div>
+    <div class="lot-grid" id="lot-grid"></div>
+    <div class="section-head" style="margin-top:76px;">
+      <div>
+        <div class="eyebrow" data-zh="流程" data-en="How It Works">流程</div>
+        <h2 data-zh="如何参与" data-en="How It Works" data-i18n-sub>如何参与</h2>
+      </div>
+      <p class="section-desc" data-zh="预展厅只处理浏览、登记与资料申请；后续流程由认证合作方与收藏顾问跟进。" data-en="The preview room supports browsing, registration and document requests; certified partners and advisors handle the next steps." data-i18n-sub>预展厅只处理浏览、登记与资料申请；后续流程由认证合作方与收藏顾问跟进。</p>
+    </div>
+    <div class="steps">
+      <article class="step"><div class="step-no">01</div><div class="step-title" data-zh="浏览拍品" data-en="Browse Lots">浏览拍品</div><div class="step-en">Browse Lots</div><p data-zh="线上目录与 3D 预展厅同步查看。" data-en="View the online catalogue and 3D preview room.">线上目录与 3D 预展厅同步查看。</p></article>
+      <article class="step"><div class="step-no">02</div><div class="step-title" data-zh="申请访问" data-en="Request Access">申请访问</div><div class="step-en">Request Access</div><p data-zh="提交意向与身份资料。" data-en="Submit interest and access information.">提交意向与身份资料。</p></article>
+      <article class="step"><div class="step-no">03</div><div class="step-title" data-zh="私享咨询" data-en="Private Consultation">私享咨询</div><div class="step-en">Private Consultation</div><p data-zh="专员对接询价与状况报告。" data-en="Specialists coordinate inquiry and condition reports.">专员对接询价与状况报告。</p></article>
+      <article class="step"><div class="step-no">04</div><div class="step-title" data-zh="合作方处理" data-en="Partner Handling">合作方处理</div><div class="step-en">Partner Handling</div><p data-zh="由认证合作方完成后续交易流程。" data-en="Certified partners handle further transaction procedures.">由认证合作方完成后续交易流程。</p></article>
+    </div>
+  </section>
+
+  <section class="room-wrap" id="room-view" hidden>
+    <div class="preview-room">
+      <div class="room-wall"></div>
+      <div class="room-floor"></div>
+      <div class="horizon"></div>
+      <div class="room-shell">
+        <div class="room-top">
+          <div>
+            <a class="room-exit" href="vr-preview/" data-zh="← 返回 VR 展厅" data-en="← Back to VR Hall">← 返回 VR 展厅</a>
+            <div class="room-title">私享拍卖预展厅<span>Private Auction Preview Room</span></div>
+          </div>
+          <div class="room-count">By Appointment · Private<strong id="room-count">6 Selected Lots</strong></div>
+        </div>
+        <div class="lot-strip" id="room-lot-strip"></div>
+        <div class="room-stage" id="room-stage">
+          <div class="room-stage-title">PRIVATE AUCTION PREVIEW<span>Selected Heritage Works · By Appointment</span></div>
+          <div class="room-ring"></div>
+          <div class="plinth left"><div class="object sphere"></div></div>
+          <div class="plinth center"><div class="object"></div></div>
+          <div class="plinth right"><div class="object flat"></div></div>
+        </div>
+        <aside class="room-panel" id="room-panel" role="dialog" aria-live="polite" aria-label="Lot detail"></aside>
+        <div class="room-bottom">
+          <div class="switch-lot">
+            <button class="square-btn" id="prev-lot" type="button" aria-label="Previous lot">‹</button>
+            <span data-zh="切换拍品 · Switch Lot" data-en="Switch Lot">切换拍品 · Switch Lot</span>
+            <button class="square-btn" id="next-lot" type="button" aria-label="Next lot">›</button>
+          </div>
+          <div data-zh="拖动鼠标观看 · Drag to look around" data-en="Drag to look around">拖动鼠标观看 · Drag to look around</div>
+          <div>Preview Only · Interest Registration Only</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="waiting" id="waiting-list">
+    <div class="waiting-inner">
+      <div>
+        <div class="eyebrow" data-zh="意向登记" data-en="Waiting List">意向登记</div>
+        <h2 data-zh="登记你的兴趣" data-en="Join the Waiting List" data-i18n-sub>登记你的兴趣</h2>
+        <p data-zh="提交意向后，专员将通过加密邮件与你联系，并安排私享预览或线下看展。" data-en="After submission, a specialist will contact you by email and arrange private preview or in-person viewing." data-i18n-sub>提交意向后，专员将通过加密邮件与你联系，并安排私享预览或线下看展。</p>
+      </div>
+      <form class="interest-form" id="interest-form">
+        <div class="field-row">
+          <input name="name" autocomplete="name" placeholder="姓名 / Name" aria-label="Name">
+          <input name="email" autocomplete="email" placeholder="邮箱 / Email" aria-label="Email">
+        </div>
+        <input name="lot" placeholder="感兴趣的拍品 LOT 编号 / Interested LOT" aria-label="Interested lot">
+        <textarea name="message" placeholder="留言（可选）/ Message optional" aria-label="Message"></textarea>
+        <button class="btn gold" type="submit" data-zh="提交登记 →" data-en="Submit Interest →">提交登记 →</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="legal-note">
+    <p data-zh="声明：本页面仅作拍卖预展与意向登记之用。平台不承载在线出价或成交执行；后续资格审核、结算、交割与物流将由认证合作方独立处理。" data-en="Notice: This page is for auction preview and interest registration only. The platform does not host online offers or transaction execution; qualification review, settlement, handover and logistics are handled independently by certified partners." data-i18n-sub>声明：本页面仅作拍卖预展与意向登记之用。平台不承载在线出价或成交执行；后续资格审核、结算、交割与物流将由认证合作方独立处理。</p>
+  </section>
+</main>
+
+<script src="data/artifacts.js"></script>
+<script src="data/auction.js"></script>
+<script src="data/i18n.js"></script>
+<script>
+const IMAGE_FALLBACKS = {
+};
+const HOTSPOTS = [
+  { left: "25%", top: "62%" },
+  { left: "41%", top: "56%" },
+  { left: "50%", top: "48%" },
+  { left: "60%", top: "56%" },
+  { left: "74%", top: "63%" },
+  { left: "86%", top: "59%" }
+];
+let lots = (window.ARTIFACTS || [])
+  .filter(item => item.auctionPreview)
+  .sort((a, b) => lotNumberValue(a) - lotNumberValue(b));
+if (!lots.length && window.ARTIFACTS) lots = ARTIFACTS.slice(0, 6);
+const previewParams = new URLSearchParams(window.location.search);
+let selectedIndex = requestedLotIndex();
+let mode = window.location.hash === "#room" ? "room" : "catalogue";
+
+function isEn() {
+  return window.LIVING_I18N && LIVING_I18N.getLang() === "en";
+}
+function pick(zh, en) {
+  return isEn() ? en : zh;
+}
+function lotNumberValue(item) {
+  const raw = item.lotNumber || "";
+  const match = raw.match(/\d+/);
+  return match ? Number(match[0]) : 99;
+}
+function normalizeLotKey(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, "-");
+}
+function requestedLotIndex() {
+  const requested = previewParams.get("lot");
+  if (!requested) return 0;
+  const key = normalizeLotKey(requested);
+  const index = lots.findIndex(item => {
+    return [
+      item.id,
+      item.lotNumber,
+      item.lotNo,
+      lotNumberValue(item) ? `lot-${String(lotNumberValue(item)).padStart(2, "0")}` : ""
+    ].some(value => normalizeLotKey(value) === key);
+  });
+  return index >= 0 ? index : 0;
+}
+function previewPath(hash = window.location.hash) {
+  const query = window.location.search || "";
+  return `auction-preview.html${query}${hash || ""}`;
+}
+function lotAnchor(item) {
+  return `lot-${item.id}`;
+}
+function auctionRoomHref(item) {
+  return `auction-room.html?lot=${encodeURIComponent(item.id)}`;
+}
+function scrollSelectedLotIntoView() {
+  const item = lots[selectedIndex];
+  if (!item || !previewParams.get("lot") || mode !== "catalogue") return;
+  const node = document.getElementById(lotAnchor(item));
+  if (node) {
+    window.requestAnimationFrame(() => node.scrollIntoView({ block: "center" }));
+  }
+}
+function imageFor(item) {
+  return IMAGE_FALLBACKS[item.id] || item.image || "assets/works/ceramics-1.jfif";
+}
+function detailHref(item) {
+  return `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+}
+function mailHref(subject, body) {
+  return `mailto:info@livingcraft.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body || "")}`;
+}
+function materialText(item) {
+  return item.auctionMaterial || item.techniqueEn || item.technique || "";
+}
+function lotTitle(item) {
+  return pick(item.name, item.nameEn);
+}
+function lotSubtitle(item) {
+  return pick(item.nameEn, item.name);
+}
+function renderFeaturedLot() {
+  const item = lots[selectedIndex] || lots[0];
+  if (!item) return;
+  document.getElementById("featured-lot").innerHTML = `
+    <img src="${imageFor(item)}" alt="${lotTitle(item)}" loading="lazy">
+    <div class="featured-lot-top"><span>${item.lotNumber || "LOT 01"}</span><span>${item.estimate || "Estimate Upon Request"}</span></div>
+    <h2>${lotTitle(item)}</h2>
+    <p>${lotSubtitle(item)}</p>
+  `;
+  document.getElementById("selected-lot-count").textContent = pick(`${lots.length} 件`, `${lots.length} lots`);
+  document.getElementById("room-count").textContent = `${lots.length} Selected Lots`;
+}
+function renderLotGrid() {
+  document.getElementById("lot-grid").innerHTML = lots.map((item, index) => `
+    <article class="lot-card ${index === selectedIndex ? "selected-lot" : ""}" id="${lotAnchor(item)}">
+      <img src="${imageFor(item)}" alt="${lotTitle(item)}" loading="lazy">
+      <div>
+        <div class="lot-kicker">${item.lotNumber || "LOT"} · AUCTION PREVIEW</div>
+        <div class="lot-title">${lotTitle(item)}</div>
+        <div class="lot-en">${lotSubtitle(item)}</div>
+        <div class="lot-meta">
+          <div>${pick("艺术家", "Artist")}: ${pick(item.artist, item.artistEn)}</div>
+          <div>${pick("年份", "Year")}: ${item.year}</div>
+          <div>${pick("工艺", "Craft")}: ${pick(item.technique, item.techniqueEn)}</div>
+          <div>${pick("估价", "Estimate")}: ${pick("面询", item.estimate || "Estimate Upon Request")}</div>
+        </div>
+        <div class="lot-actions">
+          <a href="#waiting-list">${pick("意向登记", "Join Waiting List")}</a>
+          <a href="${auctionRoomHref(item)}">${pick("进入拍卖厅 →", "Enter Auction Room →")}</a>
+          <a href="${mailHref("Request Condition Report: " + (item.lotNumber || item.nameEn), item.nameEn)}">${pick("请求状况报告", "Request Condition Report")}</a>
+          <a href="${detailHref(item)}">${pick("查看作品 →", "View Full Detail →")}</a>
+        </div>
+      </div>
+    </article>
+  `).join("");
+  scrollSelectedLotIntoView();
+}
+function renderRoom() {
+  const strip = document.getElementById("room-lot-strip");
+  strip.innerHTML = lots.map((item, index) => `
+    <button type="button" class="${index === selectedIndex ? "active" : ""}" data-lot-index="${index}">
+      ${item.lotNumber || "LOT"}<br><span>${item.nameEn.split(" ").slice(0, 3).join(" ")}</span>
+    </button>
+  `).join("");
+  strip.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => selectLot(Number(btn.dataset.lotIndex)));
+  });
+
+  const stage = document.getElementById("room-stage");
+  stage.querySelectorAll(".hotspot").forEach(node => node.remove());
+  lots.forEach((item, index) => {
+    const hotspot = document.createElement("button");
+    hotspot.type = "button";
+    hotspot.className = "hotspot";
+    hotspot.style.left = HOTSPOTS[index % HOTSPOTS.length].left;
+    hotspot.style.top = HOTSPOTS[index % HOTSPOTS.length].top;
+    hotspot.setAttribute("aria-label", `${item.lotNumber || "LOT"} ${item.nameEn}`);
+    hotspot.setAttribute("aria-pressed", index === selectedIndex ? "true" : "false");
+    hotspot.dataset.lotIndex = String(index);
+    hotspot.addEventListener("click", () => selectLot(index));
+    stage.appendChild(hotspot);
+  });
+  renderPanel();
+}
+function renderPanel() {
+  const item = lots[selectedIndex];
+  if (!item) return;
+  document.querySelectorAll(".hotspot").forEach(btn => {
+    btn.setAttribute("aria-pressed", Number(btn.dataset.lotIndex) === selectedIndex ? "true" : "false");
+  });
+  document.querySelectorAll("#room-lot-strip button").forEach(btn => {
+    btn.classList.toggle("active", Number(btn.dataset.lotIndex) === selectedIndex);
+  });
+  document.getElementById("room-panel").innerHTML = `
+    <div class="panel-top"><span>${item.lotNumber || "LOT"} · AUCTION PREVIEW</span><button class="panel-close" type="button" id="panel-close">Close ×</button></div>
+    <img src="${imageFor(item)}" alt="${lotTitle(item)}">
+    <h3>${lotTitle(item)}</h3>
+    <div class="panel-en">${lotSubtitle(item)}</div>
+    <div class="panel-grid">
+      <div><span>Artist</span>${pick(item.artist, item.artistEn)}</div>
+      <div><span>Year</span>${item.year}</div>
+      <div><span>Craft</span>${pick(item.technique, item.techniqueEn)}</div>
+      <div><span>Material</span>${materialText(item)}</div>
+      <div><span>Dimensions</span>${item.dimensions}</div>
+      <div><span>Origin</span>${pick(item.origin, item.origin)}</div>
+      <div><span>Provenance</span>${item.auctionProvenance || "London 2026 Preview"}</div>
+      <div><span>Status</span>${item.auctionStatus || "Auction Preview"}</div>
+    </div>
+    <div class="panel-estimate">${item.estimate || "Estimate Upon Request"}</div>
+    <div class="panel-actions">
+      <a class="btn gold" href="#waiting-list">${pick("意向登记", "Join Waiting List")}</a>
+      <a class="btn ghost" href="${mailHref("Request Condition Report: " + (item.lotNumber || item.nameEn), item.nameEn)}">${pick("请求状况报告", "Request Condition Report")}</a>
+      <a class="btn ghost" href="${detailHref(item)}">${pick("查看作品详情", "View Full Detail")}</a>
+    </div>
+  `;
+  document.getElementById("panel-close").addEventListener("click", () => {
+    document.getElementById("room-panel").style.display = "none";
+  });
+  document.getElementById("room-panel").style.display = "";
+}
+function selectLot(index) {
+  selectedIndex = (index + lots.length) % lots.length;
+  renderPanel();
+}
+function setMode(nextMode) {
+  mode = nextMode;
+  document.getElementById("catalogue-view").hidden = mode !== "catalogue";
+  document.getElementById("room-view").hidden = mode !== "room";
+  document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === mode));
+  if (mode === "room") {
+    window.history.replaceState(null, "", previewPath("#room"));
+    renderRoom();
+  } else if (window.location.hash === "#room") {
+    window.history.replaceState(null, "", previewPath(""));
+  }
+}
+function bindForm() {
+  document.getElementById("interest-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const body = [
+      `Name: ${data.get("name") || ""}`,
+      `Email: ${data.get("email") || ""}`,
+      `Interested LOT: ${data.get("lot") || ""}`,
+      `Message: ${data.get("message") || ""}`
+    ].join("\n");
+    window.location.href = mailHref("Auction Preview Waiting List", body);
+  });
+}
+document.querySelectorAll(".mode-btn").forEach(btn => btn.addEventListener("click", () => setMode(btn.dataset.mode)));
+document.getElementById("enter-room").addEventListener("click", event => {
+  event.preventDefault();
+  setMode("room");
+});
+document.getElementById("prev-lot").addEventListener("click", () => selectLot(selectedIndex - 1));
+document.getElementById("next-lot").addEventListener("click", () => selectLot(selectedIndex + 1));
+document.addEventListener("languagechange", () => {
+  renderFeaturedLot();
+  renderLotGrid();
+  if (mode === "room") renderRoom();
+});
+renderFeaturedLot();
+renderLotGrid();
+bindForm();
+setMode(mode);
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生万物 · 展品详情 Artifact Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --white: #FFFFFF;
+  --offwhite: #F5F3EF;
+  --parchment: #EAE6DD;
+  --ink: #0F0F0D;
+  --ink-mid: #3A3228;
+  --ink-light: #8A8078;
+  --gold: #C9973A;
+  --gold-light: #E8C878;
+  --border: #E0DAD0;
+  --max: 1380px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--offwhite);
+  color: var(--ink);
+  font-family: "Cormorant Garamond", "Noto Serif SC", serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(245, 243, 239, 0.95);
+  backdrop-filter: blur(14px);
+}
+.nav-inner {
+  max-width: var(--max);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Noto Serif SC", serif;
+  font-weight: 200;
+  letter-spacing: 0.14em;
+}
+.brand-stack { line-height: 1.15; }
+.brand-cn { display: block; font-size: 15px; letter-spacing: 0.18em; }
+.brand-en { display: block; color: var(--ink-light); font-family: "Cormorant Garamond", serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; }
+.version-badge {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 28px);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--gold); }
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-light);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.lang-switch button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-light);
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-transform: uppercase;
+}
+.lang-switch button.active { color: var(--gold); }
+.page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 34px 32px 92px;
+}
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  color: var(--ink-light);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 42px;
+}
+.breadcrumb a:hover { color: var(--gold); }
+.detail {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1fr);
+  gap: clamp(38px, 6vw, 86px);
+  align-items: start;
+}
+.media {
+  position: sticky;
+  top: 98px;
+}
+.media-stack {
+  display: grid;
+  gap: 14px;
+}
+.artifact-media {
+  aspect-ratio: 4 / 5;
+  background: var(--parchment);
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.artifact-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.thumb {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  background: var(--parchment);
+  overflow: hidden;
+  position: relative;
+}
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb-label {
+  position: absolute;
+  left: 9px;
+  bottom: 8px;
+  color: rgba(255,255,255,0.78);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.preview-card {
+  min-height: 58px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--ink-mid);
+  background: rgba(255,255,255,0.28);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+.preview-card:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(255,255,255,0.52);
+}
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: rgba(255,255,255,0.76);
+  text-align: center;
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+}
+.scan-note {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  color: var(--ink-light);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.kicker {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+h1 {
+  margin: 0 0 10px;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(40px, 5vw, 70px);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+}
+.name-en {
+  margin: 0 0 30px;
+  color: var(--ink-mid);
+  font-size: clamp(23px, 3vw, 38px);
+  font-style: italic;
+  line-height: 1.15;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  margin-bottom: 22px;
+  padding: 0 12px;
+  border: 1px solid rgba(201,151,58,0.38);
+  color: var(--gold);
+  background: rgba(255,255,255,0.34);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.summary {
+  color: var(--ink-mid);
+  font-size: 17px;
+  line-height: 1.78;
+  margin: 0 0 22px;
+}
+.summary-en {
+  color: var(--ink-light);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0 0 34px;
+}
+.meta {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 26px;
+  padding: 22px 0;
+  margin-bottom: 28px;
+}
+.meta-label {
+  color: var(--ink-light);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.meta-value {
+  color: var(--ink-mid);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--white);
+  padding: 0 22px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn:hover { background: var(--gold-light); border-color: var(--gold-light); color: var(--ink); }
+.btn.secondary {
+  background: transparent;
+  border-color: rgba(15,15,13,0.24);
+  color: var(--ink);
+}
+.btn.secondary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--white);
+}
+.btn.tertiary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--ink-light);
+}
+.btn.tertiary:hover {
+  border-color: var(--gold);
+  background: transparent;
+  color: var(--gold);
+}
+.auction-preview-block {
+  margin-top: 34px;
+  border: 1px solid rgba(201,151,58,0.34);
+  background: linear-gradient(135deg, rgba(15,15,13,0.96), rgba(58,50,40,0.92));
+  color: var(--white);
+  padding: 26px;
+}
+.auction-preview-block .kicker {
+  margin-bottom: 12px;
+}
+.auction-preview-block h2 {
+  margin: 0;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+}
+.auction-preview-block p {
+  margin: 10px 0 0;
+  color: rgba(255,255,255,0.68);
+  font-size: 14px;
+  line-height: 1.72;
+}
+.auction-preview-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 18px;
+}
+.auction-preview-grid span {
+  display: block;
+  color: rgba(255,255,255,0.42);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.auction-preview-grid div {
+  color: rgba(255,255,255,0.86);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.auction-preview-actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.auction-preview-actions .btn.secondary {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.28);
+}
+.auction-preview-actions .btn.secondary:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  color: var(--ink);
+}
+.trust {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.trust-item {
+  color: var(--ink-light);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.trust-item strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+.content-sections {
+  margin-top: 42px;
+  border-top: 1px solid var(--border);
+}
+.detail-section {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.34fr) minmax(0, 1fr);
+  gap: 28px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.detail-section p {
+  margin: 0;
+  color: var(--ink-mid);
+  font-size: 16px;
+  line-height: 1.78;
+  text-wrap: pretty;
+}
+.related-works {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.related-work {
+  border: 1px solid var(--border);
+  padding: 12px;
+  background: rgba(255,255,255,0.22);
+  transition: border-color 180ms ease, background 180ms ease;
+}
+.related-work:hover {
+  border-color: var(--gold);
+  background: rgba(255,255,255,0.48);
+}
+.related-work-img {
+  aspect-ratio: 4 / 3;
+  margin-bottom: 12px;
+  overflow: hidden;
+  background: var(--parchment);
+}
+.related-work-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.related-work-title {
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.related-work-meta {
+  margin-top: 5px;
+  color: var(--ink-light);
+  font-family: Arial, "Noto Serif SC", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .detail { grid-template-columns: 1fr; }
+  .media { position: static; }
+  .related-works { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .nav { height: auto; }
+  .nav-inner { min-height: 64px; padding: 14px 18px; align-items: flex-start; flex-direction: column; }
+  .page { padding: 28px 18px 72px; }
+  .meta, .trust, .detail-section, .related-works { grid-template-columns: 1fr; }
+  .actions .btn,
+  .auction-preview-actions .btn { width: 100%; }
+  .auction-preview-grid { grid-template-columns: 1fr; }
+}
+</style>
+<link rel="stylesheet" href="styles/theme-celadon.css">
+</head>
+<body>
+<nav class="nav" aria-label="主导航 Main navigation">
+  <div class="nav-inner">
+    <a class="brand" href="index-v2.html"><span class="brand-stack"><span class="brand-cn">新生万物</span><span class="brand-en">Living Craft · MADverse</span></span></a>
+    <div class="nav-links">
+      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a class="active" href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
+    </div>
+    <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-lang-set="zh">中</button><span>·</span><button type="button" data-lang-set="en">EN</button>
+    </span>
+  </div>
+</nav>
+
+<main class="page">
+  <nav class="breadcrumb" aria-label="面包屑 Breadcrumb">
+    <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+    <span>/</span>
+    <a href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+    <span>/</span>
+    <span id="crumb-name" data-zh="展品" data-en="Artifact">展品</span>
+  </nav>
+
+  <section class="detail" id="detail"></section>
+</main>
+
+<script src="data/artifacts.js"></script>
+<script src="data/auction.js"></script>
+<script src="data/i18n.js"></script>
+<script>
+const USE_REAL_IMAGES = true;
+const IMAGE_FALLBACKS = {
+};
+const CATEGORY_COLORS = {
+  furniture: "linear-gradient(160deg, #C4A870 0%, #6B3A18 100%)",
+  objects: "linear-gradient(160deg, #8BB5C4 0%, #2A5870 100%)",
+  fashion: "linear-gradient(160deg, #C4A8B0 0%, #6B1A3A 100%)",
+  decorative: "linear-gradient(160deg, #B4C4A0 0%, #3A5820 100%)"
+};
+const CATEGORY_LABELS = {
+  furniture: { zh: "家具", en: "Furniture" },
+  objects: { zh: "器物", en: "Objects" },
+  fashion: { zh: "服饰与珠宝", en: "Fashion & Jewelry" },
+  decorative: { zh: "观赏品", en: "Decorative" }
+};
+const ORIGIN_EN = {
+  "中国": "China",
+  "河南省汝州市": "Ruzhou, Henan Province",
+  "江苏省苏州市": "Suzhou, Jiangsu Province"
+};
+
+function isEn() {
+  return window.LIVING_I18N && LIVING_I18N.getLang() === "en";
+}
+
+function pick(zh, en) {
+  return isEn() ? en : zh;
+}
+
+function categoryLabel(item) {
+  const label = CATEGORY_LABELS[item.functionalCategory] || { zh: item.functionalCategoryLabel, en: item.functionalCategoryLabel };
+  return pick(label.zh, label.en);
+}
+
+function resolvedImage(item) {
+  return IMAGE_FALLBACKS[item.id] || item.image;
+}
+
+function craftText(item) {
+  return pick(item.technique, item.techniqueEn);
+}
+
+function compactCraftText(item) {
+  return craftText(item).split(/[，,、/]/)[0].trim();
+}
+
+function materialText(item) {
+  return pick(item.auctionMaterial || item.technique, item.auctionMaterial || item.techniqueEn);
+}
+
+function exhibitionText(item) {
+  return pick(item.exhibitionUnit, item.exhibitionUnitEn);
+}
+
+function statusText(item) {
+  if (item.auctionLot || item.auctionPreview) return `${item.lotNumber || "LOT"} · ${item.auctionStatus || "Online Auction"}`;
+  return item.available ? "Available for Inquiry" : "Unavailable";
+}
+
+function getArtifactId() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("id")) return params.get("id");
+  if (window.location.hash.startsWith("#artifact=")) return decodeURIComponent(window.location.hash.replace("#artifact=", ""));
+  return "";
+}
+
+function inquiryHref(item) {
+  return `mailto:info@livingcraft.com?subject=${encodeURIComponent("Inquiry: " + item.name)}`;
+}
+
+function interestHref(item) {
+  return `mailto:info@livingcraft.com?subject=${encodeURIComponent("Register Interest: " + item.name)}`;
+}
+
+function conditionReportHref(item) {
+  return `mailto:info@livingcraft.com?subject=${encodeURIComponent("Request Condition Report: " + (item.lotNumber || item.name))}`;
+}
+
+function auctionPreviewHref(item) {
+  return `auction-preview.html?lot=${encodeURIComponent(item.id)}#${lotAnchor(item)}`;
+}
+
+function auctionRoomHref(item) {
+  return `auction-room.html?lot=${encodeURIComponent(item.id)}`;
+}
+
+function lotAnchor(item) {
+  return `lot-${item.id}`;
+}
+
+function mediaMarkup(item) {
+  if (USE_REAL_IMAGES) {
+    return `<img src="${resolvedImage(item)}" alt="${item.name} ${item.nameEn}" loading="lazy">`;
+  }
+  return `<div class="placeholder" style="background:${CATEGORY_COLORS[item.functionalCategory]}">${pick(item.name, item.nameEn)}</div>`;
+}
+
+function thumbMarkup(item, label, index = 0) {
+  const image = resolvedImage(item);
+  if (index === 0) {
+    return `<div class="thumb"><img src="${image}" alt="${label}" loading="lazy"><span class="thumb-label">${label}</span></div>`;
+  }
+  return `<div class="thumb"><div class="placeholder" style="background:${CATEGORY_COLORS[item.functionalCategory]}">${label}</div><span class="thumb-label">${label}</span></div>`;
+}
+
+function suitableSpaces(item) {
+  const spaces = {
+    furniture: {
+      zh: "适合书房、会客厅、酒店公共空间、会所与收藏型住宅，以家具尺度承载东方工艺的空间秩序。",
+      en: "Suitable for studies, reception rooms, hospitality spaces, private clubs and collector residences where furniture can anchor the spatial order."
+    },
+    objects: {
+      zh: "适合茶席、书房、展柜、艺术壁龛与私人收藏室，作为可近距离观看的器物焦点。",
+      en: "Suitable for tea settings, studies, vitrines, art niches and private collection rooms as a focused object for close viewing."
+    },
+    fashion: {
+      zh: "适合专题展陈、品牌文化空间、私人收藏与高端形象项目，强调工艺、身体与叙事之间的关系。",
+      en: "Suitable for thematic display, brand cultural spaces, private collections and image-led projects where craft, body and narrative meet."
+    },
+    decorative: {
+      zh: "适合墙面陈列、玄关、画廊式走廊、艺术客厅与机构展陈，以观赏性建立空间记忆点。",
+      en: "Suitable for wall display, entrances, gallery corridors, art living rooms and institutional presentation where visual presence defines the space."
+    }
+  };
+  const fallback = {
+    zh: "适合艺术陈列、私人收藏与文化空间，需结合尺度、材质与观看距离进行判断。",
+    en: "Suitable for art display, private collection and cultural spaces, with placement guided by scale, material and viewing distance."
+  };
+  const copy = spaces[item.functionalCategory] || fallback;
+  return pick(copy.zh, copy.en);
+}
+
+function detailSections(item) {
+  const sections = [
+    {
+      title: "Why Collect This Work",
+      body: pick(
+        `${item.name}以${compactCraftText(item)}为核心，兼具展览记录、工艺辨识度与空间陈列价值，是新生万物目录中适合进一步询价和收藏评估的作品。`,
+        `${item.nameEn} centers on ${compactCraftText(item)}, combining exhibition context, craft identity and spatial presence for further inquiry and collection review.`
+      )
+    },
+    {
+      title: "Craft & Material",
+      body: pick(
+        `作品使用${materialText(item)}，其工艺线索不只作为材料说明，也帮助买家理解制作难度、维护方式与长期收藏条件。`,
+        `The work uses ${materialText(item)}. The craft record helps buyers understand making complexity, care requirements and long-term collection conditions.`
+      )
+    },
+    {
+      title: "Artist Context",
+      body: pick(
+        `${item.artist}的创作被放入“${exhibitionText(item)}”语境中观看，作品更适合以艺术家脉络、工艺传承和当代表达共同判断。`,
+        `${item.artistEn} is presented within the "${exhibitionText(item)}" context, inviting review through artist practice, craft lineage and contemporary expression.`
+      )
+    },
+    {
+      title: "Exhibition History",
+      body: pick(
+        `本作品收录于${exhibitionText(item)}单元，相关展览记录、来源说明与预展资料可作为后续询价和状况报告申请的基础。`,
+        `This work is listed under the ${exhibitionText(item)} unit. Exhibition records, provenance notes and preview materials support later inquiry and condition report requests.`
+      )
+    },
+    {
+      title: "Suitable Spaces",
+      body: suitableSpaces(item)
+    }
+  ];
+  if (item.details) {
+    sections.splice(2, 0, {
+      title: "Details",
+      body: pick(item.details, item.detailsEn || item.details)
+    });
+  }
+  if (Array.isArray(item.keywords) && item.keywords.length) {
+    sections.push({
+      title: "Keywords",
+      body: item.keywords.join(" · ")
+    });
+  }
+  return `
+    <div class="content-sections">
+      ${sections.map(section => `
+        <section class="detail-section">
+          <h2>${section.title}</h2>
+          <p>${section.body}</p>
+        </section>
+      `).join("")}
+      <section class="detail-section">
+        <h2>Related Works</h2>
+        ${relatedWorksMarkup(item)}
+      </section>
+    </div>
+  `;
+}
+
+function relatedWorksMarkup(item) {
+  const primary = ARTIFACTS.filter(work => work.id !== item.id && (work.craftCategory === item.craftCategory || work.functionalCategory === item.functionalCategory));
+  const fallback = ARTIFACTS.filter(work => work.id !== item.id && !primary.includes(work));
+  const related = [...primary, ...fallback].slice(0, 3);
+  return `
+    <div class="related-works">
+      ${related.map(work => `
+        <a class="related-work" href="artifact-detail.html?id=${encodeURIComponent(work.id)}">
+          <div class="related-work-img"><img src="${resolvedImage(work)}" alt="${work.name} ${work.nameEn}" loading="lazy"></div>
+          <div class="related-work-title">${pick(work.name, work.nameEn)}</div>
+          <div class="related-work-meta">${work.year} · ${compactCraftText(work)}</div>
+        </a>
+      `).join("")}
+    </div>
+  `;
+}
+
+function auctionPreviewBlock(item) {
+  if (!(item.auctionLot || item.auctionPreview)) return "";
+  return `
+    <section class="auction-preview-block" aria-label="Auction preview and room">
+      <div class="kicker">${pick("拍卖预展", "Auction Preview")} · ${item.lotNo || item.lotNumber || "LOT"}</div>
+      <h2>${pick("拍卖预展 / 线上拍卖厅", "Auction Preview / Online Auction Room")}</h2>
+      <p>${pick("本作品已进入 London 2026 线上拍卖链路。预展页用于查看 LOT、登记意向与申请状况报告；拍卖厅用于查看当前价、下一口价、倒计时、直播讲解并进行前端模拟竞价。v0.5 仅作界面演示，不产生真实交易。", "This work is included in the London 2026 auction flow. The preview page is for lot review, interest registration and condition report requests; the auction room is for current price, next bid, countdown, live commentary and front-end simulated bidding only. v0.5 creates no real transaction.")}</p>
+      <div class="auction-preview-grid">
+        <div><span>Lot</span>${item.lotNo || item.lotNumber || "LOT"}</div>
+        <div><span>Status</span>${item.auctionStatus || "Live Demo"}</div>
+        <div><span>Estimate</span>${item.estimate || "Estimate Upon Request"}</div>
+        <div><span>Current</span>${item.currentPriceDisplay || "Demo Price"}</div>
+        <div><span>Next Bid</span>${item.nextBidDisplay || "Demo Bid"}</div>
+      </div>
+      <div class="auction-preview-actions">
+        <a class="btn" href="${auctionPreviewHref(item)}">${pick("查看拍卖预展", "View Auction Preview")}</a>
+        <a class="btn secondary" href="${auctionRoomHref(item)}">${pick("进入拍卖厅", "Enter Auction Room")}</a>
+        <a class="btn secondary" href="explore.html#artifact=${encodeURIComponent(item.id)}">${pick("进入 3D 预览", "Enter 3D Preview")}</a>
+        <a class="btn secondary" href="${conditionReportHref(item)}">${pick("索取状况报告", "Request Condition Report")}</a>
+      </div>
+    </section>
+  `;
+}
+
+function renderMissing() {
+  document.getElementById("detail").innerHTML = `
+    <div></div>
+    <div>
+      <div class="kicker">${pick("展品不可用", "Artifact unavailable")}</div>
+      <h1>${pick("未找到展品", "Artifact Not Found")}</h1>
+      <p class="summary">${pick("当前链接未能匹配展品数据，请返回藏品目录重新选择。", "The requested artifact could not be found in the collection data set.")}</p>
+      <div class="actions"><a class="btn" href="collections.html">${pick("返回藏品", "Back to Collections")}</a></div>
+    </div>
+  `;
+}
+
+function renderDetail(item) {
+  document.title = `${pick(item.name, item.nameEn)} · 新生万物`;
+  document.getElementById("crumb-name").textContent = pick(item.name, item.nameEn);
+  document.getElementById("detail").innerHTML = `
+    <div class="media">
+      <div class="media-stack">
+        <div class="artifact-media">${mediaMarkup(item)}</div>
+        <div class="thumb-row">
+          ${thumbMarkup(item, "Primary View", 0)}
+          ${thumbMarkup(item, "Material Detail", 1)}
+          ${thumbMarkup(item, "3D Preview", 2)}
+        </div>
+        <a class="preview-card" href="explore.html#artifact=${encodeURIComponent(item.id)}">
+          <span>${pick("Enter 3D Preview", "Enter 3D Preview")}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <div class="scan-note">${pick("3D 扫描状态 · 可进入 3D 器物场景预览", "3D scan status · Preview available in Explore 3D")}</div>
+      </div>
+    </div>
+    <article>
+      <div class="kicker">${categoryLabel(item)} · ${item.tag}</div>
+      <h1>${pick(item.name, item.nameEn)}</h1>
+      <p class="name-en">${pick(item.nameEn, item.name)}</p>
+      <div class="status-pill">${statusText(item)}</div>
+      <p class="summary">${pick(item.desc1, item.desc1En)}</p>
+      <div class="meta">
+        ${[
+          ["Artist", pick(item.artist, item.artistEn)],
+          ["Year", item.year],
+          ["Craft", compactCraftText(item)],
+          ["Material", materialText(item)],
+          ["Dimensions", item.dimensions],
+          ["Origin", pick(item.origin, item.originEn || ORIGIN_EN[item.origin] || item.origin)],
+          ["Exhibition", exhibitionText(item)],
+          ["Status", statusText(item)]
+        ].map(([label, value]) => `<div><div class="meta-label">${label}</div><div class="meta-value">${value}</div></div>`).join("")}
+      </div>
+      <div class="actions">
+        <a class="btn" href="${inquiryHref(item)}">${pick("Inquire", "Inquire")}</a>
+        ${(item.auctionLot || item.auctionPreview) ? `<a class="btn secondary" href="${auctionPreviewHref(item)}">${pick("查看拍卖预展", "View Auction Preview")}</a>` : ""}
+        ${(item.auctionLot || item.auctionPreview) ? `<a class="btn secondary" href="${auctionRoomHref(item)}">${pick("进入拍卖厅", "Enter Auction Room")}</a>` : ""}
+        <a class="btn secondary" href="${interestHref(item)}">${pick("Register Interest", "Register Interest")}</a>
+        <a class="btn tertiary" href="explore.html#artifact=${encodeURIComponent(item.id)}">${pick("Enter 3D Preview", "Enter 3D Preview")}</a>
+        <a class="btn tertiary" href="${conditionReportHref(item)}">${pick("Request Condition Report", "Request Condition Report")}</a>
+        <a class="btn tertiary" href="collections.html#category=${encodeURIComponent(item.functionalCategory)}">${pick("Back to Collections", "Back to Collections")}</a>
+      </div>
+      ${auctionPreviewBlock(item)}
+      ${detailSections(item)}
+    </article>
+  `;
+}
+
+const artifact = ARTIFACTS.find(item => item.id === getArtifactId());
+if (artifact) renderDetail(artifact);
+else renderMissing();
+document.addEventListener("languagechange", () => {
+  if (artifact) renderDetail(artifact);
+  else renderMissing();
+});
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>

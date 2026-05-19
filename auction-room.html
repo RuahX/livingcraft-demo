@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="theme-ochre">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线上拍卖厅 Online Auction Room · 新生万物</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/theme-celadon.css">
+<style>
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: normal; src: local("Cormorant Garamond Light"), url("fonts/CormorantGaramond-Light.ttf") format("truetype"); }
+@font-face { font-family: "Cormorant Garamond"; font-weight: 300; font-style: italic; src: local("Cormorant Garamond Light Italic"), url("fonts/CormorantGaramond-LightItalic.ttf") format("truetype"); }
+:root {
+  --bg: #0C0705;
+  --bg-2: #120B07;
+  --panel: #100B08;
+  --surface: #18100B;
+  --ink: #F2EFE8;
+  --ink-mid: rgba(242,239,232,0.72);
+  --ink-soft: rgba(242,239,232,0.48);
+  --muted: rgba(242,239,232,0.32);
+  --line: rgba(205,126,42,0.22);
+  --line-soft: rgba(255,255,255,0.1);
+  --accent: #C06E28;
+  --accent-2: #E0A15A;
+  --danger: #A24634;
+  --ok: #B8D7C3;
+  --mono: "Courier New", "Noto Serif SC", monospace;
+  --serif: "Cormorant Garamond", "Noto Serif SC", serif;
+  --cn: "Noto Serif SC", serif;
+}
+html.theme-ochre {
+  --bg: #0C0705;
+  --bg-2: #120B07;
+  --panel: #100B08;
+  --surface: #18100B;
+  --ink: #F2EFE8;
+  --ink-mid: rgba(242,239,232,0.72);
+  --ink-soft: rgba(242,239,232,0.48);
+  --muted: rgba(242,239,232,0.32);
+  --line: rgba(205,126,42,0.22);
+  --line-soft: rgba(255,255,255,0.1);
+  --accent: #C06E28;
+  --accent-2: #E0A15A;
+  --danger: #A24634;
+  --ok: #B8D7C3;
+  color-scheme: dark;
+}
+html.theme-celadon {
+  --bg: #06110B;
+  --bg-2: #08160F;
+  --panel: #09140E;
+  --surface: #101B15;
+  --line: rgba(155,230,196,0.24);
+  --accent: #9BC9B4;
+  --accent-2: #B8E5D1;
+  --danger: #7E3E34;
+  --ok: #9BC9B4;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font-family: var(--serif); -webkit-font-smoothing: antialiased; }
+html.theme-ochre body,
+html.theme-celadon body { background: var(--bg); color: var(--ink); }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.auction-shell { min-height: 100vh; background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 68%, #F5F6F3 68%, #F5F6F3 100%); }
+.topbar { position: sticky; top: 0; z-index: 30; min-height: 58px; display: grid; grid-template-columns: minmax(360px, 1fr) auto; align-items: center; border-bottom: 1px solid var(--line-soft); background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(14px); }
+.top-left, .top-right { min-width: 0; display: flex; align-items: center; gap: 18px; padding: 0 clamp(18px, 5vw, 72px); }
+.top-left { color: var(--ink-mid); }
+.top-right { justify-content: flex-end; color: var(--ink-soft); }
+.back-link { font-family: var(--cn); font-size: 13px; font-weight: 500; letter-spacing: 0.08em; }
+.event-name { padding-left: 18px; border-left: 1px solid var(--line-soft); color: var(--ink); font-size: 15px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-pill { min-height: 30px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); color: var(--accent); padding: 0 12px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.18em; white-space: nowrap; }
+.demo-pill::before, .feed-dot::before { content: ""; width: 7px; height: 7px; border-radius: 999px; background: var(--accent); display: inline-block; }
+.topbar .theme-toggle {
+  min-height: 30px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.035);
+  color: var(--ink-mid);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.topbar .theme-toggle:hover {
+  color: var(--accent-2);
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.055);
+}
+.topbar .theme-toggle__panel {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.status-chip { color: var(--ink-soft); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.13em; white-space: nowrap; }
+.status-chip strong { color: var(--ink-mid); font-weight: 800; }
+.status-chip.time strong { color: var(--accent); }
+.auction-grid { display: grid; grid-template-columns: minmax(420px, 42.5vw) minmax(340px, 1fr) minmax(380px, 470px); border-bottom: 1px solid var(--line-soft); }
+.visual-panel, .info-panel, .bid-panel-wrap { min-height: 720px; border-right: 1px solid var(--line-soft); padding: clamp(26px, 4vw, 48px); }
+.visual-panel { padding-left: clamp(28px, 5.5vw, 90px); }
+.lot-visual { position: relative; aspect-ratio: 4 / 5; min-height: 520px; border: 1px solid var(--line-soft); background: linear-gradient(155deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04)); overflow: hidden; }
+.lot-visual img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.82) contrast(0.98); }
+.placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-soft); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+.lot-tag, .live-tag, .thumb-label, .queue-lot-tag { position: absolute; z-index: 2; font-family: var(--mono); font-weight: 700; letter-spacing: 0.16em; }
+.lot-tag { top: 18px; left: 18px; border: 1px solid var(--accent); background: rgba(0,0,0,0.56); color: var(--accent); padding: 8px 12px; font-size: 12px; }
+.live-tag { top: 18px; right: 18px; background: var(--accent); color: var(--bg); padding: 9px 13px; font-size: 12px; }
+.auction-shell .live-tag { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.inventory-code { position: absolute; right: 18px; bottom: 18px; z-index: 2; color: var(--ink-soft); font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.18em; }
+.thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.thumb { position: relative; aspect-ratio: 4 / 3; border: 1px solid var(--line-soft); background: rgba(255,255,255,0.08); overflow: hidden; }
+.thumb img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; opacity: 0.82; filter: saturate(0.7); }
+.thumb-label { left: 8px; bottom: 7px; background: rgba(0,0,0,0.58); color: var(--ink-mid); padding: 3px 6px; font-size: 9px; }
+.visual-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.outline-btn { min-height: 43px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line-soft); background: transparent; color: var(--ink); padding: 0 14px; font-family: var(--cn); font-size: 13px; font-weight: 500; letter-spacing: 0.12em; }
+.outline-btn:hover { color: var(--accent-2); border-color: var(--accent); }
+.info-panel { display: flex; flex-direction: column; gap: 28px; }
+.lot-kicker { color: var(--accent); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.22em; }
+h1 { margin: 18px 0 0; font-family: var(--cn); font-size: clamp(34px, 3.6vw, 54px); font-weight: 300; line-height: 1.08; letter-spacing: 0.02em; }
+.name-en { margin: 8px 0 0; color: var(--ink-mid); font-size: 24px; font-style: italic; line-height: 1.15; }
+.lot-meta { display: grid; grid-template-columns: 124px minmax(0, 1fr); gap: 14px 22px; padding-top: 26px; border-top: 1px solid var(--line-soft); font-family: Arial, "Noto Serif SC", sans-serif; font-size: 14px; line-height: 1.35; }
+.lot-meta dt { color: var(--ink-soft); font-weight: 800; }
+.lot-meta dd { margin: 0; color: var(--ink-mid); font-weight: 700; }
+.lot-meta .ok { color: var(--accent-2); }
+.stream { margin-top: 22px; border: 1px solid var(--line-soft); padding: 18px; background: rgba(255,255,255,0.025); }
+.stream-head { display: flex; justify-content: space-between; color: var(--accent); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
+.stream-box { margin-top: 14px; min-height: 258px; display: grid; place-items: center; background: rgba(0,0,0,0.34); border: 1px solid rgba(255,255,255,0.08); color: var(--ink-soft); text-align: center; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; }
+.stream-pulse { width: 44px; height: 44px; margin: 0 auto 22px; border: 1px solid var(--accent); border-radius: 999px; opacity: 0.7; animation: pulse 1.8s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(0.88); opacity: 0.45; } 50% { transform: scale(1.08); opacity: 0.85; } }
+.bid-panel-wrap { padding-right: clamp(24px, 4vw, 70px); }
+.bid-card { border: 1px solid var(--line-soft); background: rgba(0,0,0,0.18); }
+.bid-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 24px 24px 0; color: var(--accent); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; }
+.current-bid { padding: 18px 24px 10px; font-family: var(--mono); font-size: clamp(44px, 4.7vw, 66px); font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.estimate-line { display: flex; justify-content: space-between; gap: 16px; padding: 0 24px 22px; color: var(--ink-soft); border-bottom: 1px solid var(--line-soft); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.13em; }
+.reserve-not-met { color: var(--danger); }
+.reserve-met { color: var(--ok); }
+.bid-boxes { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line-soft); }
+.bid-boxes > div { padding: 20px 24px; border-right: 1px solid var(--line-soft); }
+.bid-boxes > div:first-child { border-left: 2px solid var(--accent); }
+.bid-boxes span { display: block; margin-bottom: 11px; color: var(--ink-soft); font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; }
+.bid-boxes strong { color: var(--ink); font-family: var(--mono); font-size: 23px; font-weight: 800; }
+.rule-pills { display: flex; flex-wrap: wrap; gap: 7px; padding: 18px 24px 0; }
+.rule-pill { border: 1px solid var(--line-soft); color: var(--ink-mid); padding: 7px 10px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; }
+.rule-pill.active { color: var(--accent-2); border-color: var(--line); }
+.cost-card { margin: 20px 24px 0; padding: 17px 18px; border: 1px solid var(--line-soft); color: var(--ink-mid); font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.cost-card h2 { margin: 0 0 14px; color: var(--accent); font-size: 13px; letter-spacing: 0.18em; }
+.cost-line { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.cost-line.total { margin-top: 8px; padding-top: 12px; border-bottom: 0; color: var(--accent-2); }
+.cost-note { margin-top: 12px; color: var(--ink-soft); line-height: 1.55; }
+.outbid-alert { margin: 18px 24px 0; min-height: 42px; display: flex; align-items: center; border: 1px solid rgba(162,70,52,0.58); background: rgba(162,70,52,0.15); color: var(--danger); padding: 0 14px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; }
+.outbid-alert.leading { border-color: var(--line); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent-2); }
+.bid-actions { display: grid; gap: 10px; padding: 18px 24px 0; }
+.bid-btn, .ghost-btn, .max-btn { min-height: 48px; border: 1px solid var(--line-soft); background: transparent; color: var(--ink); font-family: var(--cn); font-size: 13px; font-weight: 500; letter-spacing: 0.13em; }
+.bid-btn { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.bid-btn:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.ghost-btn:hover, .max-btn:hover { border-color: var(--accent); color: var(--accent-2); }
+.max-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 10px; }
+.max-row input { min-width: 0; border: 1px solid var(--line-soft); background: rgba(255,255,255,0.02); color: var(--ink); padding: 0 14px; font-family: var(--mono); font-size: 13px; font-weight: 700; outline: none; }
+.max-row input:focus { border-color: var(--accent); }
+.activity { margin: 28px 24px 0; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+.activity-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 14px; color: var(--ink-mid); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; }
+.activity-head span:last-child { border: 1px solid var(--line); color: var(--accent); padding: 6px 9px; }
+.activity-list { max-height: 265px; overflow: auto; padding-right: 8px; scrollbar-color: var(--accent) rgba(255,255,255,0.08); }
+.activity-row { display: grid; grid-template-columns: minmax(0, 1fr) 72px 92px; gap: 10px; align-items: center; min-height: 54px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.055); font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.activity-row .type { display: inline-flex; align-items: center; min-height: 30px; padding: 0 9px; color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); letter-spacing: 0.12em; }
+.activity-row.competing .type { color: var(--danger); background: rgba(162,70,52,0.2); }
+.activity-row.system .type { color: var(--ink-soft); background: transparent; border-left: 2px solid var(--accent); }
+.activity-row .who, .activity-row .time { color: var(--ink-soft); }
+.activity-row .amount { color: var(--ink); text-align: right; font-size: 15px; }
+.feed-status { display: flex; justify-content: space-between; gap: 16px; padding: 14px 24px; margin-top: 18px; border-top: 1px solid var(--line-soft); color: var(--ink-soft); font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; }
+.feed-dot { display: inline-flex; align-items: center; gap: 8px; }
+.demo-note { padding: 18px 24px 24px; color: var(--ink-soft); font-family: var(--cn); font-size: 13px; font-weight: 500; line-height: 1.65; }
+.queue-section { border-bottom: 1px solid var(--line-soft); padding: 24px clamp(18px, 5vw, 72px) 26px; background: var(--bg-2); }
+.queue-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.16em; }
+.queue-track { display: grid; grid-auto-flow: column; grid-auto-columns: 220px; gap: 12px; overflow-x: auto; padding-bottom: 10px; scrollbar-color: var(--accent) rgba(255,255,255,0.1); }
+.queue-card { position: relative; height: 220px; border: 1px solid var(--line-soft); background: rgba(255,255,255,0.02); color: var(--ink-mid); padding: 10px; text-align: left; overflow: hidden; }
+.queue-card.current { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); color: var(--ink); }
+.queue-card.closed { opacity: 0.52; }
+.queue-img { position: relative; height: 138px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.queue-img img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.72); }
+.queue-lot-tag { top: 8px; left: 8px; z-index: 3; color: var(--accent); background: rgba(0,0,0,0.58); border: 1px solid var(--line); padding: 4px 7px; font-size: 10px; }
+.queue-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 11px; color: var(--ink-soft); font-family: var(--mono); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; }
+.queue-card.current .queue-meta span:last-child { color: var(--accent); }
+.queue-title { margin-top: 7px; font-size: 14px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.footer { display: grid; grid-template-columns: minmax(0, 1fr) 320px 320px; gap: 56px; padding: 88px clamp(28px, 9vw, 180px); background: #F5F6F3; color: #26322C; border-top: 1px solid rgba(0,0,0,0.1); }
+.footer-brand { font-family: var(--cn); font-size: 24px; font-weight: 300; }
+.footer-brand span { margin-left: 8px; font-family: var(--serif); font-size: 16px; font-style: italic; }
+.footer p { max-width: 520px; color: rgba(38,50,44,0.72); font-family: var(--cn); font-size: 16px; line-height: 1.7; }
+.footer-col { display: grid; gap: 14px; align-content: start; font-family: var(--cn); font-size: 16px; }
+.footer-col strong { margin-bottom: 8px; font-weight: 400; }
+.confirm-layer { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; background: rgba(0,0,0,0.68); padding: 24px; }
+.confirm-layer.open { display: grid; }
+.confirm-card { width: min(520px, 100%); border: 1px solid var(--line); background: var(--panel); color: var(--ink); padding: 28px; box-shadow: 0 24px 80px rgba(0,0,0,0.42); }
+.confirm-card h2 { margin: 0 0 8px; font-family: var(--cn); font-size: 28px; font-weight: 300; }
+.confirm-card p { margin: 0 0 18px; color: var(--ink-mid); line-height: 1.65; }
+.confirm-grid { display: grid; gap: 10px; border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); padding: 16px 0; font-family: var(--mono); font-size: 13px; }
+.confirm-grid div { display: flex; justify-content: space-between; gap: 18px; }
+.confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+@media (max-width: 1280px) {
+  .auction-grid { grid-template-columns: 1fr; }
+  .visual-panel, .info-panel, .bid-panel-wrap { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line-soft); padding-inline: clamp(20px, 6vw, 72px); }
+  .lot-visual { min-height: 0; max-height: 760px; }
+  .bid-panel-wrap { padding-right: clamp(20px, 6vw, 72px); }
+  .topbar { grid-template-columns: 1fr; }
+  .top-left, .top-right { padding-block: 14px; flex-wrap: wrap; justify-content: flex-start; }
+}
+@media (max-width: 760px) {
+  .top-left, .top-right { padding-inline: 18px; }
+  .visual-panel, .info-panel, .bid-panel-wrap, .queue-section { padding-inline: 18px; }
+  .thumbs, .visual-actions, .bid-boxes, .confirm-actions, .footer { grid-template-columns: 1fr; }
+  .lot-meta { grid-template-columns: 1fr; }
+  .activity-row { grid-template-columns: 1fr; gap: 4px; }
+  .activity-row .amount { text-align: left; }
+  .queue-track { grid-auto-columns: 205px; }
+  .footer { gap: 28px; padding-block: 54px; }
+}
+</style>
+</head>
+<body>
+<main class="auction-shell">
+  <header class="topbar">
+    <div class="top-left">
+      <a class="back-link" id="back-to-preview" href="auction-preview.html">← 返回拍卖预展</a>
+      <span class="event-name" id="event-name">London 2026 Selected Works</span>
+    </div>
+    <div class="top-right">
+      <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
+      <span class="demo-pill">DEMO 演示 · 仅作模拟</span>
+      <span class="status-chip">LOT <strong id="lot-progress">03 / 12</strong></span>
+      <span class="status-chip time">当前 LOT 倒计时 <strong id="lot-clock">03:19</strong></span>
+      <span class="status-chip"><strong id="online-viewers">1,284</strong> 在线</span>
+      <span class="status-chip"><strong id="registered-bidders">96</strong> 竞投</span>
+    </div>
+  </header>
+
+  <section class="auction-grid">
+    <section class="visual-panel">
+      <div class="lot-visual" id="visual-main"></div>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="visual-actions">
+        <a class="outline-btn" id="full-detail-link" href="#">查看作品全档 →</a>
+        <a class="outline-btn" id="preview-link" href="#">3D / 360 预览 →</a>
+      </div>
+    </section>
+
+    <section class="info-panel">
+      <div>
+        <div class="lot-kicker" id="info-lot">LOT 03</div>
+        <h1 id="info-title">明黄珠绣十二章祥瑞万字纹吉服</h1>
+        <p class="name-en" id="info-title-en">Bright Yellow Beaded Twelve-Symbol Auspicious Wan-Pattern Ceremonial Robe</p>
+      </div>
+      <dl class="lot-meta" id="lot-meta"></dl>
+      <section class="stream" aria-label="Auctioneer curator stream">
+        <div class="stream-head"><span>直播讲解</span><span>占位</span></div>
+        <div class="stream-box"><div><div class="stream-pulse"></div>Auctioneer · Curator Stream<br>Video Stream Placeholder</div></div>
+      </section>
+    </section>
+
+    <aside class="bid-panel-wrap">
+      <section class="bid-card" aria-label="Bid console">
+        <div class="bid-head"><span>Current Bid · 当前出价</span><span id="bid-count">11 Bids · 03:19</span></div>
+        <div class="current-bid" id="current-bid">£50,000</div>
+        <div class="estimate-line"><span id="estimate">EST £38,000–£55,000</span><span id="reserve-status">RESERVE NOT MET</span></div>
+        <div class="bid-boxes">
+          <div><span>Next / 下一口</span><strong id="next-bid">£55,000</strong></div>
+          <div><span>Step</span><strong id="increment">+£5,000</strong></div>
+        </div>
+        <div class="rule-pills">
+          <span class="rule-pill" id="reserve-pill">保留价未达 · Not Met</span>
+          <span class="rule-pill" id="condition-pill">未申请状况报告</span>
+          <span class="rule-pill active" id="access-pill">竞投资格 · Demo Approved</span>
+        </div>
+        <div class="cost-card">
+          <h2>预估成本 · DEMO</h2>
+          <div class="cost-line"><span>若按下一口价落槌</span><strong id="cost-hammer">£55,000</strong></div>
+          <div class="cost-line"><span>买方佣金 25%</span><strong id="cost-premium">+£13,750</strong></div>
+          <div class="cost-line"><span>线上服务费 1%</span><strong id="cost-service">+£550</strong></div>
+          <div class="cost-line total"><span>预估总额</span><strong id="cost-total">£69,300</strong></div>
+          <div class="cost-note">不含税费 / 关税 / 保险 / 包装与运输，由认证合作方线下核算。</div>
+        </div>
+        <div class="outbid-alert" id="user-alert">已被超越 · You have been outbid</div>
+        <div class="bid-actions">
+          <button class="bid-btn" id="quick-bid" type="button">再次竞价 · £55,000</button>
+          <div class="max-row">
+            <input id="max-bid-input" inputmode="numeric" aria-label="Max bid" placeholder="最高代理价 ≥ £55,000">
+            <button class="max-btn" id="set-max-bid" type="button">设最高价</button>
+          </div>
+          <a class="ghost-btn" id="condition-link" href="mailto:info@livingcraft.com?subject=Request%20Condition%20Report">索取状况报告 (Demo)</a>
+        </div>
+        <section class="activity">
+          <div class="activity-head"><span>Activity Log · 竞价记录</span><span>Demo · Live-feed</span></div>
+          <div class="activity-list" id="activity-list"></div>
+        </section>
+        <div class="feed-status">
+          <span class="feed-dot">Feed · Live</span>
+          <span>Latency 42ms</span>
+          <span id="broker-id">BKR_ID 9920-X</span>
+        </div>
+        <div class="demo-note" id="demo-note">DEMO · 不构成真实出价或合同 · 不收取保证金 · 不处理支付 · 不办理结算或物流。买方佣金 25% 与线上服务费 1% 仅为示意。</div>
+      </section>
+    </aside>
+  </section>
+
+  <section class="queue-section" aria-label="Lot queue">
+    <div class="queue-head"><span>本场 LOT 队列</span><span id="queue-count">12 件</span></div>
+    <div class="queue-track" id="lot-queue"></div>
+  </section>
+
+  <footer class="footer">
+    <div>
+      <div class="footer-brand">新生万物 <span>Living Craft</span></div>
+      <p>新生万物 Living Craft —— 面向国际的中国文化艺术品与非遗数字策展平台。以策展、数字孪生与长篇叙事，把中国艺术带给世界观众。</p>
+      <p>伦敦 2026 · 9 月 16-27 日</p>
+    </div>
+    <nav class="footer-col" aria-label="浏览">
+      <strong>浏览</strong>
+      <a href="collections.html">藏品</a>
+      <a href="exhibitions.html">展览</a>
+      <a href="artisans.html">艺术家</a>
+      <a href="vr-preview.html">VR 展厅</a>
+    </nav>
+    <nav class="footer-col" aria-label="平台">
+      <strong>平台</strong>
+      <a href="about.html">关于</a>
+      <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help">帮助</a>
+      <a href="mailto:info@livingcraft.com?subject=Media%20Partnership">媒体与合作</a>
+    </nav>
+  </footer>
+</main>
+
+<div class="confirm-layer" id="confirm-layer" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="confirm-card">
+    <h2 id="confirm-title">确认模拟竞价</h2>
+    <p>该操作只更新本页前端 Demo 状态，不会提交真实出价、保证金、支付或成交。</p>
+    <div class="confirm-grid">
+      <div><span>LOT</span><strong id="confirm-lot">LOT 03</strong></div>
+      <div><span>模拟出价</span><strong id="confirm-amount">£55,000</strong></div>
+      <div><span>预估总额</span><strong id="confirm-total">£69,300</strong></div>
+    </div>
+    <div class="confirm-actions">
+      <button class="ghost-btn" id="cancel-bid" type="button">取消</button>
+      <button class="bid-btn" id="confirm-bid" type="button">确认 Demo 出价</button>
+    </div>
+  </div>
+</div>
+
+<script src="data/artifacts.js"></script>
+<script src="data/auction.js"></script>
+<script>
+const eventData = (window.XEMTA_AUCTION_EVENTS || [])[0] || { lots: [], lotData: [] };
+const auctionPolicies = window.XEMTA_AUCTION_POLICIES || {};
+const artifacts = window.ARTIFACTS || [];
+const byId = new Map(artifacts.map((item) => [item.id, item]));
+const lotMeta = new Map((eventData.lotData || []).map((lot) => [lot.artifactId, lot]));
+const lots = (eventData.lots || []).map((id) => byId.get(id)).filter(Boolean);
+const roomParams = new URLSearchParams(window.location.search);
+let currentIndex = initialLotIndex();
+let userState = "outbid";
+let pendingBid = null;
+let proxyMax = 0;
+let lotSeconds = Number(lotFor(lots[currentIndex] || {}).closeOffsetSeconds || 199);
+let outbidTimer = null;
+
+function safe(value) {
+  return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
+function money(value) {
+  return window.XEMTA_FORMAT_MONEY ? window.XEMTA_FORMAT_MONEY(value) : `£${Number(value || 0).toLocaleString("en-GB")}`;
+}
+function lotFor(item) {
+  return item ? (lotMeta.get(item.id) || item) : {};
+}
+function normalizeLotKey(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, "-");
+}
+function auctionPreviewHref(item) {
+  return item ? `auction-preview.html?lot=${encodeURIComponent(item.id)}#lot-${item.id}` : "auction-preview.html#lots";
+}
+function initialLotIndex() {
+  const requested = roomParams.get("lot");
+  if (requested) {
+    const key = normalizeLotKey(requested);
+    const byRequest = lots.findIndex((item, index) => {
+      const lot = lotFor(item);
+      return [
+        item.id,
+        item.lotNumber,
+        item.lotNo,
+        lot.lotNo,
+        `lot-${String(index + 1).padStart(2, "0")}`
+      ].some(value => normalizeLotKey(value) === key);
+    });
+    if (byRequest >= 0) return byRequest;
+  }
+  const featured = lots.findIndex((item) => item.id === eventData.featuredLotId);
+  return Math.max(0, featured);
+}
+function bidIncrementFor(value) {
+  return typeof window.XEMTA_GET_BID_INCREMENT === "function" ? window.XEMTA_GET_BID_INCREMENT(value) : 500;
+}
+function imageMarkup(item) {
+  const lot = lotFor(item);
+  const img = item?.image || "";
+  return `<img src="${safe(img)}" alt="${safe(item?.name || item?.nameEn || lot.lotNo)}" onerror="this.hidden=true"><div class="placeholder">${safe(lot.lotNo || "LOT")}</div>`;
+}
+function timeLabel(seconds) {
+  const safeSeconds = Math.max(0, Number(seconds) || 0);
+  const minutes = Math.floor(safeSeconds / 60);
+  const sec = safeSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+}
+function queueStatus(index) {
+  if (index < currentIndex) return "closed";
+  if (index === currentIndex) return "current";
+  return "upcoming";
+}
+function statusZh(status) {
+  return status === "closed" ? "结束" : status === "current" ? "当前" : "即将";
+}
+function reserveLabel(lot) {
+  return lot.reserveStatus === "Reserve Met" ? "RESERVE MET" : "RESERVE NOT MET";
+}
+function reservePill(lot) {
+  return lot.reserveStatus === "Reserve Met" ? "保留价已达 · Met" : "保留价未达 · Not Met";
+}
+function totalCost(amount, lot) {
+  const value = Number(amount) || 0;
+  return Math.round(value + value * Number(lot.buyerPremiumRate || 0.25) + value * Number(lot.onlineServiceRate || 0.01));
+}
+function activityClass(row) {
+  if (row.bidType === "competing") return "competing";
+  if (row.bidType === "soft-close" || row.bidType === "system") return "system";
+  return "";
+}
+function activityType(row) {
+  const labels = {
+    competing: "对手出价 · COMPETING",
+    quick: "快速出价 · QUICK",
+    "max-bid": "代理出价 · MAX",
+    "proxy-response": "代理回应 · PROXY",
+    "soft-close": "软关闭 · SOFT CLOSE",
+    absentee: "委托出价 · ABSENTEE",
+    opening: "开拍价 · OPENING",
+    system: "系统 · SYSTEM",
+  };
+  return labels[row.bidType] || row.note || "DEMO";
+}
+function setCurrentLot(index) {
+  currentIndex = Math.max(0, Math.min(index, lots.length - 1));
+  lotSeconds = Number(lotFor(lots[currentIndex]).closeOffsetSeconds || 199);
+  userState = lotFor(lots[currentIndex]).lotState === "Live Now" ? "outbid" : "watching";
+  clearTimeout(outbidTimer);
+  render();
+}
+function render() {
+  const item = lots[currentIndex];
+  if (!item) return;
+  const lot = lotFor(item);
+  const lotNo = lot.lotNo || `LOT ${String(currentIndex + 1).padStart(2, "0")}`;
+  const nextBid = Number(lot.nextBid || lot.currentPrice + bidIncrementFor(lot.currentPrice));
+  const increment = Number(lot.bidIncrement || bidIncrementFor(lot.currentPrice));
+  const premium = Math.round(nextBid * Number(lot.buyerPremiumRate || eventData.buyerPremiumRate || 0.25));
+  const service = Math.round(nextBid * Number(lot.onlineServiceRate || eventData.onlineServiceRate || 0.01));
+  const total = totalCost(nextBid, lot);
+
+  document.getElementById("event-name").textContent = eventData.title || "London 2026 Selected Works";
+  document.getElementById("back-to-preview").href = auctionPreviewHref(item);
+  document.getElementById("lot-progress").textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${eventData.lotCount || lots.length}`;
+  document.getElementById("online-viewers").textContent = Number(eventData.onlineViewers || 1284).toLocaleString("en-GB");
+  document.getElementById("registered-bidders").textContent = Number(eventData.registeredBidders || 96).toLocaleString("en-GB");
+  document.getElementById("visual-main").innerHTML = `<span class="lot-tag">${safe(lotNo)}</span><span class="live-tag">● ${lot.lotState === "Live Now" ? "LIVE" : "DEMO"}</span>${imageMarkup(item)}<span class="inventory-code">HR-${String(currentIndex + 1).padStart(3, "0")}</span>`;
+  document.getElementById("thumbs").innerHTML = ["Primary", "Material", "Surface", "3D/360"].map((label) => `<div class="thumb">${imageMarkup(item)}<span class="thumb-label">${label}</span></div>`).join("");
+  document.getElementById("full-detail-link").href = `artifact-detail.html?id=${encodeURIComponent(item.id)}`;
+  document.getElementById("preview-link").href = `vr-preview.html?artifact=${encodeURIComponent(item.id)}`;
+  document.getElementById("info-lot").textContent = lotNo;
+  document.getElementById("info-title").textContent = item.name || "";
+  document.getElementById("info-title-en").textContent = item.nameEn || "";
+  document.getElementById("lot-meta").innerHTML = [
+    ["艺术家", item.artistEn ? `${item.artistEn} ${item.artist || ""}` : item.artist],
+    ["年份", item.year || "—"],
+    ["工艺", item.techniqueEn || item.technique || "—"],
+    ["材质", item.auctionMaterial || item.techniqueEn || item.technique || "—"],
+    ["尺寸", item.dimensions || "—"],
+    ["产地", item.originEn || item.origin || "—"],
+    ["状况报告", lot.conditionReportStatus === "Not Requested" ? '<span>未申请</span>' : `<span class="ok">${safe(lot.conditionReportStatus)}</span>`],
+    ["估价", `${money(lot.estimateLow)} – ${money(lot.estimateHigh)}`],
+  ].map(([label, value]) => `<dt>${safe(label)}</dt><dd>${value}</dd>`).join("");
+
+  document.getElementById("current-bid").textContent = money(lot.currentPrice);
+  document.getElementById("bid-count").textContent = `${lot.bidCount || 0} Bids · ${timeLabel(lotSeconds)}`;
+  document.getElementById("estimate").textContent = `EST ${money(lot.estimateLow)}–${money(lot.estimateHigh)}`;
+  const reserve = document.getElementById("reserve-status");
+  reserve.textContent = reserveLabel(lot);
+  reserve.className = lot.reserveStatus === "Reserve Met" ? "reserve-met" : "reserve-not-met";
+  document.getElementById("next-bid").textContent = money(nextBid);
+  document.getElementById("increment").textContent = `+${money(increment)}`;
+  document.getElementById("reserve-pill").textContent = reservePill(lot);
+  document.getElementById("condition-pill").textContent = lot.conditionReportStatus === "Not Requested" ? "未申请状况报告" : `状况报告 · ${lot.conditionReportStatus}`;
+  document.getElementById("access-pill").textContent = `竞投资格 · ${lot.bidderAccessStatus || "Not Requested"}`;
+  document.getElementById("cost-hammer").textContent = money(nextBid);
+  document.getElementById("cost-premium").textContent = `+${money(premium)}`;
+  document.getElementById("cost-service").textContent = `+${money(service)}`;
+  document.getElementById("cost-total").textContent = money(total);
+  document.getElementById("quick-bid").textContent = `${userState === "outbid" ? "再次竞价" : "确认竞价"} · ${money(nextBid)}`;
+  document.getElementById("max-bid-input").placeholder = `最高代理价 ≥ ${money(nextBid)}`;
+  document.getElementById("condition-link").href = `mailto:info@livingcraft.com?subject=${encodeURIComponent("Request Condition Report: " + lotNo)}`;
+  renderUserAlert();
+  renderActivity(lot);
+  renderQueue();
+}
+function renderUserAlert() {
+  const alert = document.getElementById("user-alert");
+  const labels = {
+    watching: "围观中 · 申请资格后可参与模拟竞价",
+    outbid: "已被超越 · You have been outbid",
+    leading: "当前领先 · You are currently leading",
+    max: "最高价已设 · Proxy max registered",
+  };
+  alert.textContent = labels[userState] || labels.outbid;
+  alert.classList.toggle("leading", userState === "leading" || userState === "max");
+}
+function renderActivity(lot) {
+  const rows = (lot.bidHistory || []).slice(0, 8);
+  document.getElementById("activity-list").innerHTML = rows.map((row) => `
+    <div class="activity-row ${activityClass(row)}">
+      <div><span class="type">${safe(activityType(row))}</span><br><span class="who">${safe(row.bidderLabel || "")}</span></div>
+      <span class="time">${safe(row.relativeTime || "刚刚")}</span>
+      <strong class="amount">${row.amount ? money(row.amount) : ""}</strong>
+    </div>
+  `).join("");
+}
+function renderQueue() {
+  document.getElementById("queue-count").textContent = `${eventData.lotCount || lots.length} 件`;
+  document.getElementById("lot-queue").innerHTML = lots.map((item, index) => {
+    const lot = lotFor(item);
+    const status = queueStatus(index);
+    return `<button type="button" class="queue-card ${status}" data-index="${index}">
+      <div class="queue-img"><span class="queue-lot-tag">${safe(lot.lotNo)}</span>${imageMarkup(item)}</div>
+      <div class="queue-meta"><span>${String(index + 1).padStart(2, "0")} / ${eventData.lotCount || lots.length}</span><span>${statusZh(status)}</span></div>
+      <div class="queue-title">${safe(item.nameEn || item.name)}</div>
+    </button>`;
+  }).join("");
+  document.querySelectorAll(".queue-card").forEach((button) => {
+    button.addEventListener("click", () => setCurrentLot(Number(button.dataset.index)));
+  });
+  const track = document.getElementById("lot-queue");
+  const current = track.querySelector(".queue-card.current");
+  if (current) track.scrollLeft = Math.max(0, current.offsetLeft - (track.clientWidth - current.clientWidth) / 2);
+}
+function openConfirm(amount) {
+  const item = lots[currentIndex];
+  const lot = lotFor(item);
+  pendingBid = Number(amount);
+  document.getElementById("confirm-lot").textContent = lot.lotNo;
+  document.getElementById("confirm-amount").textContent = money(pendingBid);
+  document.getElementById("confirm-total").textContent = money(totalCost(pendingBid, lot));
+  document.getElementById("confirm-layer").classList.add("open");
+}
+function closeConfirm() {
+  pendingBid = null;
+  document.getElementById("confirm-layer").classList.remove("open");
+}
+function applySoftClose(lot) {
+  const threshold = Number(eventData.softCloseThresholdMinutes || 3) * 60;
+  const extension = Number(eventData.softCloseExtensionMinutes || 3) * 60;
+  if (lotSeconds <= threshold) {
+    lotSeconds += extension;
+    lot.bidHistory.unshift({ bidType: "soft-close", bidderLabel: "SYSTEM", amount: null, note: "Soft close - lot extended 3 min", relativeTime: "刚刚", simulatedOnly: true });
+  }
+}
+function confirmBid() {
+  const item = lots[currentIndex];
+  const lot = lotFor(item);
+  const amount = Number(pendingBid || lot.nextBid || 0);
+  if (!amount) return;
+  lot.currentPrice = amount;
+  lot.bidIncrement = bidIncrementFor(lot.currentPrice);
+  lot.nextBid = lot.currentPrice + lot.bidIncrement;
+  lot.bidCount = Number(lot.bidCount || 0) + 1;
+  lot.bidHistory.unshift({ bidType: "quick", bidderLabel: "YOU", amount, note: "Quick bid confirmed", relativeTime: "刚刚", simulatedOnly: true });
+  userState = "leading";
+  applySoftClose(lot);
+  closeConfirm();
+  render();
+  clearTimeout(outbidTimer);
+  outbidTimer = setTimeout(() => {
+    lot.currentPrice = lot.nextBid;
+    lot.bidIncrement = bidIncrementFor(lot.currentPrice);
+    lot.nextBid = lot.currentPrice + lot.bidIncrement;
+    lot.bidCount = Number(lot.bidCount || 0) + 1;
+    lot.bidHistory.unshift({ bidType: "competing", bidderLabel: "COMPETING", amount: lot.currentPrice, note: "Competing bidder", relativeTime: "刚刚", simulatedOnly: true });
+    userState = proxyMax >= lot.nextBid ? "max" : "outbid";
+    render();
+  }, 3600);
+}
+function setMaxBid() {
+  const item = lots[currentIndex];
+  const lot = lotFor(item);
+  const raw = Number(String(document.getElementById("max-bid-input").value).replace(/[^0-9.]/g, ""));
+  const minimum = Number(lot.nextBid || 0);
+  if (!raw || raw < minimum) {
+    userState = "outbid";
+    document.getElementById("user-alert").textContent = `最高代理价需不低于 ${money(minimum)}`;
+    return;
+  }
+  proxyMax = raw;
+  lot.bidHistory.unshift({ bidType: "max-bid", bidderLabel: "YOU", amount: minimum, note: `Confidential max set to ${money(raw)}`, relativeTime: "刚刚", simulatedOnly: true });
+  userState = "max";
+  render();
+}
+function tickClock() {
+  lotSeconds = Math.max(0, lotSeconds - 1);
+  document.getElementById("lot-clock").textContent = timeLabel(lotSeconds);
+  const count = document.getElementById("bid-count");
+  if (count) count.textContent = `${lotFor(lots[currentIndex]).bidCount || 0} Bids · ${timeLabel(lotSeconds)}`;
+}
+document.getElementById("quick-bid").addEventListener("click", () => {
+  const lot = lotFor(lots[currentIndex]);
+  openConfirm(lot.nextBid || lot.currentPrice + bidIncrementFor(lot.currentPrice));
+});
+document.getElementById("set-max-bid").addEventListener("click", setMaxBid);
+document.getElementById("cancel-bid").addEventListener("click", closeConfirm);
+document.getElementById("confirm-bid").addEventListener("click", confirmBid);
+document.getElementById("confirm-layer").addEventListener("click", (event) => {
+  if (event.target.id === "confirm-layer") closeConfirm();
+});
+render();
+tickClock();
+setInterval(tickClock, 1000);
+</script>
+<script src="scripts/theme-toggle.js"></script>
+</body>
+</html>
