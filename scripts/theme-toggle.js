@@ -132,7 +132,10 @@
     const path = window.location.pathname.replace(/\/+$/, "");
     const parts = path.split("/").filter(Boolean);
     const projectIndex = parts.lastIndexOf("xemta-cultural");
-    const afterProject = projectIndex >= 0 ? parts.slice(projectIndex + 1) : parts;
+    let afterProject = projectIndex >= 0 ? parts.slice(projectIndex + 1) : parts;
+    if (projectIndex < 0 && window.location.hostname.endsWith("github.io")) {
+      afterProject = parts.slice(1);
+    }
     if (!afterProject.length) return 0;
     const last = afterProject[afterProject.length - 1] || "";
     const hasFile = /\.[a-z0-9]+$/i.test(last);
