@@ -493,14 +493,14 @@ h1 {
 <body>
 <nav class="nav" aria-label="主导航 Main navigation">
   <div class="nav-inner">
-    <a class="brand" href="index-v2.html"><span class="brand-stack"><span class="brand-cn">新生万物</span><span class="brand-en">Living Craft · MADverse</span></span></a>
+    <a class="brand" href="/livingcraft-demo/"><span class="brand-stack"><span class="brand-cn">新生万物</span><span class="brand-en">Living Craft · MADverse</span></span></a>
     <div class="nav-links">
-      <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
-      <a href="explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
-      <a class="active" href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
-      <a href="exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
-      <a href="artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
-      <a href="about.html" data-zh="关于" data-en="About">关于</a>
+      <a href="/livingcraft-demo/" data-zh="首页" data-en="Home">首页</a>
+      <a href="/livingcraft-demo/explore.html" data-zh="VR 展厅" data-en="VR Gallery">VR 展厅</a>
+      <a class="active" href="/livingcraft-demo/collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+      <a href="/livingcraft-demo/exhibitions.html" data-zh="展览" data-en="Exhibitions">展览</a>
+      <a href="/livingcraft-demo/artisans.html" data-zh="艺术家" data-en="Artists">艺术家</a>
+      <a href="/livingcraft-demo/about.html" data-zh="关于" data-en="About">关于</a>
       <a href="mailto:info@livingcraft.com?subject=Living%20Craft%20Help" data-zh="帮助" data-en="Help">帮助</a>
     </div>
     <button class="theme-toggle" type="button" data-theme-toggle="true" aria-label="切换配色方案"><span class="theme-toggle__dot" aria-hidden="true"></span><span class="theme-toggle__label">切换配色：翠 · 秘色</span></button>
@@ -512,9 +512,9 @@ h1 {
 
 <main class="page">
   <nav class="breadcrumb" aria-label="面包屑 Breadcrumb">
-    <a href="index-v2.html" data-zh="首页" data-en="Home">首页</a>
+    <a href="/livingcraft-demo/" data-zh="首页" data-en="Home">首页</a>
     <span>/</span>
-    <a href="collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
+    <a href="/livingcraft-demo/collections.html" data-zh="艺术品" data-en="Collections">艺术品</a>
     <span>/</span>
     <span id="crumb-name" data-zh="展品" data-en="Artifact">展品</span>
   </nav>
@@ -728,7 +728,7 @@ function relatedWorksMarkup(item) {
   return `
     <div class="related-works">
       ${related.map(work => `
-        <a class="related-work" href="artifact-detail.html?id=${encodeURIComponent(work.id)}">
+        <a class="related-work" href="/livingcraft-demo/artifact-detail.html?id=${encodeURIComponent(work.id)}">
           <div class="related-work-img"><img src="${resolvedImage(work)}" alt="${work.name} ${work.nameEn}" loading="lazy"></div>
           <div class="related-work-title">${pick(work.name, work.nameEn)}</div>
           <div class="related-work-meta">${work.year} · ${compactCraftText(work)}</div>
@@ -755,7 +755,7 @@ function auctionPreviewBlock(item) {
       <div class="auction-preview-actions">
         <a class="btn" href="${auctionPreviewHref(item)}">${pick("查看拍卖预展", "View Auction Preview")}</a>
         <a class="btn secondary" href="${auctionRoomHref(item)}">${pick("进入拍卖厅", "Enter Auction Room")}</a>
-        <a class="btn secondary" href="explore.html#artifact=${encodeURIComponent(item.id)}">${pick("进入 3D 预览", "Enter 3D Preview")}</a>
+        <a class="btn secondary" href="/livingcraft-demo/explore.html#artifact=${encodeURIComponent(item.id)}">${pick("进入 3D 预览", "Enter 3D Preview")}</a>
         <a class="btn secondary" href="${conditionReportHref(item)}">${pick("索取状况报告", "Request Condition Report")}</a>
       </div>
     </section>
@@ -769,7 +769,7 @@ function renderMissing() {
       <div class="kicker">${pick("展品不可用", "Artifact unavailable")}</div>
       <h1>${pick("未找到展品", "Artifact Not Found")}</h1>
       <p class="summary">${pick("当前链接未能匹配展品数据，请返回藏品目录重新选择。", "The requested artifact could not be found in the collection data set.")}</p>
-      <div class="actions"><a class="btn" href="collections.html">${pick("返回藏品", "Back to Collections")}</a></div>
+      <div class="actions"><a class="btn" href="/livingcraft-demo/collections.html">${pick("返回藏品", "Back to Collections")}</a></div>
     </div>
   `;
 }
@@ -786,7 +786,7 @@ function renderDetail(item) {
           ${thumbMarkup(item, "Material Detail", 1)}
           ${thumbMarkup(item, "3D Preview", 2)}
         </div>
-        <a class="preview-card" href="explore.html#artifact=${encodeURIComponent(item.id)}">
+        <a class="preview-card" href="/livingcraft-demo/explore.html#artifact=${encodeURIComponent(item.id)}">
           <span>${pick("Enter 3D Preview", "Enter 3D Preview")}</span>
           <span aria-hidden="true">→</span>
         </a>
@@ -816,9 +816,9 @@ function renderDetail(item) {
         ${(item.auctionLot || item.auctionPreview) ? `<a class="btn secondary" href="${auctionPreviewHref(item)}">${pick("查看拍卖预展", "View Auction Preview")}</a>` : ""}
         ${(item.auctionLot || item.auctionPreview) ? `<a class="btn secondary" href="${auctionRoomHref(item)}">${pick("进入拍卖厅", "Enter Auction Room")}</a>` : ""}
         <a class="btn secondary" href="${interestHref(item)}">${pick("Register Interest", "Register Interest")}</a>
-        <a class="btn tertiary" href="explore.html#artifact=${encodeURIComponent(item.id)}">${pick("Enter 3D Preview", "Enter 3D Preview")}</a>
+        <a class="btn tertiary" href="/livingcraft-demo/explore.html#artifact=${encodeURIComponent(item.id)}">${pick("Enter 3D Preview", "Enter 3D Preview")}</a>
         <a class="btn tertiary" href="${conditionReportHref(item)}">${pick("Request Condition Report", "Request Condition Report")}</a>
-        <a class="btn tertiary" href="collections.html#category=${encodeURIComponent(item.functionalCategory)}">${pick("Back to Collections", "Back to Collections")}</a>
+        <a class="btn tertiary" href="/livingcraft-demo/collections.html#category=${encodeURIComponent(item.functionalCategory)}">${pick("Back to Collections", "Back to Collections")}</a>
       </div>
       ${auctionPreviewBlock(item)}
       ${detailSections(item)}
